@@ -91,10 +91,10 @@ namespace CFG
 	CFGVAR(Visual_PlayerArrows_Offset, 25);
 	CFGVAR(Visual_PlayerArrows_MaxDist, 1000.f);
 	CFGVAR(Visual_DrawCrosshair, false);
-	CFGVAR(Visual_DrawCrosshair_Size, 20);
 	CFGVAR(Visual_DrawSpread, false);
 	CFGVAR(Visual_FOV, 110);
 	CFGVAR(Visual_ViewmodelFOV, 90);
+	CFGVAR(Visual_SpectatorList, false);
 
 #pragma endregion
 

@@ -150,6 +150,9 @@
     <ClCompile Include="SDK\Interfaces\IHudChat.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Features\SpectatorList\SpectatorList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entry\Entry.h">
@@ -456,6 +459,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Features\Glow\Glow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\SpectatorList\SpectatorList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -34,7 +34,7 @@ void CFeatures_Visual::Crosshair()
 	if (!CFG::Visual_DrawCrosshair || I::EngineVGui->IsGameUIVisible())
 		return;
 
-	int CrosshairSize = CFG::Visual_DrawCrosshair_Size;
+	int CrosshairSize = 20;
 	int HalfSize = CrosshairSize / 2;
 
 	H::Draw.OutlinedRect((H::Draw.m_nScreenW / 2) - 1, (H::Draw.m_nScreenH / 2) - HalfSize + 1, 2, CrosshairSize - 2, COLOR_GREEN); // |

@@ -1111,11 +1111,8 @@ void CFeatures_Menu::MainWindow()
 	m_nCursorX = CFG::Menu_Pos_X + CFG::Menu_Spacing_X;
 	m_nCursorY = CFG::Menu_Pos_Y + CFG::Menu_Drag_Bar_Height + CFG::Menu_Spacing_Y;
 
-	enum class EMainTabs { AIM, VISUALS, MISC, PLAYERS, CONFIGS };
-	static EMainTabs MainTab = EMainTabs::AIM;
-
-	if (Button("Aim", MainTab == EMainTabs::AIM, CFG::Menu_Tab_Button_Width))
-		MainTab = EMainTabs::AIM;
+	enum class EMainTabs { VISUALS, MISC, PLAYERS, CONFIGS };
+	static EMainTabs MainTab = EMainTabs::VISUALS;
 
 	if (Button("Visuals", MainTab == EMainTabs::VISUALS, CFG::Menu_Tab_Button_Width))
 		MainTab = EMainTabs::VISUALS;
@@ -1140,276 +1137,6 @@ void CFeatures_Menu::MainWindow()
 	m_nCursorX = CFG::Menu_Pos_X + m_nLastButtonW + (CFG::Menu_Spacing_X * 3) - 1;
 	m_nCursorY = CFG::Menu_Pos_Y + CFG::Menu_Drag_Bar_Height + CFG::Menu_Spacing_Y;
 
-	if (MainTab == EMainTabs::AIM)
-	{
-		enum class EAimTabs { AIMBOT, TRIGGERBOT };
-		static EAimTabs AimTab = EAimTabs::AIMBOT;
-
-		int anchor_x = m_nCursorX;
-		int anchor_y = m_nCursorY;
-
-		if (Button("Aimbot", AimTab == EAimTabs::AIMBOT))
-			AimTab = EAimTabs::AIMBOT;
-
-		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
-		m_nCursorY = anchor_y;
-
-		if (Button("Triggerbot", AimTab == EAimTabs::TRIGGERBOT))
-			AimTab = EAimTabs::TRIGGERBOT;
-
-		H::Draw.Line(
-			anchor_x - CFG::Menu_Spacing_X,
-			m_nCursorY,
-			CFG::Menu_Pos_X + CFG::Menu_Width - 1,
-			m_nCursorY,
-			CFG::Menu_Accent_Primary
-		);
-
-		m_nCursorX = anchor_x + CFG::Menu_Spacing_X;
-		m_nCursorY += CFG::Menu_Spacing_Y;
-
-		if (AimTab == EAimTabs::AIMBOT)
-		{
-			anchor_y = m_nCursorY;
-
-			GroupBoxStart("Global", 150);
-			{
-				/*CheckBox("Active", CFG::Aimbot_Active);
-				CheckBox("Auto Shoot", CFG::Aimbot_AutoShoot);
-				InputKey("Key", CFG::Aimbot_Key);
-
-				multiselect("Targets", AimbotTargets, {
-					{ "Players", CFG::Aimbot_Target_Players },
-					{ "Buildings", CFG::Aimbot_Target_Buildings }
-					});
-
-				multiselect("Ignore", AimbotIgnores, {
-					{ "Friends", CFG::Aimbot_Ignore_Friends },
-					{ "Invisible", CFG::Aimbot_Ignore_Invisible },
-					{ "Invulnerable", CFG::Aimbot_Ignore_Invulnerable },
-					{ "Taunting", CFG::Aimbot_Ignore_Taunting }
-					});*/
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("Melee", 150);
-			{
-				/*CheckBox("Active", CFG::Aimbot_Melee_Active);
-				CheckBox("Always Active", CFG::Aimbot_Melee_Always_Active);
-				CheckBox("Target Lag Records", CFG::Aimbot_Melee_Target_LagRecords);
-
-				CheckBox("Predict Swing", CFG::Aimbot_Melee_Predict_Swing);
-				CheckBox("Walk To Target", CFG::Aimbot_Melee_Walk_To_Target);
-				CheckBox("Whip Teammates", CFG::Aimbot_Melee_Whip_Teammates);
-
-				SelectSingle("Aim Type", CFG::Aimbot_Melee_Aim_Type, {
-					{ "Normal", 0 },
-					{ "Silent", 1 },
-					{ "Smooth", 2 }
-					});
-
-				SelectSingle("Sort", CFG::Aimbot_Melee_Sort, {
-					{ "FOV", 0 },
-					{ "Distance", 1 }
-					});
-
-				SliderFloat("FOV", CFG::Aimbot_Melee_FOV, 1.0f, 180.0f, 1.0f, "%.0f");
-				SliderFloat("Smoothing", CFG::Aimbot_Melee_Smoothing, 0.0f, 20.0f, 0.5f, "%.1f");
-				SliderFloat("Predict Swing Time", CFG::Aimbot_Melee_Predict_Swing_Amount, 0.1f, 0.2f, 0.01f, "%.2f");*/
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Hitscan", 150);
-			{
-				/*CheckBox("Active", CFG::Aimbot_Hitscan_Active);
-				CheckBox("Target Lag Records", CFG::Aimbot_Hitscan_Target_LagRecords);
-				CheckBox("Target Stickies", CFG::Aimbot_Hitscan_Target_Stickies);
-
-				CheckBox("Smooth Auto Shoot", CFG::Aimbot_Hitscan_Advanced_Smooth_AutoShoot);
-				CheckBox("Auto Scope", CFG::Aimbot_Hitscan_Auto_Scope);
-				CheckBox("Wait For Headshot", CFG::Aimbot_Hitscan_Wait_For_Headshot);
-				CheckBox("Wait For Charge", CFG::Aimbot_Hitscan_Wait_For_Charge);
-				CheckBox("Minigun Tapfire", CFG::Aimbot_Hitscan_Minigun_TapFire);
-
-				SelectSingle("Aim Type", CFG::Aimbot_Hitscan_Aim_Type, {
-					{ "Normal", 0 },
-					{ "Silent", 1 },
-					{ "Smooth", 2 }
-				});
-
-				SelectSingle("Hitbox", CFG::Aimbot_Hitscan_Hitbox, {
-					{ "Head", 0 },
-					{ "Body", 1 },
-					{ "Auto", 2 }
-					});
-
-				SelectSingle("Sort", CFG::Aimbot_Hitscan_Sort, {
-					{ "FOV", 0 },
-					{ "Distance", 1 }
-					});
-
-				multiselect("Scan", HitscanScan, {
-					{ "Head", CFG::Aimbot_Hitscan_Scan_Head },
-					{ "Body", CFG::Aimbot_Hitscan_Scan_Body },
-					{ "Arms", CFG::Aimbot_Hitscan_Scan_Arms },
-					{ "Legs", CFG::Aimbot_Hitscan_Scan_Legs },
-					{ "Buildings", CFG::Aimbot_Hitscan_Scan_Buildings }
-					});
-
-				SliderFloat("FOV", CFG::Aimbot_Hitscan_FOV, 1.0f, 180.0f, 1.0f, "%.0f");
-				SliderFloat("Smoothing", CFG::Aimbot_Hitscan_Smoothing, 0.0f, 20.0f, 0.5f, "%.1f");*/
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Projectile", 150);
-			{
-				/*CheckBox("Active", CFG::Aimbot_Projectile_Active);
-				CheckBox("No Spread", CFG::Aimbot_Projectile_NoSpread);
-				CheckBox("Auto Double Donk", CFG::Aimbot_Projectile_Auto_Double_Donk);
-				CheckBox("Advanced Head Aim", CFG::Aimbot_Projectile_Advanced_Head_Aim);
-				CheckBox("Ground Strafe Prediction", CFG::Aimbot_Projectile_Ground_Strafe_Prediction);
-				CheckBox("Air Strafe Prediction", CFG::Aimbot_Projectile_Air_Strafe_Prediction);
-				CheckBox("BBOX Multipoint", CFG::Aimbot_Projectile_BBOX_Multipoint);
-				SelectSingle("Rocket Splash", CFG::Aimbot_Projectile_Rocket_Splash,
-				{
-					{ "Disabled", 0 },
-					{ "Enabled", 1 },
-					{ "Preferred", 2 }
-				});
-
-				SelectSingle("Aim Type", CFG::Aimbot_Projectile_Aim_Type, {
-					{ "Normal", 0 },
-					{ "Silent", 1 }
-					});
-
-				SelectSingle("Aim Position", CFG::Aimbot_Projectile_Aim_Position, {
-					{ "Feet", 0 },
-					{ "Body", 1 },
-					{ "Head", 2 },
-					{ "Auto", 3 }
-					});
-
-				SelectSingle("Sort", CFG::Aimbot_Projectile_Sort, {
-					{ "FOV", 0 },
-					{ "Distance", 1 }
-					});
-
-				SelectSingle("Prediction Method", CFG::Aimbot_Projectile_Aim_Prediction_Method, {
-					{ "Full Acceleration", 0 },
-					{ "Current Velocity", 1 }
-				});
-
-				SliderFloat("FOV", CFG::Aimbot_Projectile_FOV, 1.0f, 180.0f, 1.0f, "%.0f");
-				SliderFloat("Max Simulation Time", CFG::Aimbot_Projectile_Max_Simulation_Time, 1.0f, 5.0f, 0.5f, "%.1fs");
-				SliderInt("Max Targets", CFG::Aimbot_Projectile_Max_Processing_Targets, 1, 6, 1);*/
-			}
-			GroupBoxEnd();
-		}
-
-		if (AimTab == EAimTabs::TRIGGERBOT)
-		{
-			anchor_y = m_nCursorY;
-
-			GroupBoxStart("Global", 150);
-			{
-				/*CheckBox("Active", CFG::Triggerbot_Active);
-				InputKey("Key", CFG::Triggerbot_Key);*/
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("Auto Airblast", 150);
-			{
-				/*CheckBox("Active", CFG::Triggerbot_AutoAirblast_Active);
-				CheckBox("Aim Assist", CFG::Triggerbot_AutoAirblast_Aim_Assist);
-
-				SelectSingle("Mode", CFG::Triggerbot_AutoAirblast_Mode,
-				{
-					{ "Legit", 0 },
-					{ "Rage", 1 }
-				});
-
-				SelectSingle("Aim Mode", CFG::Triggerbot_AutoAirblast_Aim_Mode,
-				{
-					{ "Normal", 0 },
-					{ "Silent", 1 }
-				});
-
-				multiselect("Ignore", TriggerbotAirblastIgnore,
-				{
-					{ "Rocket", CFG::Triggerbot_AutoAirblast_Ignore_Rocket },
-					{ "Sentry Rocket", CFG::Triggerbot_AutoAirblast_Ignore_SentryRocket },
-					{ "Jarate", CFG::Triggerbot_AutoAirblast_Ignore_Jar },
-					{ "Gas", CFG::Triggerbot_AutoAirblast_Ignore_JarGas },
-					{ "Milk", CFG::Triggerbot_AutoAirblast_Ignore_JarMilk },
-					{ "Arrow", CFG::Triggerbot_AutoAirblast_Ignore_Arrow },
-					{ "Flare", CFG::Triggerbot_AutoAirblast_Ignore_Flare },
-					{ "Cleaver", CFG::Triggerbot_AutoAirblast_Ignore_Cleaver },
-					{ "Healing Bolt", CFG::Triggerbot_AutoAirblast_Ignore_HealingBolt },
-					{ "Pipebomb", CFG::Triggerbot_AutoAirblast_Ignore_PipebombProjectile },
-					{ "Ball of Fire", CFG::Triggerbot_AutoAirblast_Ignore_BallOfFire },
-					{ "Energy Ring", CFG::Triggerbot_AutoAirblast_Ignore_EnergyRing },
-					{ "Energy Ball", CFG::Triggerbot_AutoAirblast_Ignore_EnergyBall },
-				});*/
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Auto Detonate", 150);
-			{
-				/*CheckBox("Active", CFG::Triggerbot_AutoDetonate_Active);
-
-				multiselect("Targets", DetonateTargets, {
-					{ "Players", CFG::Triggerbot_AutoDetonate_Target_Players },
-					{ "Buildings", CFG::Triggerbot_AutoDetonate_Target_Buildings }
-					});
-
-				multiselect("Ignore", DetonateIgnores, {
-					{ "Friends", CFG::Triggerbot_AutoDetonate_Ignore_Friends },
-					{ "Invisible", CFG::Triggerbot_AutoDetonate_Ignore_Invisible },
-					{ "Invulnerable", CFG::Triggerbot_AutoDetonate_Ignore_Invulnerable }
-					});*/
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Auto Backstab", 150);
-			{
-				/*CheckBox("Active", CFG::Triggerbot_AutoBackstab_Active);
-				CheckBox("Knife If Lethal", CFG::Triggerbot_AutoBackstab_Knife_If_Lethal);
-
-				SelectSingle("Mode", CFG::Triggerbot_AutoBacktab_Mode,
-				{
-					{ "Legit", 0 },
-					{ "Rage", 1 }
-				});
-
-				SelectSingle("Aim Mode", CFG::Triggerbot_AutoBacktab_Aim_Mode,
-				{
-					{ "Normal", 0 },
-					{ "Silent", 1 }
-				});
-
-				multiselect("Ignore", AutoBackstabIgnores,
-				{
-					{ "Friends", CFG::Triggerbot_AutoBackstab_Ignore_Friends },
-					{ "Invisible", CFG::Triggerbot_AutoBackstab_Ignore_Invisible },
-					{ "Invulnerable", CFG::Triggerbot_AutoBackstab_Ignore_Invulnerable }
-				});*/
-			}
-			GroupBoxEnd();
-		}
-	}
-
 	if (MainTab == EMainTabs::VISUALS)
 	{
 		enum class EVisualsTabs { ESP, RADAR, MATERIALS, OUTLINES, OTHER, OTHER2, COLORS };
@@ -1424,32 +1151,8 @@ void CFeatures_Menu::MainWindow()
 		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 		m_nCursorY = anchor_y;
 
-		/*if (Button("Radar", VisualsTab == EVisualsTabs::RADAR))
-			VisualsTab = EVisualsTabs::RADAR;
-
-		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
-		m_nCursorY = anchor_y;
-
-		if (Button("Materials", VisualsTab == EVisualsTabs::MATERIALS))
-			VisualsTab = EVisualsTabs::MATERIALS;
-
-		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
-		m_nCursorY = anchor_y;
-
-		if (Button("Outlines", VisualsTab == EVisualsTabs::OUTLINES))
-			VisualsTab = EVisualsTabs::OUTLINES;
-
-		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
-		m_nCursorY = anchor_y;*/
-
 		if (Button("Other", VisualsTab == EVisualsTabs::OTHER))
 			VisualsTab = EVisualsTabs::OTHER;
-
-		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
-		m_nCursorY = anchor_y;
-
-		if (Button("Other2", VisualsTab == EVisualsTabs::OTHER2))
-			VisualsTab = EVisualsTabs::OTHER2;
 
 		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 		m_nCursorY = anchor_y;
@@ -1476,9 +1179,6 @@ void CFeatures_Menu::MainWindow()
 			{
 				CheckBox("Active", CFG::ESP_Enabled);
 				SliderFloat("Alpha", CFG::ESP_Alpha, 0.1f, 1.0f, 0.1f, "%.1f");
-				/*SelectSingle("Tracer From", CFG::ESP_Tracer_From, {{"Top", 0}, {"Center", 1}, {"Bottom", 2}});
-				SelectSingle("Tracer To", CFG::ESP_Tracer_To, { { "Top", 0 }, { "Center", 1 }, { "Bottom", 2 } });
-				SelectSingle("Text Color_t", CFG::ESP_Text_Color, { { "Default", 0 }, { "White", 1 } });*/
 			}
 			GroupBoxEnd();
 
@@ -1488,11 +1188,9 @@ void CFeatures_Menu::MainWindow()
 			GroupBoxStart("Players", 150);
 			{
 				CheckBox("Active", CFG::ESP_Players_Enabled);
-				//SliderFloat("Alpha", CFG::ESP_Players_Alpha, 0.1f, 1.0f, 0.1f, "%.1f");
 				CheckBox("Out of FOV Arrows", CFG::Visual_PlayerArrows_Enabled);
 				SliderInt("Arrow Max Distance", CFG::Visual_PlayerArrows_Offset, 0, 500, 25);
 				SliderFloat("Arrow Max Distance", CFG::Visual_PlayerArrows_MaxDist, 0.0f, 5000.0f, 50.0f, "%.0f");
-				//SelectSingle("Bones Color", CFG::ESP_Players_Bones_Color, { { "Default", 0 }, { "White", 1 } });*/
 
 				multiselect("Ignore", PlayerIgnore, {
 					{ "Local", CFG::ESP_Players_Ignore_Local },
@@ -1529,304 +1227,7 @@ void CFeatures_Menu::MainWindow()
 					});
 			}
 			GroupBoxEnd();
-
-			/*GroupBoxStart("Buildings", 150);
-			{
-				CheckBox("Active", CFG::ESP_Buildings_Active);
-				SliderFloat("Alpha", CFG::ESP_Buildings_Alpha, 0.1f, 1.0f, 0.1f, "%.1f");
-
-				multiselect("Ignore", BuildingIgnore, {
-					{ "Local", CFG::ESP_Buildings_Ignore_Local },
-					{ "Enemies", CFG::ESP_Buildings_Ignore_Enemies },
-					{ "Teammates", CFG::ESP_Buildings_Ignore_Teammates }
-					});
-
-				multiselect("Draw", BuildingDraw, {
-					{ "Name", CFG::ESP_Buildings_Name },
-					{ "Health", CFG::ESP_Buildings_Health },
-					{ "Health Bar", CFG::ESP_Buildings_HealthBar },
-					{ "Level", CFG::ESP_Buildings_Level },
-					{ "Level Bar", CFG::ESP_Buildings_LevelBar },
-					{ "Box", CFG::ESP_Buildings_Box },
-					{ "Tracer", CFG::ESP_Buildings_Tracer },
-					{ "Conds", CFG::ESP_Buildings_Conds }
-					});
-
-				CheckBox("Show Team Dispensers", CFG::ESP_Buildings_Show_Teammate_Dispensers);
-			}
-			GroupBoxEnd();*/
 		}
-		/*
-		if (VisualsTab == EVisualsTabs::RADAR)
-		{
-			anchor_x = m_nCursorX;
-			anchor_y = m_nCursorY;
-
-			GroupBoxStart("Global", 150);
-			{
-				CheckBox("Active", CFG::Radar_Active);
-				SelectSingle("Style", CFG::Radar_Style, { { "Rectangle", 0 }, { "Circle", 1 } });
-				SliderInt("Size", CFG::Radar_Size, 100, 1000, 25);
-				SliderInt("Icon Size", CFG::Radar_Icon_Size, 18, 36, 2);
-				SliderFloat("Radius", CFG::Radar_Radius, 100.0f, 3000.0f, 50.0f, "%.0f");
-				SliderFloat("Cross Alpha", CFG::Radar_Cross_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-				SliderFloat("Outline Alpha", CFG::Radar_Outline_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-				SliderFloat("Background Alpha", CFG::Radar_Background_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Players", 150);
-			{
-				CheckBox("Active", CFG::Radar_Players_Active);
-
-				multiselect("Ignore", PlayerIgnore, {
-					{ "Local", CFG::Radar_Players_Ignore_Local },
-					{ "Friends", CFG::Radar_Players_Ignore_Friends },
-					{ "Enemies", CFG::Radar_Players_Ignore_Enemies },
-					{ "Teammates", CFG::Radar_Players_Ignore_Teammates },
-					{ "Invisible", CFG::Radar_Players_Ignore_Invisible }
-					});
-
-				CheckBox("Show Team Medics", CFG::Radar_Players_Show_Teammate_Medics);
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("Buildings", 150);
-			{
-				CheckBox("Active", CFG::Radar_Buildings_Active);
-
-				multiselect("Ignore", BuildingIgnore, {
-					{ "Local", CFG::Radar_Buildings_Ignore_Local },
-					{ "Enemies", CFG::Radar_Buildings_Ignore_Enemies },
-					{ "Teammates", CFG::Radar_Buildings_Ignore_Teammates }
-					});
-
-				CheckBox("Show Team Dispensers", CFG::Radar_Buildings_Show_Teammate_Dispensers);
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("World", 150);
-			{
-				CheckBox("Active", CFG::Radar_World_Active);
-
-				multiselect("Ignore", BuildingIgnore, {
-					{ "Health Packs", CFG::Radar_World_Ignore_HealthPacks },
-					{ "Ammo Packs", CFG::Radar_World_Ignore_AmmoPacks },
-					{ "Halloween Gifts", CFG::Radar_World_Ignore_Halloween_Gift },
-					{ "MVM Money", CFG::Radar_World_Ignore_MVM_Money }
-				});
-			}
-			GroupBoxEnd();
-		}
-
-		if (VisualsTab == EVisualsTabs::MATERIALS)
-		{
-			anchor_x = m_nCursorX;
-			anchor_y = m_nCursorY;
-
-			GroupBoxStart("Global", 150);
-			{
-				CheckBox("Active", CFG::Materials_Active);
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("World", 150);
-			{
-				CheckBox("Active", CFG::Materials_World_Active);
-				CheckBox("No Depth", CFG::Materials_World_No_Depth);
-				SliderFloat("Alpha", CFG::Materials_World_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-
-				SelectSingle("Material", CFG::Materials_World_Material, {
-					{ "Original", 0 },
-					{ "Flat", 1 },
-					{ "Shaded", 2 },
-					{ "Glossy", 3 },
-					{ "Glow", 4 },
-					{ "Plastic", 5 }
-					});
-
-				multiselect("Ignore", WorldIgnore, {
-					{ "Health Packs", CFG::Materials_World_Ignore_HealthPacks },
-					{ "Ammo Packs", CFG::Materials_World_Ignore_AmmoPacks },
-					{ "Local Projectiles", CFG::Materials_World_Ignore_LocalProjectiles },
-					{ "Enemy Projectiles", CFG::Materials_World_Ignore_EnemyProjectiles },
-					{ "Teammate Projectiles", CFG::Materials_World_Ignore_TeammateProjectiles },
-					{ "Halloween Gifts", CFG::Materials_World_Ignore_Halloween_Gift },
-					{ "MVM Money", CFG::Materials_World_Ignore_MVM_Money }
-					});
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("View Model", 150);
-			{
-				CheckBox("Active", CFG::Materials_ViewModel_Active);
-
-				SliderFloat("Hands Alpha", CFG::Materials_ViewModel_Hands_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-
-				SelectSingle("Hands Material", CFG::Materials_ViewModel_Hands_Material, {
-					{ "Original", 0 },
-					{ "Flat", 1 },
-					{ "Shaded", 2 },
-					{ "Glossy", 3 },
-					{ "Glow", 4 },
-					{ "Plastic", 5 }
-				});
-
-				SliderFloat("Weapon Alpha", CFG::Materials_ViewModel_Weapon_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-
-				SelectSingle("Weapon Material", CFG::Materials_ViewModel_Weapon_Material, {
-					{ "Original", 0 },
-					{ "Flat", 1 },
-					{ "Shaded", 2 },
-					{ "Glossy", 3 },
-					{ "Glow", 4 },
-					{ "Plastic", 5 }
-				});
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Players", 150);
-			{
-				CheckBox("Active", CFG::Materials_Players_Active);
-				CheckBox("No Depth", CFG::Materials_Players_No_Depth);
-				SliderFloat("Alpha", CFG::Materials_Players_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-
-				SelectSingle("Material", CFG::Materials_Players_Material, {
-					{ "Original", 0 },
-					{ "Flat", 1 },
-					{ "Shaded", 2 },
-					{ "Glossy", 3 },
-					{ "Glow", 4 },
-					{ "Plastic", 5 }
-					});
-
-				SelectSingle("Lag Records Style", CFG::Materials_Players_LagRecords_Style, {
-					{ "All", 0 },
-					{ "Last Only", 1 }
-					});
-
-				multiselect("Ignore", PlayerIgnore, {
-					{ "Local", CFG::Materials_Players_Ignore_Local },
-					{ "Friends", CFG::Materials_Players_Ignore_Friends },
-					{ "Enemies", CFG::Materials_Players_Ignore_Enemies },
-					{ "Teammates", CFG::Materials_Players_Ignore_Teammates },
-					{ "Lag Records", CFG::Materials_Players_Ignore_LagRecords }
-					});
-
-				CheckBox("Show Team Medics", CFG::Materials_Players_Show_Teammate_Medics);
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Buildings", 150);
-			{
-				CheckBox("Active", CFG::Materials_Buildings_Active);
-				CheckBox("No Depth", CFG::Materials_Buildings_No_Depth);
-				SliderFloat("Alpha", CFG::Materials_Buildings_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-
-				SelectSingle("Material", CFG::Materials_Buildings_Material, {
-					{ "Original", 0 },
-					{ "Flat", 1 },
-					{ "Shaded", 2 },
-					{ "Glossy", 3 },
-					{ "Glow", 4 },
-					{ "Plastic", 5 }
-					});
-
-				multiselect("Ignore", BuildingIgnore, {
-					{ "Local", CFG::Materials_Buildings_Ignore_Local },
-					{ "Enemies", CFG::Materials_Buildings_Ignore_Enemies },
-					{ "Teammates", CFG::Materials_Buildings_Ignore_Teammates }
-					});
-
-				CheckBox("Show Team Dispensers", CFG::Materials_Buildings_Show_Teammate_Dispensers);
-			}
-			GroupBoxEnd();
-		}
-
-		if (VisualsTab == EVisualsTabs::OUTLINES)
-		{
-			anchor_x = m_nCursorX;
-			anchor_y = m_nCursorY;
-
-			GroupBoxStart("Global", 150);
-			{
-				CheckBox("Active", CFG::Outlines_Active);
-
-				SelectSingle("Style", CFG::Outlines_Style, {
-					{ "Bloom", 0 },
-					{ "Crisp", 1 },
-					{ "Cartoony", 2 },
-					{ "Cartoony Alt", 3 }
-				});
-
-				SliderInt("Bloom Amount", CFG::Outlines_Bloom_Amount, 1, 10, 1);
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("World", 150);
-			{
-				CheckBox("Active", CFG::Outlines_World_Active);
-				SliderFloat("Alpha", CFG::Outlines_World_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-
-				multiselect("Ignore", WorldIgnore, {
-					{ "Health Packs", CFG::Outlines_World_Ignore_HealthPacks },
-					{ "Ammo Packs", CFG::Outlines_World_Ignore_AmmoPacks },
-					{ "Local Projectiles", CFG::Outlines_World_Ignore_LocalProjectiles },
-					{ "Enemy Projectiles", CFG::Outlines_World_Ignore_EnemyProjectiles },
-					{ "Teammate Projectiles", CFG::Outlines_World_Ignore_TeammateProjectiles },
-					{ "Halloween Gifts", CFG::Outlines_World_Ignore_Halloween_Gift },
-					{ "MVM Money", CFG::Outlines_World_Ignore_MVM_Money }
-					});
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Players", 150);
-			{
-				CheckBox("Active", CFG::Outlines_Players_Active);
-				SliderFloat("Alpha", CFG::Outlines_Players_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-
-				multiselect("Ignore", PlayerIgnore, {
-					{ "Local", CFG::Outlines_Players_Ignore_Local },
-					{ "Friends", CFG::Outlines_Players_Ignore_Friends },
-					{ "Enemies", CFG::Outlines_Players_Ignore_Enemies },
-					{ "Teammates", CFG::Outlines_Players_Ignore_Teammates }
-					});
-
-				CheckBox("Show Team Medics", CFG::Outlines_Players_Show_Teammate_Medics);
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Buildings", 150);
-			{
-				CheckBox("Active", CFG::Outlines_Buildings_Active);
-				SliderFloat("Alpha", CFG::Outlines_Buildings_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-
-				multiselect("Ignore", BuildingIgnore, {
-					{ "Local", CFG::Outlines_Buildings_Ignore_Local },
-					{ "Enemies", CFG::Outlines_Buildings_Ignore_Enemies },
-					{ "Teammates", CFG::Outlines_Buildings_Ignore_Teammates }
-					});
-
-				CheckBox("Show Team Dispensers", CFG::Outlines_Buildings_Show_Teammate_Dispensers);
-			}
-			GroupBoxEnd();
-		}
-		*/
 		if (VisualsTab == EVisualsTabs::OTHER)
 		{
 			anchor_x = m_nCursorX;
@@ -1834,141 +1235,18 @@ void CFeatures_Menu::MainWindow()
 
 			GroupBoxStart("Local", 150);
 			{
-				/*CheckBox("Aimbot FOV Circle", CFG::Visuals_Aimbot_FOV_Circle);
-				SliderFloat("FOV Circle Alpha", CFG::Visuals_Aimbot_FOV_Circle_Alpha, 0.01f, 1.0f, 0.01f, "%.2f");
-				CheckBox("Draw Projectile Arc", CFG::Visuals_Draw_Projectile_Arc);
-				CheckBox("Reveal Scoreboard", CFG::Visuals_Reveal_Scoreboard);*/
 				CheckBox("Clear Screenshots", CFG::Visual_ClearScreenshots);
 				CheckBox("Draw Crosshair", CFG::Visual_DrawCrosshair);
-				SliderInt("Crosshair Size", CFG::Visual_DrawCrosshair_Size, 5, 25, 1);
 				CheckBox("Show Spread", CFG::Visual_DrawSpread);
+				CheckBox("Show Spectators", CFG::Visual_SpectatorList);
 				SliderInt("FOV", CFG::Visual_FOV, 90, 120, 1);
 				SliderInt("Viewmodel FOV", CFG::Visual_ViewmodelFOV, 70, 120, 1);
-				//SliderFloat("FOV Override", CFG::Visuals_FOV_Override, 70.0f, 170.0f, 1.0f, "%.0f");
 
 				multiselect("Removals", LocalRemovals, {
 					{ "Viewmodel Recoil", CFG::Visual_NoRecoil },
 					{ "Recoil", CFG::Misc_NoRecoil },
 					{ "Spread", CFG::Misc_NoSpread }
 				});
-
-				/*SelectSingle("Removals Mode", CFG::Visuals_Removals_Mode, {
-					{ "Everyone", 0 },
-					{ "Local Only", 1 }
-					});
-
-				SelectSingle("Tracer Effect", CFG::Visuals_Tracer_Type, {
-					{ "Default", 0 },
-					{ "C.A.P.P.E.R", 1 },
-					{ "Machina (White)", 2 },
-					{ "Machina (Team)", 3 },
-					{ "Big Nasty", 4 },
-					{ "Short Circuit", 5 },
-					{ "Mrasmus Zap", 6 },
-					{ "Random", 7 },
-					{ "Random (No Zap)", 8 }
-					});
-
-				SelectSingle("Projectile Arc Color_t Mode", CFG::Visuals_Draw_Projectile_Arc_Color_Mode,
-				{
-					{ "Custom", 0 },
-					{ "Rainbow", 1 }
-				});
-
-				SelectSingle("Movement Path Style", CFG::Visuals_Draw_Movement_Path_Style,
-				{
-					{ "Disabled", 0 },
-					{ "Line", 1 },
-					{ "Dashed Line", 2 },
-					{ "Alt Line", 3 }
-				});*/
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("Chat", 150);
-			{
-				/*CheckBox("Teammate Votes", CFG::Visuals_Chat_Teammate_Votes);
-				CheckBox("Enemy Votes", CFG::Visuals_Chat_Enemy_Votes);
-				CheckBox("Player List Info", CFG::Visuals_Chat_Player_List_Info);
-				CheckBox("Name Tags", CFG::Visuals_Chat_Name_Tags);*/
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("World", 150);
-			{
-				/*CheckBox("Flat Textures", CFG::Visuals_Flat_Textures);
-				CheckBox("Disable Fog", CFG::Visuals_Remove_Fog);
-				CheckBox("Disable Sky Fog", CFG::Visuals_Remove_Sky_Fog);
-				CheckBox("Distance Prop Alpha", CFG::Visuals_Distance_Prop_Alpha);
-				CheckBox("Don't Modulate Sky", CFG::Visuals_World_Modulation_No_Sky_Change);
-
-				SelectSingle("World Modulation Mode", CFG::Visuals_World_Modulation_Mode,
-				{
-					{ "Night Mode", 0 },
-					{ "Custom Color_t", 1 }
-				});
-
-				SliderFloat("Night Mode", CFG::Visuals_Night_Mode, 0.0f, 100.0f, 1.0f, "%.0f");
-
-				SelectSingle("Particles Mode", CFG::Visuals_Particles_Mode, {
-					{ "Original", 0 },
-					{ "Custom Color_t", 1 },
-					{ "Rainbow", 2 }
-				});
-
-				SliderFloat("Particles Rainbow Rate", CFG::Visuals_Particles_Rainbow_Rate, 1.0f, 10.0f, 1.0f, "%.0f");*/
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("Spectator List", 150);
-			{
-				/*CheckBox("Active", CFG::Visuals_SpectatorList_Active);
-				SliderFloat("Outline Alpha", CFG::Visuals_SpectatorList_Outline_Alpha, 0.1f, 1.0f, 0.1f, "%.1f");
-				SliderFloat("Background Alpha", CFG::Visuals_SpectatorList_Background_Alpha, 0.1f, 1.0f, 0.1f, "%.1f");
-				SliderInt("Width", CFG::Visuals_SpectatorList_Width, 200, 1000, 1);*/
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Thirdperson", 150);
-			{
-				/*CheckBox("Active", CFG::Visuals_Thirdperson_Active);
-				InputKey("Toggle Key", CFG::Visuals_Thirdperson_Key);
-				SliderFloat("Offset Forward", CFG::Visuals_Thirdperson_Offset_Forward, 10.0f, 200.0f, 1.0f, "%.0f");
-				SliderFloat("Offset Right", CFG::Visuals_Thirdperson_Offset_Right, -50.0f, 50.0f, 1.0f, "%.0f");
-				SliderFloat("Offset Up", CFG::Visuals_Thirdperson_Offset_Up, -50.0f, 50.0f, 1.0f, "%.0f");*/
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("View Model", 150);
-			{
-				/*CheckBox("Active", CFG::Visuals_ViewModel_Active);
-				CheckBox("Sway", CFG::Visuals_ViewModel_Sway);
-				SliderFloat("Sway Scale", CFG::Visuals_ViewModel_Sway_Scale, 0.1f, 1.0f, 0.1f, "%.1f");
-				SliderFloat("Offset Forward", CFG::Visuals_ViewModel_Offset_Forward, -50.00f, 50.0f, 1.0f, "%.0f");
-				SliderFloat("Offset Right", CFG::Visuals_ViewModel_Offset_Right, -50.0f, 50.0f, 1.0f, "%.0f");
-				SliderFloat("Offset Up", CFG::Visuals_ViewModel_Offset_Up, -50.0f, 50.0f, 1.0f, "%.0f");*/
-			}
-			GroupBoxEnd();
-		}
-
-		if (VisualsTab == EVisualsTabs::OTHER2)
-		{
-			anchor_x = m_nCursorX;
-			anchor_y = m_nCursorY;
-
-			GroupBoxStart("Camera", 150);
-			{
-				/*CheckBox("Active", CFG::Visuals_SpyCamera_Active);
-				SliderFloat("Background Alpha", CFG::Visuals_SpyCamera_Background_Alpha, 0.1f, 1.0f, 0.1f, "%.1f");
-				SliderInt("Camera Width", CFG::Visuals_SpyCamera_Pos_W, 100, 600, 10);
-				SliderInt("Camera Height", CFG::Visuals_SpyCamera_Pos_H, 100, 600, 10);
-				SliderFloat("Camera FOV", CFG::Visuals_SpyCamera_FOV, 70.0f, 170.0f, 1.0f, "%.0f");*/
 			}
 			GroupBoxEnd();
 		}
@@ -1983,16 +1261,6 @@ void CFeatures_Menu::MainWindow()
 				ColorPicker("Accent Secondary", CFG::Menu_Accent_Secondary);
 				ColorPicker("Background", CFG::Menu_Background);
 				CheckBox("Menu Snow", CFG::Menu_Snow);
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("Visuals", 150);
-			{
-				/*ColorPicker("Hands", CFG::Color_Hands);
-				ColorPicker("Hands Sheen", CFG::Color_Hands_Sheen);
-				ColorPicker("Weapon", CFG::Color_Weapon);
-				ColorPicker("Weapon Sheen", CFG::Color_Weapon_Sheen);
-				ColorPicker("Projectile Arc", CFG::Color_Projectile_Arc);*/
 			}
 			GroupBoxEnd();
 
@@ -2029,66 +1297,6 @@ void CFeatures_Menu::MainWindow()
 		{
 			CheckBox("Bunnyhop", CFG::Misc_Bunnyhop);
 			CheckBox("AutoStrafe", CFG::Misc_AutoStrafe);
-			/*CheckBox("Choke on Bunnyhop", CFG::Misc_Choke_On_Bhop);
-			CheckBox("Bypass sv_pure", CFG::Misc_Pure_Bypass);
-			CheckBox("Noise Maker Spam", CFG::Misc_NoiseMaker_Spam);
-			CheckBox("No Push", CFG::Misc_No_Push);
-			CheckBox("Giant Weapon Sounds", CFG::Misc_MVM_Giant_Weapon_Sounds);
-			CheckBox("Equip Region Unlock", CFG::Misc_Equip_Region_Unlock);
-			CheckBox("Fast Stop", CFG::Misc_Fast_Stop);
-			CheckBox("Anti Server Angle Change", CFG::Misc_Prevent_Server_Angle_Change);*/
-
-			/*if (Button("Unlock CVars"))
-			{
-				auto iter = ICvar::Iterator(I::Cvar);
-
-				for (iter.SetFirst(); iter.IsValid(); iter.Next())
-				{
-					auto cmd = iter.Get();
-
-					if (!cmd)
-						continue;
-
-					if (cmd->m_nFlags & FCVAR_DEVELOPMENTONLY)
-						cmd->m_nFlags &= ~FCVAR_DEVELOPMENTONLY;
-
-					if (cmd->m_nFlags & FCVAR_HIDDEN)
-						cmd->m_nFlags &= ~FCVAR_HIDDEN;
-
-					if (cmd->m_nFlags & FCVAR_PROTECTED)
-						cmd->m_nFlags &= ~FCVAR_PROTECTED;
-
-					if (cmd->m_nFlags & FCVAR_CHEAT)
-						cmd->m_nFlags &= ~FCVAR_CHEAT;
-				}
-			}*/
-		}
-		GroupBoxEnd();
-		
-		GroupBoxStart("Chat", 160);
-		{
-			//CheckBox("OwO-ify", CFG::Misc_Chat_Owoify);
-		}
-		GroupBoxEnd();
-
-		m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-		m_nCursorY = anchor_y;
-
-		GroupBoxStart("Auto", 150);
-		{
-			/*CheckBox("Auto Disguise", CFG::Misc_Auto_Disguise);
-			CheckBox("Auto Vaccinator", CFG::AutoVaccinator_Active);
-			SelectSingle("Auto Vaccinator Pop", CFG::AutoVaccinator_Pop, {
-				{ "Everyone", 0 },
-				{ "Friends Only", 1 }
-			});
-			CheckBox("Auto Strafe", CFG::Misc_Auto_Strafe);
-			SliderFloat("Auto Strafe Turn Scale", CFG::Misc_Auto_Strafe_Turn_Scale, 0.0f, 1.0f, 0.1f, "%.1f");
-			InputKey("Auto RJ Key", CFG::Misc_Auto_Rocket_Jump_Key);
-			InputKey("Auto AP Key", CFG::Misc_Auto_Air_Pogo_Key);
-			InputKey("Auto Heal Key", CFG::Misc_Auto_Medigun_Key);
-			InputKey("Undo Glue Key", CFG::Misc_Movement_Lock_Key);
-			InputKey("Edge Jump Key", CFG::Misc_Edge_Jump_Key);*/
 		}
 		GroupBoxEnd();
 	}
@@ -2377,9 +1585,6 @@ std::string GetInstructionSet() {
 
 void CFeatures_Menu::Info()
 {
-	if (!m_bOpen && I::EngineVGui->IsGameUIVisible())
-		return;
-
 	const EFonts& fFont = EFonts::DEBUG;
 	int y = H::Draw.m_nScreenH - (H::Draw.GetFontHeight(fFont) + 2);
 	Color_t clr = { 200, 200, 200, 255 };
@@ -2446,6 +1651,9 @@ void CFeatures_Menu::Run()
 		return;
 	}
 
+	if (!m_bOpen || I::EngineVGui->IsGameUIVisible())
+		Info();
+
 	if (!H::Input.IsGameFocused() && m_bOpen) {
 		m_bOpen = false;
 		I::MatSystemSurface->SetCursorAlwaysVisible(false);
@@ -2476,8 +1684,6 @@ void CFeatures_Menu::Run()
 
 	if (H::Input.IsPressed(VK_INSERT))
 		I::MatSystemSurface->SetCursorAlwaysVisible(m_bOpen = !m_bOpen);
-
-	Info();
 
 	if (m_bOpen)
 	{

@@ -7,6 +7,7 @@ void CHelpers_DrawManager::Initialize()
 
 	m_Fonts[EFonts::DEBUG] = { "Verdana", 12, FW_DONTCARE, EFontFlags::FONTFLAG_OUTLINE };
 	m_Fonts[EFonts::MENU] = { "Verdana", 12, FW_DONTCARE, EFontFlags::FONTFLAG_ANTIALIAS };
+	m_Fonts[EFonts::MENU_OTHER] = { "Verdana", 12, FW_DONTCARE, EFontFlags::FONTFLAG_OUTLINE };
 	m_Fonts[EFonts::ESP] = { "Verdana", 12, FW_DONTCARE, EFontFlags::FONTFLAG_OUTLINE };
 	m_Fonts[EFonts::ESP_SMALL] = { "Small Fonts", 11, FW_DONTCARE, EFontFlags::FONTFLAG_OUTLINE };
 

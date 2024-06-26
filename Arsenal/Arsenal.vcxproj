@@ -102,6 +102,7 @@
     <ClCompile Include="Features\NoSpread\NoSpread.cpp" />
     <ClCompile Include="Features\Notification\Notification.cpp" />
     <ClCompile Include="Features\PlayerArrows\PlayerArrows.cpp" />
+    <ClCompile Include="Features\SpectatorList\SpectatorList.cpp" />
     <ClCompile Include="Features\Visual\Visual.cpp" />
     <ClCompile Include="Hooks\Definitions\CBasePlayer_CalcPlayerView.cpp" />
     <ClCompile Include="Hooks\Definitions\ClientModeShared_CreateMove.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="Features\CFG.h" />
     <ClInclude Include="Features\Notification\Notification.h" />
     <ClInclude Include="Features\PlayerArrows\PlayerArrows.h" />
+    <ClInclude Include="Features\SpectatorList\SpectatorList.h" />
     <ClInclude Include="Features\Visual\Visual.h" />
     <ClInclude Include="Hooks\Definitions\WINAPI_WndProc.h" />
     <ClInclude Include="Hooks\Hooks.h" />

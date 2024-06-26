@@ -5,6 +5,7 @@
 #include "../../Features/Notification/Notification.h"
 #include "../../Features/PlayerArrows/PlayerArrows.h"
 #include "../../Features/Visual/Visual.h"
+#include "../../Features/SpectatorList/SpectatorList.h"
 
 DEFINE_HOOK(IEngineVGui_Paint, void, __fastcall, void* ecx, void* edx, int mode)
 {
@@ -23,6 +24,7 @@ DEFINE_HOOK(IEngineVGui_Paint, void, __fastcall, void* ecx, void* edx, int mode)
 			F::Visual.Run();
 			F::ESP.Run();
 			F::PlayerArrows.Run();
+			F::SpectatorList.Run();
 			F::Menu.Run();
 		}
 		I::MatSystemSurface->FinishDrawing();

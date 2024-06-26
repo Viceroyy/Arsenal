@@ -28,7 +28,7 @@ void CFeatures_Notifications::Draw()
 		return;
 
 	int y = 2;
-	const auto& fFont = EFonts::MENU;
+	const auto& fFont = EFonts::MENU_OTHER;
 	for (auto& tNotification : vNotifications)
 	{
 		int x = 2;

@@ -21,6 +21,7 @@ enum class EFonts {
 	ESP,
 	ESP_SMALL,
 	MENU,
+	MENU_OTHER,
 	FONT_LAST
 };
 
