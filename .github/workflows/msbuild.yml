@@ -45,7 +45,29 @@ jobs:
         name: Arsenal-${{ env.BUILD_CONFIGURATION }}
         path: output/${{ env.BUILD_CONFIGURATION }}/*.dll
 
-    - name: Create release
-      uses: softprops/action-gh-release@v2.0.6
+    - uses: dev-drprasad/delete-older-releases@v0.2.1
       with:
-          files: output/${{ env.BUILD_CONFIGURATION }}/*.dll
+        keep_latest: 0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+    - name: Create release
+      uses: actions/create-release@v1.1.4
+      id: create_release
+      with:
+        draft: false
+        prerelease: false
+        release_name: Arsenal
+        tag_name: v1.0.0
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      
+    - name: Upload release
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: output/${{ env.BUILD_CONFIGURATION }}/*.dll
+        asset_name: Arsenal-${{ env.BUILD_CONFIGURATION }}.dll
+        asset_content_type: application/dll
