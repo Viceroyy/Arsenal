@@ -62,7 +62,7 @@ To download source code this way [click here](https://github.com/Viceroyy/Arsena
 
 #### With [git](https://git-scm.com)
 
-Choose this option if you're going to contribute to the repo or you want to use version control system. Download size ~4 MB. Git is required to step further, if not installed download it [here](https://git-scm.com).
+Choose this option if you're going to contribute to the repo or you want to use version control system. Download size ~2.5 MB. Git is required to step further, if not installed download it [here](https://git-scm.com).
 
 Open git command prompt and enter following command:
 
@@ -92,8 +92,8 @@ When injected, menu is openable under `INSERT` key.
 
 </details>
 
-### Further optimizations
-If your CPU doesn't support the AVX2 instruction set, you can disable it in project settings. Currently AVX2 instructions are selected in project settings.
+### Instruction sets
+If your CPU doesn't support the AVX2 instruction set, you can use SSE2 instructions instead in project settings. Currently AVX2 instructions are selected in project settings.
 
 ## FAQ
 

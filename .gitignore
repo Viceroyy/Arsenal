@@ -396,5 +396,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 *.vcxproj.user
-bin/
+output/
 build/
