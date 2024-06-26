@@ -42,7 +42,7 @@ namespace CFG
 
 	CFGVAR(Menu_Accent_Primary, Color_t({ 0, 100, 120, 255 }));
 	CFGVAR(Menu_Accent_Secondary, Color_t({ 0, 100, 120, 255 }));
-	CFGVAR(Menu_Background, Color_t({ 0, 20, 20, 255 }));
+	CFGVAR(Menu_Background, Color_t({ 23, 23, 23, 250 }));
 
 	CFGVAR(Menu_Snow, false);
 
@@ -90,7 +90,11 @@ namespace CFG
 	CFGVAR(Visual_PlayerArrows_Enabled, true);
 	CFGVAR(Visual_PlayerArrows_Offset, 25);
 	CFGVAR(Visual_PlayerArrows_MaxDist, 1000.f);
-	CFGVAR(Visual_DrawSpread, true);
+	CFGVAR(Visual_DrawCrosshair, false);
+	CFGVAR(Visual_DrawCrosshair_Size, 20);
+	CFGVAR(Visual_DrawSpread, false);
+	CFGVAR(Visual_FOV, 110);
+	CFGVAR(Visual_ViewmodelFOV, 90);
 
 #pragma endregion
 

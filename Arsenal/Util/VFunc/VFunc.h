@@ -10,7 +10,7 @@ public:
 		return reinterpret_cast<T>(Get_VTable(inst, offset)[index]);
 	}
 
-	inline void* GetVFunc(void* instance, size_t index)
+	inline void* Get(void* instance, size_t index)
 	{
 		const auto vtable = *static_cast<void***>(instance);
 		return vtable[index];

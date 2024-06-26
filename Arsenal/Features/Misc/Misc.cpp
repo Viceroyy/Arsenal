@@ -25,7 +25,10 @@ void CFeatures_Misc::Bunnyhop(C_CSPlayer* pLocal, CUserCmd* cmd)
 	if (bCurJump && bLastJump)
 	{
 		if (!(bCurGrounded && !bLastGrounded))
+		{
 			cmd->buttons &= ~IN_JUMP;
+			cmd->buttons &= ~IN_DUCK;
+		}
 
 		if (!(cmd->buttons & IN_JUMP) && bCurGrounded && !bLastAttempted)
 			cmd->buttons |= IN_JUMP;

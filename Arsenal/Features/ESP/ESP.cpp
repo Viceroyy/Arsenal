@@ -132,7 +132,7 @@ void CFeatures_ESP::DrawWorld()
 		return;
 
 	const EFonts& fFont = EFonts::ESP_SMALL;
-	const int nTextTopOffset = H::Draw.GetFontHeight(fFont) * (5 / 4);
+	const int nTextTopOffset = (H::Draw.GetFontHeight(fFont) + 2);
 
 	I::MatSystemSurface->DrawSetAlphaMultiplier(CFG::ESP_Alpha);
 
@@ -156,7 +156,9 @@ void CFeatures_ESP::DrawWorld()
 			}
 
 			if (CFG::ESP_World_Name)
-				H::Draw.String(fFont, x + w / 2, y - nTextTopOffset, CFG::Colors_PlantedC4, ALIGN_TOP, "C4");
+			{
+				H::Draw.String(fFont, x + (w / 2), y - nTextTopOffset, CFG::Colors_PlantedC4, ALIGN_TOP, "C4");
+			}
 		}
 	}
 

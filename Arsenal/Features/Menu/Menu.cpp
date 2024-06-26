@@ -1106,6 +1106,8 @@ void CFeatures_Menu::MainWindow()
 		CFG::Menu_Accent_Primary
 	);
 
+	H::Draw.String(EFonts::MENU, CFG::Menu_Pos_X + 5, CFG::Menu_Pos_Y + 1, CFG::Menu_Text_Active, ALIGN_TOPLEFT, "Arsenal For Counter-Strike Source");
+
 	m_nCursorX = CFG::Menu_Pos_X + CFG::Menu_Spacing_X;
 	m_nCursorY = CFG::Menu_Pos_Y + CFG::Menu_Drag_Bar_Height + CFG::Menu_Spacing_Y;
 
@@ -1837,7 +1839,11 @@ void CFeatures_Menu::MainWindow()
 				CheckBox("Draw Projectile Arc", CFG::Visuals_Draw_Projectile_Arc);
 				CheckBox("Reveal Scoreboard", CFG::Visuals_Reveal_Scoreboard);*/
 				CheckBox("Clear Screenshots", CFG::Visual_ClearScreenshots);
+				CheckBox("Draw Crosshair", CFG::Visual_DrawCrosshair);
+				SliderInt("Crosshair Size", CFG::Visual_DrawCrosshair_Size, 5, 25, 1);
 				CheckBox("Show Spread", CFG::Visual_DrawSpread);
+				SliderInt("FOV", CFG::Visual_FOV, 90, 120, 1);
+				SliderInt("Viewmodel FOV", CFG::Visual_ViewmodelFOV, 70, 120, 1);
 				//SliderFloat("FOV Override", CFG::Visuals_FOV_Override, 70.0f, 170.0f, 1.0f, "%.0f");
 
 				multiselect("Removals", LocalRemovals, {
@@ -2341,20 +2347,49 @@ void CFeatures_Menu::Snow()
 	}
 }
 
-void CFeatures_Menu::Indicators()
+std::string GetBuildDate()
 {
-	auto pLocal = H::EntityCache.GetLocal();
+	std::time_t t = std::time(0);
+	tm Time = {};
+	localtime_s(&Time, &t);
 
-	int x = 2;
-	int tall = H::Draw.GetFontHeight(EFonts::ESP_SMALL);
-	int numitems = 3;
-	int y = H::Draw.m_nScreenH - ((numitems * tall) + 2);
-	int offset = 0;
+	std::ostringstream oss;
+	oss << std::setw(2) << std::setfill('0') << (Time.tm_year % 100)
+		<< std::setw(2) << std::setfill('0') << (Time.tm_mon + 1)
+		<< std::setw(2) << std::setfill('0') << Time.tm_mday;
+
+	return oss.str();
+}
+
+std::string GetInstructionSet() {
+#ifdef __AVX2__
+	return "AVX2";
+#elif defined(__AVX__)
+	return "AVX";
+#elif defined(__AVX512F__)
+	return "AVX512F";
+#elif defined(__SSE2__)
+	return "SSE2";
+#else
+	return "UNK";
+#endif
+}
+
+void CFeatures_Menu::Info()
+{
+	if (!m_bOpen && I::EngineVGui->IsGameUIVisible())
+		return;
+
+	const EFonts& fFont = EFonts::DEBUG;
+	int y = H::Draw.m_nScreenH - (H::Draw.GetFontHeight(fFont) + 2);
 	Color_t clr = { 200, 200, 200, 255 };
+	std::string type = "RELEASE";
 
-	H::Draw.String(EFonts::ESP_SMALL, x, y + (offset++ * tall), clr, ALIGN_TOPLEFT, "fps %d", static_cast<int>(1.0f / I::GlobalVars->absoluteframetime));
-	H::Draw.String(EFonts::ESP_SMALL, x, y + (offset++ * tall), clr, ALIGN_TOPLEFT, "choked %d", I::ClientState->chokedcommands);
-	H::Draw.String(EFonts::ESP_SMALL, x, y + (offset++ * tall), clr, ALIGN_TOPLEFT, "build %hs", __DATE__ " " __TIME__);
+#ifdef _DEBUG
+	type = "DEBUG";
+#endif
+
+	H::Draw.String(fFont, 2, y, clr, ALIGN_TOPLEFT, std::string(GetBuildDate() + " " + GetInstructionSet() + "/" + type).c_str());
 }
 
 Color_t HSLToRGB(float h, float s, float l)
@@ -2406,10 +2441,10 @@ Color_t HSLToRGB(float h, float s, float l)
 
 void CFeatures_Menu::Run()
 {
-	/*if (CFG::Misc_Clean_Screenshot && I::EngineClient->IsTakingScreenshot())
+	if (CFG::Visual_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
 	{
 		return;
-	}*/
+	}
 
 	if (!H::Input.IsGameFocused() && m_bOpen) {
 		m_bOpen = false;
@@ -2442,7 +2477,7 @@ void CFeatures_Menu::Run()
 	if (H::Input.IsPressed(VK_INSERT))
 		I::MatSystemSurface->SetCursorAlwaysVisible(m_bOpen = !m_bOpen);
 
-	Indicators();
+	Info();
 
 	if (m_bOpen)
 	{

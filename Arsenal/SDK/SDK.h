@@ -10,6 +10,28 @@
 
 namespace Util
 {
+	inline Color_t Rainbow()
+	{
+		float t = TICKS_TO_TIME(I::GlobalVars->tickcount);
+
+		int r = static_cast<int>(std::round(std::cos(I::GlobalVars->realtime + t + 0.0f) * 127.5f + 127.5f));
+		int g = static_cast<int>(std::round(std::cos(I::GlobalVars->realtime + t + 2.0f) * 127.5f + 127.5f));
+		int b = static_cast<int>(std::round(std::cos(I::GlobalVars->realtime + t + 4.0f) * 127.5f + 127.5f));
+
+		return Color_t{ static_cast<byte>(r), static_cast<byte>(g), static_cast<byte>(b), 255 };
+	}
+
+	inline Color_t RainbowTickOffset(int nTick)
+	{
+		float t = TICKS_TO_TIME(nTick);
+
+		int r = static_cast<int>(std::lround(std::cos((I::GlobalVars->realtime * 2.0f) + t + 0.0f) * 127.5f + 127.5f));
+		int g = static_cast<int>(std::lround(std::cos((I::GlobalVars->realtime * 2.0f) + t + 2.0f) * 127.5f + 127.5f));
+		int b = static_cast<int>(std::lround(std::cos((I::GlobalVars->realtime * 2.0f) + t + 4.0f) * 127.5f + 127.5f));
+
+		return Color_t{ static_cast<byte>(r), static_cast<byte>(g), static_cast<byte>(b), 255 };
+	}
+
 	inline int CreateTextureFromArray(const unsigned char* rgba, int w, int h)
 	{
 		int nTextureIdOut = I::MatSystemSurface->CreateNewTextureID(true);

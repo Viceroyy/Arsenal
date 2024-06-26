@@ -3,6 +3,10 @@
 #include "../../Interfaces/IMatSystemSurface.h"
 #include "../../Interfaces/IInputSystem.h"
 #include "../../Interfaces/IClientState.h"
+#include "../../Interfaces/IClientModeShared.h"
+#include "../../Interfaces/IInput.h"
+#include "../../Interfaces/IMaterialSystem.h"
+#include "../../Interfaces/IHudChat.h"
 
 class CHelpers_NetVarManager
 {

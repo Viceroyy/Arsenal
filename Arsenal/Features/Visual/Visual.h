@@ -8,6 +8,7 @@ public:
 
 private:
 	void SpreadCircle();
+	void Crosshair();
 };
 
 namespace F { inline CFeatures_Visual Visual; }

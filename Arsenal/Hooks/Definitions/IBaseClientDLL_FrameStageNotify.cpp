@@ -1,6 +1,5 @@
 #include "../Hooks.h"
 #include "../../SDK/Input/Input.h"
-//#include "../../Features/Backtrack/Backtrack.h"
 
 DEFINE_HOOK(IBaseClientDLL_FrameStageNotify, void, __fastcall, void* ecx, void* edx, ClientFrameStage_t curStage)
 {
@@ -16,7 +15,6 @@ DEFINE_HOOK(IBaseClientDLL_FrameStageNotify, void, __fastcall, void* ecx, void* 
 		case ClientFrameStage_t::FRAME_NET_UPDATE_END:
 		{
 			H::EntityCache.Fill();
-			//F::Backtrack.FrameStageNotify();
 			g_Globals.m_bIsInGame = I::EngineClient->IsInGame();
 			g_Globals.m_bIsGameUIVisible = I::EngineVGui->IsGameUIVisible();
 

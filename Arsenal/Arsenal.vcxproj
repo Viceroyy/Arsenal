@@ -93,9 +93,9 @@
   <ItemGroup>
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="Entry\Entry.cpp" />
-    <ClCompile Include="Features\Backtrack\Backtrack.cpp" />
     <ClCompile Include="Features\EnginePrediction\EnginePrediction.cpp" />
     <ClCompile Include="Features\ESP\ESP.cpp" />
+    <ClCompile Include="Features\Glow\Glow.cpp" />
     <ClCompile Include="Features\Menu\LateRenderer\LateRenderer.cpp" />
     <ClCompile Include="Features\Menu\Menu.cpp" />
     <ClCompile Include="Features\Misc\Misc.cpp" />
@@ -105,12 +105,15 @@
     <ClCompile Include="Features\Visual\Visual.cpp" />
     <ClCompile Include="Hooks\Definitions\CBasePlayer_CalcPlayerView.cpp" />
     <ClCompile Include="Hooks\Definitions\ClientModeShared_CreateMove.cpp" />
+    <ClCompile Include="Hooks\Definitions\ClientModeShared_DoPostScreenSpaceEffects.cpp" />
+    <ClCompile Include="Hooks\Definitions\ClientModeShared_GetViewmodelFOV.cpp" />
     <ClCompile Include="Hooks\Definitions\ClientModeShared_OverrideView.cpp" />
     <ClCompile Include="Hooks\Definitions\CPrediction_RunCommand.cpp" />
     <ClCompile Include="Hooks\Definitions\IBaseClientDLL_FrameStageNotify.cpp" />
     <ClCompile Include="Hooks\Definitions\IBaseClientDLL_LevelInitPostEntity.cpp" />
     <ClCompile Include="Hooks\Definitions\IBaseClientDLL_LevelShutdown.cpp" />
     <ClCompile Include="Hooks\Definitions\IEngineVGui_Paint.cpp" />
+    <ClCompile Include="Hooks\Definitions\ModelRender_DrawModelExecute.cpp" />
     <ClCompile Include="Hooks\Definitions\WINAPI_WndProc.cpp" />
     <ClCompile Include="Hooks\Hooks.cpp" />
     <ClCompile Include="SDK\DrawManager\DrawManager.cpp" />
@@ -118,6 +121,7 @@
     <ClCompile Include="SDK\EntityCacher\EntityCacher.cpp" />
     <ClCompile Include="SDK\Includes\checksum_crc.cpp" />
     <ClCompile Include="SDK\Includes\checksum_md5.cpp" />
+    <ClCompile Include="SDK\Interfaces\IHudChat.h" />
     <ClCompile Include="SDK\Interfaces\IInputSystem.h" />
     <ClCompile Include="SDK\Input\Input.cpp" />
     <ClCompile Include="SDK\Interfaces\ICvar.cpp" />
@@ -135,9 +139,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entry\Entry.h" />
-    <ClInclude Include="Features\Backtrack\Backtrack.h" />
     <ClInclude Include="Features\EnginePrediction\EnginePrediction.h" />
     <ClInclude Include="Features\ESP\ESP.h" />
+    <ClInclude Include="Features\Glow\Glow.h" />
     <ClInclude Include="Features\Menu\LateRenderer\LateRenderer.h" />
     <ClInclude Include="Features\Menu\Menu.h" />
     <ClInclude Include="Features\Misc\Misc.h" />
@@ -198,11 +202,14 @@
     <ClInclude Include="SDK\Interfaces\GlobalVars_Base.h" />
     <ClInclude Include="SDK\Interfaces\IBaseClientDLL.h" />
     <ClInclude Include="SDK\Interfaces\IClientEntityList.h" />
+    <ClInclude Include="SDK\Interfaces\IClientModeShared.h" />
     <ClInclude Include="SDK\Interfaces\IClientState.h" />
     <ClInclude Include="SDK\Interfaces\ICvar.h" />
     <ClInclude Include="SDK\Interfaces\IEngineTrace.h" />
     <ClInclude Include="SDK\Interfaces\IEngineVGui.h" />
     <ClInclude Include="SDK\Interfaces\IGameMovement.h" />
+    <ClInclude Include="SDK\Interfaces\IInput.h" />
+    <ClInclude Include="SDK\Interfaces\IMaterialSystem.h" />
     <ClInclude Include="SDK\Interfaces\IMatSystemSurface.h" />
     <ClInclude Include="SDK\Interfaces\IMoveHelper.h" />
     <ClInclude Include="SDK\Interfaces\IPrediction.h" />

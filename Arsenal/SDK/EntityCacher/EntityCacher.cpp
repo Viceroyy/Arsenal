@@ -72,7 +72,8 @@ void CHelpers_EntityCache::Fill()
 			case ECSClientClass::CWeaponSG552:
 			case ECSClientClass::CWeaponP90:
 			{
-				m_mGroups[EGroupType::WORLD_WEAPONS].push_back(pEntity);
+				if (pEntity->As<C_BaseCombatWeapon>()->m_hOwner().ToInt() == 255)
+					m_mGroups[EGroupType::WORLD_WEAPONS].push_back(pEntity);
 				break;
 			}*/
 		}

@@ -23,6 +23,7 @@ class Vector;
 struct studiohdr_t;
 class IMaterial;
 class CStudioHdr;
+class IMaterialVar;
 
 FORWARD_DECLARE_HANDLE(LightCacheHandle_t);
 
@@ -76,6 +77,116 @@ struct StaticPropRenderInfo_t
 	Vector* pLightingOrigin;
 	short					skin;
 	ModelInstanceHandle_t	instance;
+};
+
+enum class MaterialVarFlags
+{
+    MATERIAL_VAR_NO_DRAW = (1 << 2),
+    MATERIAL_VAR_FLAT = (1 << 12),
+    MATERIAL_VAR_IGNOREZ = (1 << 15),
+    MATERIAL_VAR_TRANSLUCENT = (1 << 21),
+    MATERIAL_VAR_WIREFRAME = (1 << 28),
+};
+
+class IMaterial
+{
+public:
+
+    const char* GetName()
+    {
+        using Type = const char* (__thiscall*)(void*);
+
+        return U::VFunc.Get<Type>(this, 0)(this);
+    }
+
+    const char* GetTextureGroupName()
+    {
+        using Type = const char* (__thiscall*)(void*);
+
+        return U::VFunc.Get<Type>(this, 1)(this);
+    }
+
+    void IncrementReferenceCount()
+    {
+        using Type = void(__thiscall*)(void*);
+
+        return U::VFunc.Get<Type>(this, 12)(this);
+    }
+
+    void DecrementReferenceCount()
+    {
+        using Type = void(__thiscall*)(void*);
+
+        return U::VFunc.Get<Type>(this, 13)(this);
+    }
+
+    void AlphaModulate(float alpha)
+    {
+        using Type = void(__thiscall*)(void*, float);
+
+        return U::VFunc.Get<Type>(this, 27)(this, alpha);
+    }
+
+    void ColorModulate(float r, float g, float b)
+    {
+        using Type = void(__thiscall*)(void*, float, float, float);
+
+        return U::VFunc.Get<Type>(this, 28)(this, r, g, b);
+    }
+
+    void SetMaterialVarFlag(MaterialVarFlags flag, bool on)
+    {
+        using Type = void(__thiscall*)(void*, MaterialVarFlags, bool);
+
+        return U::VFunc.Get<Type>(this, 29)(this, flag, on);
+    }
+
+    bool GetMaterialVarFlag(MaterialVarFlags flag)
+    {
+        using Type = bool(__thiscall*)(void*, MaterialVarFlags);
+
+        return U::VFunc.Get<Type>(this, 30)(this, flag);
+    }
+
+    bool IsErrorMaterial()
+    {
+        using Type = bool(__thiscall*)(void*);
+
+        return U::VFunc.Get<Type>(this, 42)(this);
+    }
+
+    const bool IsPrecached()
+    {
+        using Type = const bool(__thiscall*)(void*);
+
+        return U::VFunc.Get<Type>(this, 56)(this);
+    }
+
+    void Precache()
+    {
+        using Type = void(__thiscall*)(void*);
+
+        return U::VFunc.Get<Type>(this, 62)(this);
+    }
+
+    IMaterialVar* FindVar(const char* varName, bool* found, bool complain = true)
+    {
+        using Type = IMaterialVar * (__thiscall*)(void*, const char*, bool*, bool);
+
+        return U::VFunc.Get<Type>(this, 11)(this, varName, found, complain);
+    }
+
+public:
+
+    inline void AddRef()
+    {
+        IncrementReferenceCount();
+    }
+
+    inline void Release()
+    {
+        DecrementReferenceCount();
+    }
 };
 
 class IVModelRender

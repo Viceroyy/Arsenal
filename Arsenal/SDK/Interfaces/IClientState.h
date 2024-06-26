@@ -12,7 +12,7 @@ public:
 	__int32 m_nCurrentSequence; //0x0194 
 	__int32 unk1; //0x0198 
 	__int32 unk2; //0x019C 
-	__int32 unk3; //0x01A0 
+	__int32 m_nDeltaTick; //0x01A0 
 	char pad_0x01A4[0x10C]; //0x01A4
 	__int32 m_nMaxClients; //0x02B0 
 	void* N00000583; //0x02B4 
@@ -31,6 +31,10 @@ public:
 	Vector viewangles; //0x4B84 
 	char pad_0x4B90[0xCB0]; //0x4B90
 
+	const char* GetLevelNameShort()
+	{
+		return (const char*)((unsigned int)this + 0x230);
+	}
 }; //Size=0x5840
 
 namespace I { inline CClientState* ClientState = nullptr; }

@@ -24,10 +24,35 @@
 #endif
 
 class Color;
-class ITexture;
 class IImage;
 class Image;
 class Point;
+
+class ITexture
+{
+public:
+
+	int GetActualWidth()
+	{
+		using Type = int(__thiscall*)(void*);
+
+		return U::VFunc.Get<Type>(this, 3)(this);
+	}
+
+	int GetActualHeight()
+	{
+		using Type = int(__thiscall*)(void*);
+
+		return U::VFunc.Get<Type>(this, 4)(this);
+	}
+
+	void IncrementReferenceCount(void)
+	{
+		using Type = void(__thiscall*)(void*);
+
+		return U::VFunc.Get<Type>(this, 10)(this);
+	}
+};
 
 	// handles
 typedef unsigned long HCursor;

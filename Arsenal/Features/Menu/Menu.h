@@ -45,7 +45,7 @@ public:
 private:
 	void MainWindow();
 	void Snow();
-	void Indicators();
+	void Info();
 
 public:
 	void Run();

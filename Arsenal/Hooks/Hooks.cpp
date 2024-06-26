@@ -4,7 +4,10 @@ void CGlobal_Hooks::Initialize()
 {
 	XASSERT(MH_Initialize() != MH_STATUS::MH_OK);
 
+	Hooks::ClientModeShared_OverrideView::Initialize();
 	Hooks::ClientModeShared_CreateMove::Initialize();
+	Hooks::ClientModeShared_GetViewmodelFOV::Initialize();
+	//Hooks::ClientModeShared_DoPostScreenSpaceEffects::Initialize();
 	Hooks::IEngineVGui_Paint::Initialize();
 	Hooks::IBaseClientDLL_FrameStageNotify::Initialize();
 	Hooks::IBaseClientDLL_LevelInitPostEntity::Initialize();

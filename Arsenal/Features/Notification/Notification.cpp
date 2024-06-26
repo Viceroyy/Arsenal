@@ -39,7 +39,7 @@ void CFeatures_Notifications::Draw()
 		if (flLife < 0.1f)
 			x -= U::Math.RemapValClamped(flLife, 0.1f, 0.f, 0.f, w);
 
-		auto& cAccent = CFG::Menu_Accent_Primary, &cActive = CFG::Menu_Accent_Secondary, &cBackground = CFG::Menu_Background;
+		auto& cAccent = CFG::Menu_Accent_Primary, &cActive = CFG::Menu_Text, &cBackground = CFG::Menu_Background;
 		H::Draw.Line(x, y, x, y + h, { cAccent.r, cAccent.g, cAccent.b, 255 });
 		H::Draw.GradientRect(x + 1, y, w, h, { cBackground.r, cBackground.g, cBackground.b, 255 }, { cBackground.r, cBackground.g, cBackground.b, 0 }, true);
 		H::Draw.String(fFont, x + 6, y + 2, { cActive.r, cActive.g, cActive.b, 255 }, ALIGN_TOPLEFT, tNotification.m_sText.c_str());

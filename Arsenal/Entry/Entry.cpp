@@ -74,10 +74,10 @@ void CGlobal_Entry::Load()
 	//Interfaces
 	{
 		I::BaseClientDLL = U::Interface.Get<IBaseClientDLL*>("client.dll", "VClient017");
+		I::Input = **reinterpret_cast<CInput***>((*reinterpret_cast<uintptr_t**>(I::BaseClientDLL))[15] + 2);
 		I::ClientEntityList = U::Interface.Get<IClientEntityList*>("client.dll", "VClientEntityList003");
 		I::GameMovement = U::Interface.Get<IGameMovement*>("client.dll", "GameMovement001");
 		I::ClientPrediction = U::Interface.Get<CPrediction*>("client.dll", "VClientPrediction001");
-
 		I::EngineClient = U::Interface.Get<IVEngineClient*>("engine.dll", "VEngineClient014");
 		I::EngineVGui = U::Interface.Get<IEngineVGui*>("engine.dll", "VEngineVGui001");
 		I::InputSystem = U::Interface.Get<IInputSystem*>("inputsystem.dll", "InputSystemVersion001");
@@ -85,12 +85,12 @@ void CGlobal_Entry::Load()
 		I::RenderView = U::Interface.Get<IVRenderView*>("engine.dll", "VEngineRenderView014");
 		I::ModelRender = U::Interface.Get<IVModelRender*>("engine.dll", "VEngineModel016");
 		I::GameEventManager = U::Interface.Get<IGameEventManager2*>("engine.dll", "GAMEEVENTSMANAGER002");
-
 		I::StudioRender = U::Interface.Get<IStudioRender*>("studiorender.dll", "VStudioRender025");
-
 		I::MatSystemSurface = U::Interface.Get<IMatSystemSurface*>("vguimatsurface.dll", "VGUI_Surface030");
-
+		I::MaterialSystem = U::Interface.Get<IMaterialSystem*>("MaterialSystem.dll", "VMaterialSystem080");
 		I::Cvar = U::Interface.Get<ICvar*>("vstdlib.dll", "VEngineCvar004");
+		I::ClientMode = **(ClientModeShared***)(U::Pattern.Find("client.dll", "8B 0D ? ? ? ? 8B 01 5D FF 60 28 CC") + 2);
+		I::HudChat = (CHudChat*)(((uintptr_t*)(I::ClientMode))[4]);
 
 		//Other shenanigans
 		{
@@ -123,6 +123,9 @@ void CGlobal_Entry::Load()
 
 void CGlobal_Entry::Unload()
 {
+	CFG::Visual_FOV = 90;
+	CFG::Visual_ViewmodelFOV = 70;
+
 	G::Hooks.Uninitialize();
 	SetWindowLongPtr(WINAPI_HOOK::WINAPI_WndProc::hwWindow, GWL_WNDPROC, (LONG_PTR)WINAPI_HOOK::WINAPI_WndProc::Original);
 
