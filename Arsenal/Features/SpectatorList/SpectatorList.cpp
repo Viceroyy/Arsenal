@@ -14,11 +14,11 @@ bool CFeatures_SpectatorList::GetSpectators(C_CSPlayer* pLocal)
 		std::wstring szMode;
 		switch (pPlayer->m_iObserverMode())
 		{
-			case OBS_MODE_DEATHCAM:		szMode = L"Death"; break;
-			case OBS_MODE_FREEZECAM:	szMode = L"Freeze"; break;
+			case OBS_MODE_DEATHCAM:		szMode = L"Deathcam"; break;
+			case OBS_MODE_FREEZECAM:	szMode = L"Freezecam"; break;
 			case OBS_MODE_FIXED:		szMode = L"Fixed"; break;
-			case OBS_MODE_FIRSTPERSON:	szMode = L"3rd"; break;
-			case OBS_MODE_THIRDPERSON:	szMode = L"1st"; break;
+			case OBS_MODE_FIRSTPERSON:	szMode = L"1st"; break;
+			case OBS_MODE_THIRDPERSON:	szMode = L"3rd"; break;
 			case OBS_MODE_ROAMING:		szMode = L"Roaming"; break;
 			default: continue;
 		}
@@ -26,7 +26,7 @@ bool CFeatures_SpectatorList::GetSpectators(C_CSPlayer* pLocal)
 		player_info_t pi{};
 		if (I::EngineClient->GetPlayerInfo(pPlayer->entindex(), &pi))
 		{
-			Spectators.push_back({ Util::ConvertUtf8ToWide(pi.name), szMode, pPlayer->m_iTeamNum(), pPlayer->entindex() });
+			Spectators.push_back({ Util::ConvertUtf8ToWide(pi.name), szMode });
 		}
 	}
 

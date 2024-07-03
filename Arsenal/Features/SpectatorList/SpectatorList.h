@@ -8,14 +8,11 @@ private:
 	{
 		std::wstring Name;
 		std::wstring Mode;
-		int Team;
-		int Index;
 	};
 
 	std::vector<Spectator_t> Spectators;
 
 public:
-	int SpecListX = 30, SpecListY = 100;
 	bool GetSpectators(C_CSPlayer* pLocal);
 	void Run();
 };

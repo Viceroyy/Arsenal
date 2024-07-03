@@ -188,6 +188,31 @@ namespace Util
 		return result;
 	}
 
+	inline std::string ConvertWideToUtf8(const std::wstring& unicode)
+	{
+		const int size = WideCharToMultiByte(CP_UTF8, 0, unicode.c_str(), -1, nullptr, 0, nullptr, nullptr);
+		std::string result(size, '\0');
+		WideCharToMultiByte(CP_UTF8, 0, unicode.c_str(), -1, result.data(), size, nullptr, nullptr);
+		return result;
+	}
+
+	inline std::unique_ptr<char[]> ConvertToUppercase(const std::wstring& wstr)
+	{
+		size_t length = wstr.length();
+		auto upper_wstr = std::make_unique<wchar_t[]>(length + 1);
+		wcscpy_s(upper_wstr.get(), length + 1, wstr.c_str());
+
+		for (size_t i = 0; i < length; ++i) {
+			upper_wstr[i] = std::toupper(upper_wstr[i]);
+		}
+
+		std::string utf8_str = ConvertWideToUtf8(upper_wstr.get());
+		auto result = std::make_unique<char[]>(utf8_str.size() + 1);
+		strcpy_s(result.get(), utf8_str.size() + 1, utf8_str.c_str());
+
+		return result;
+	}
+
 	inline void MakeSafeName(const char* oldName, char* newName, int newNameBufSize)
 	{
 		assert(newNameBufSize >= sizeof(newName[0]));

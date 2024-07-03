@@ -1218,7 +1218,7 @@ void CFeatures_Menu::MainWindow()
 
 				multiselect("Ignore", WorldIgnore, {
 					{ "Planted C4", CFG::ESP_World_Ignore_PlantedC4 },
-					//{ "Dropped Weapons", CFG::ESP_World_Ignore_DroppedWeapons }
+					{ "Dropped Weapons", CFG::ESP_World_Ignore_DroppedWeapons }
 					});
 
 				multiselect("Draw", WorldDraw, {
@@ -1228,6 +1228,7 @@ void CFeatures_Menu::MainWindow()
 			}
 			GroupBoxEnd();
 		}
+
 		if (VisualsTab == EVisualsTabs::OTHER)
 		{
 			anchor_x = m_nCursorX;

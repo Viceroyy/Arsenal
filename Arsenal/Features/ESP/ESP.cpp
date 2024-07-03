@@ -110,8 +110,11 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 		{
 			if (const auto& pWeapon = pPlayer->GetActiveCSWeapon())
 			{
-				H::Draw.String(fFont, x + (w / 2), y + h + bOffset, COLOR_WHITE, ALIGN_TOP, "%s", GetWeaponName(pWeapon->GetWeaponID()));
-				bOffset += H::Draw.GetFontHeight(fFont);
+				if (auto weapon_name = Util::ConvertToUppercase(GetWeaponName(pWeapon->GetWeaponID())))
+				{
+					H::Draw.String(fFont, x + (w / 2), y + h + bOffset, COLOR_WHITE, ALIGN_TOP, weapon_name.get());
+					bOffset += H::Draw.GetFontHeight(fFont);
+				}
 			}
 		}
 
@@ -162,91 +165,76 @@ void CFeatures_ESP::DrawWorld()
 		}
 	}
 
-	//if (!CFG::ESP_World_Ignore_DroppedWeapons)
-	//{
-	//	for (auto pWeapons : H::EntityCache.GetGroup(EGroupType::WORLD_WEAPONS))
-	//	{
-	//		int x = 0, y = 0, w = 0, h = 0;
-	//		if (!GetDynamicBounds(pWeapons, x, y, w, h))
-	//			continue;
+	if (!CFG::ESP_World_Ignore_DroppedWeapons)
+	{
+		for (auto pWeapons : H::EntityCache.GetGroup(EGroupType::WORLD_WEAPONS))
+		{
+			int x = 0, y = 0, w = 0, h = 0;
+			if (!GetDynamicBounds(pWeapons, x, y, w, h))
+				continue;
 
-	//		if (CFG::ESP_World_Box)
-	//		{
-	//			H::Draw.OutlinedRect(x, y, w, h, CFG::Colors_PlantedC4);
+			auto pWeps = pWeapons->As<C_WeaponCSBase>();
 
-	//			//Outline
-	//			H::Draw.OutlinedRect(x - 1, y - 1, w + 2, h + 2, COLOR_BLACK);
+			if (CFG::ESP_World_Box)
+			{
+				H::Draw.OutlinedRect(x, y, w, h, CFG::Colors_PlantedC4);
 
-	//			//Inline
-	//			H::Draw.OutlinedRect(x + 1, y + 1, w - 2, h - 2, COLOR_BLACK);
-	//		}
+				//Outline
+				H::Draw.OutlinedRect(x - 1, y - 1, w + 2, h + 2, COLOR_BLACK);
 
-	//		if (CFG::ESP_World_Name)
-	//			H::Draw.String(fFont, x + w / 2, y - nTextTopOffset, COLOR_RED, ALIGN_TOP, "Weapon");
-	//	}
-	//}
+				//Inline
+				H::Draw.OutlinedRect(x + 1, y + 1, w - 2, h - 2, COLOR_BLACK);
+			}
+
+			if (CFG::ESP_World_Name)
+			{
+				if (auto weapon_name = Util::ConvertToUppercase(GetWeaponName(pWeps->GetWeaponID())))
+				{
+					H::Draw.String(fFont, x + w / 2, y - nTextTopOffset, COLOR_WHITE, ALIGN_TOP, weapon_name.get());
+				}
+			}
+		}
+	}
 
 	I::MatSystemSurface->DrawSetAlphaMultiplier(1.f);
 }
 
 bool CFeatures_ESP::GetDynamicBounds(C_BaseEntity* pEntity, int& x, int& y, int& w, int& h)
 {
-	Vector vMins = pEntity->m_vecMins(), vMaxs = pEntity->m_vecMaxs();
+	if (!pEntity)
+		return false;
+
+	Vector vMins, vMaxs;
+	pEntity->GetRenderBounds(vMins, vMaxs);
 
 	auto& transform = const_cast<matrix3x4_t&>(pEntity->RenderableToWorldTransform());
-	if (pEntity && pEntity->entindex() == I::EngineClient->GetLocalPlayer())
-	{
-		Vector vAngles = I::EngineClient->GetViewAngles();
-		vAngles.x = vAngles.z = 0.f;
-		U::Math.AngleMatrix(vAngles, transform);
-		U::Math.MatrixSetColumn(pEntity->GetAbsOrigin(), 3, transform);
-	}
+	U::Math.AngleMatrix(pEntity->GetRenderAngles(), transform);
+	U::Math.MatrixSetColumn(pEntity->GetRenderOrigin(), 3, transform);
 
 	float flLeft, flRight, flTop, flBottom;
 	if (!Util::IsOnScreen(pEntity, transform, &flLeft, &flRight, &flTop, &flBottom))
 		return false;
 
-	x = flLeft + (flRight - flLeft) / 8.f;
+	x = flLeft;
 	y = flBottom;
-	w = flRight - flLeft - (flRight - flLeft) / 8.f * 2.f;
+	w = flRight - flLeft;
 	h = flTop - flBottom;
 
 	return !(x > H::Draw.m_nScreenW || x + w < 0 || y > H::Draw.m_nScreenH || y + h < 0);
 }
 
-const char* CFeatures_ESP::GetWeaponName(int wpnid)
+std::uintptr_t get_rel32(std::uintptr_t address, std::uintptr_t offset, std::uintptr_t instruction_size)
 {
-	switch (wpnid)
-	{
-		case WEAPON_P228: return "P228"; break;
-		case WEAPON_GLOCK: return "GLOCK"; break;
-		case WEAPON_SCOUT: return "SCOUT"; break;
-		case WEAPON_HEGRENADE: return "HE GRENADE"; break;
-		case WEAPON_XM1014: return "XM1014"; break;
-		case WEAPON_C4: return "C4"; break;
-		case WEAPON_MAC10: return "MAC10"; break;
-		case WEAPON_AUG: return "AUG"; break;
-		case WEAPON_SMOKEGRENADE: return "SMOKE GRENADE"; break;
-		case WEAPON_ELITE: return "ELITE"; break;
-		case WEAPON_FIVESEVEN: return "FIVE-SEVEN"; break;
-		case WEAPON_UMP45: return "UMP45"; break;
-		case WEAPON_SG550: return "SG550"; break;
-		case WEAPON_GALIL: return "GALIL"; break;
-		case WEAPON_FAMAS: return "FAMAS"; break;
-		case WEAPON_USP: return "USP"; break;
-		case WEAPON_AWP: return "AWP"; break;
-		case WEAPON_MP5NAVY: return "MP5"; break;
-		case WEAPON_M249: return "M249"; break;
-		case WEAPON_M3: return "M3"; break;
-		case WEAPON_M4A1: return "M4A1"; break;
-		case WEAPON_TMP: return "TMP"; break;
-		case WEAPON_G3SG1: return "G3SG1"; break;
-		case WEAPON_FLASHBANG: return "FLASHBANG"; break;
-		case WEAPON_DEAGLE: return "DEAGLE"; break;
-		case WEAPON_SG552: return "SG552"; break;
-		case WEAPON_AK47: return "AK47"; break;
-		case WEAPON_KNIFE: return "KNIFE"; break;
-		case WEAPON_P90: return "P90"; break;
-	}
-	return "UNKNOWN";
+	return address + *reinterpret_cast<std::uintptr_t*>(address + offset) + instruction_size;
+}
+
+std::wstring CFeatures_ESP::GetWeaponName(int wpnid)
+{
+	static auto function = reinterpret_cast<const char* (*)(int)>(
+		get_rel32(U::Pattern.Find("client.dll", "E8 ? ? ? ? 50 FF 75 94"), 1, 5));
+
+	if (!function(wpnid))
+		return L"UNKNOWN";
+
+	return Util::ConvertUtf8ToWide(function(wpnid));
 }

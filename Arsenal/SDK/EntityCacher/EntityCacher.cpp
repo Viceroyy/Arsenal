@@ -43,7 +43,7 @@ void CHelpers_EntityCache::Fill()
 				m_mGroups[EGroupType::WORLD_C4PLANTED].push_back(pEntity);
 				break;
 			}
-			/*case ECSClientClass::CAK47:
+			case ECSClientClass::CAK47:
 			case ECSClientClass::CWeaponP228:
 			case ECSClientClass::CWeaponGlock:
 			case ECSClientClass::CWeaponScout:
@@ -72,10 +72,10 @@ void CHelpers_EntityCache::Fill()
 			case ECSClientClass::CWeaponSG552:
 			case ECSClientClass::CWeaponP90:
 			{
-				if (pEntity->As<C_BaseCombatWeapon>()->m_hOwner().ToInt() == 255)
+				if (pEntity->As<C_BaseCombatWeapon>()->m_hOwner().Get() == nullptr)
 					m_mGroups[EGroupType::WORLD_WEAPONS].push_back(pEntity);
 				break;
-			}*/
+			}
 		}
 	}
 }

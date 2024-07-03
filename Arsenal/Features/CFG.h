@@ -68,7 +68,7 @@ namespace CFG
 
 	CFGVAR(ESP_World_Enabled, true);
 	CFGVAR(ESP_World_Ignore_PlantedC4, false);
-	//CFGVAR(ESP_World_Ignore_DroppedWeapons, false);
+	CFGVAR(ESP_World_Ignore_DroppedWeapons, false);
 	CFGVAR(ESP_World_Name, true);
 	CFGVAR(ESP_World_Box, false);
 
