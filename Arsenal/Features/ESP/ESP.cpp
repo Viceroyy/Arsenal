@@ -1,5 +1,6 @@
 #include "ESP.h"
 #include "../CFG.h"
+#include "../Players/Players.h"
 
 void CFeatures_ESP::Run()
 {
@@ -49,7 +50,7 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 		const int iHealth = pPlayer->GetHealth();
 		const int iMaxHealth = pPlayer->GetMaxHealth();
 
-		const Color_t clrTeam = Util::GetTeamColor(pPlayer->m_iTeamNum(), pLocal->m_iTeamNum(), CFG::Colors_Relative);
+		const Color_t clrTeam = Util::GetEntityColor(pLocal, pPlayer, CFG::Colors_Relative);
 
 		if (CFG::ESP_Players_Box)
 		{
@@ -234,7 +235,7 @@ std::wstring CFeatures_ESP::GetWeaponName(int wpnid)
 		get_rel32(U::Pattern.Find("client.dll", "E8 ? ? ? ? 50 FF 75 94"), 1, 5));
 
 	if (!function(wpnid))
-		return L"UNKNOWN";
+		return L"unknown";
 
 	return Util::ConvertUtf8ToWide(function(wpnid));
 }

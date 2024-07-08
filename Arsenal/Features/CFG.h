@@ -105,7 +105,11 @@ namespace CFG
 	CFGVAR(Colors_Team, Color_t({ 252, 92, 101, 255 }));
 	CFGVAR(Colors_TeamT, Color_t({ 240, 90, 90, 255 }));
 	CFGVAR(Colors_TeamCT, Color_t({ 150, 200, 255, 255 }));
+	CFGVAR(Color_Friend, Color_t({ 38, 222, 129, 255 }));
+	CFGVAR(Color_Cheater, Color_t({ 214, 48, 49, 255 }));
+	CFGVAR(Color_RetardLegit, Color_t({ 48, 218, 70, 255 }));
 	CFGVAR(Colors_PlantedC4, Color_t({ 255, 219, 88, 255 }));
+	CFGVAR(Colors_DroppedWeapons, Color_t({ 255, 219, 88, 255 }));
 
 #pragma endregion
 }

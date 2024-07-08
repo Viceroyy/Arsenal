@@ -1,6 +1,7 @@
 #include "Entry.h"
 #include "../Hooks/Definitions/WINAPI_WndProc.h"
 #include "../Features/Notification/Notification.h"
+#include "../Features/Players/Players.h"
 
 //#include <iostream>
 //#include <fstream>
@@ -113,6 +114,8 @@ void CGlobal_Entry::Load()
 
 	G::Hooks.Initialize();
 	WINAPI_HOOK::WINAPI_WndProc::Init();
+
+	PlayerManager::Parse();
 
 	Config::Load((std::filesystem::current_path().string() + "\\Arsenal\\default.json").c_str());
 	F::Notifications.Add("Config default loaded!");

@@ -71,10 +71,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -95,13 +95,13 @@
     <ClCompile Include="Entry\Entry.cpp" />
     <ClCompile Include="Features\EnginePrediction\EnginePrediction.cpp" />
     <ClCompile Include="Features\ESP\ESP.cpp" />
-    <ClCompile Include="Features\Glow\Glow.cpp" />
     <ClCompile Include="Features\Menu\LateRenderer\LateRenderer.cpp" />
     <ClCompile Include="Features\Menu\Menu.cpp" />
     <ClCompile Include="Features\Misc\Misc.cpp" />
     <ClCompile Include="Features\NoSpread\NoSpread.cpp" />
     <ClCompile Include="Features\Notification\Notification.cpp" />
     <ClCompile Include="Features\PlayerArrows\PlayerArrows.cpp" />
+    <ClCompile Include="Features\Players\Players.cpp" />
     <ClCompile Include="Features\SpectatorList\SpectatorList.cpp" />
     <ClCompile Include="Features\Visual\Visual.cpp" />
     <ClCompile Include="Hooks\Definitions\CBasePlayer_CalcPlayerView.cpp" />
@@ -126,7 +126,6 @@
     <ClCompile Include="SDK\Interfaces\IInputSystem.h" />
     <ClCompile Include="SDK\Input\Input.cpp" />
     <ClCompile Include="SDK\Interfaces\ICvar.cpp" />
-    <ClCompile Include="Util\Hash\Hash.cpp" />
     <ClCompile Include="Util\Hook\MinHook\buffer.c" />
     <ClCompile Include="Util\Hook\MinHook\hde\hde32.c" />
     <ClCompile Include="Util\Hook\MinHook\hde\hde64.c" />
@@ -142,7 +141,6 @@
     <ClInclude Include="Entry\Entry.h" />
     <ClInclude Include="Features\EnginePrediction\EnginePrediction.h" />
     <ClInclude Include="Features\ESP\ESP.h" />
-    <ClInclude Include="Features\Glow\Glow.h" />
     <ClInclude Include="Features\Menu\LateRenderer\LateRenderer.h" />
     <ClInclude Include="Features\Menu\Menu.h" />
     <ClInclude Include="Features\Misc\Misc.h" />
@@ -150,6 +148,7 @@
     <ClInclude Include="Features\CFG.h" />
     <ClInclude Include="Features\Notification\Notification.h" />
     <ClInclude Include="Features\PlayerArrows\PlayerArrows.h" />
+    <ClInclude Include="Features\Players\Players.h" />
     <ClInclude Include="Features\SpectatorList\SpectatorList.h" />
     <ClInclude Include="Features\Visual\Visual.h" />
     <ClInclude Include="Hooks\Definitions\WINAPI_WndProc.h" />

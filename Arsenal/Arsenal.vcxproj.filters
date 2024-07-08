@@ -21,9 +21,6 @@
     <ClCompile Include="Entry\Entry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Util\Hash\Hash.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Util\Offsets\Offsets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -144,13 +141,13 @@
     <ClCompile Include="Hooks\Definitions\ModelRender_DrawModelExecute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Glow\Glow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SDK\Interfaces\IHudChat.h">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Features\SpectatorList\SpectatorList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Players\Players.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -458,10 +455,10 @@
     <ClInclude Include="SDK\Interfaces\IMaterialSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Glow\Glow.h">
+    <ClInclude Include="Features\SpectatorList\SpectatorList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Features\SpectatorList\SpectatorList.h">
+    <ClInclude Include="Features\Players\Players.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

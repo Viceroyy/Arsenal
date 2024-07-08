@@ -4,9 +4,9 @@
 #include "EntityCacher/EntityCacher.h"
 #include "../Features/CFG.h"
 #include "DrawManager/DrawManager.h"
-
 #include <random>
 #include "../Util/Icons.h"
+#include "../Features/Players/Players.h"
 
 namespace Util
 {
@@ -151,33 +151,50 @@ namespace Util
 		return !(flRight < 0 || flLeft > H::Draw.m_nScreenW || flTop < 0 || flBottom > H::Draw.m_nScreenH);
 	}
 
-	inline Color_t GetHealthColor(const int nHealth, const int nMaxHealth)
+	inline Color_t GetEntityColor(C_CSPlayer* pLocal, C_BaseEntity* pEntity, bool bRelativeColors)
 	{
-		if (nHealth > nMaxHealth)
-			return { 15, 150, 150, 255 };
+		if (!pLocal || !pEntity)
+			return { 245, 229, 196, 255 };
 
-		const int nHP = U::Math.Max(0, U::Math.Min(nHealth, nMaxHealth));
-
-		const unsigned int nR = static_cast<unsigned int>(U::Math.Min((510 * (nMaxHealth - nHP)) / nMaxHealth, 200));
-		const unsigned int nG = static_cast<unsigned int>(U::Math.Min((510 * nHP) / nMaxHealth, 200));
-
-		return { static_cast<byte>(nR), static_cast<byte>(nG), 0, 255 };
-	}
-
-	inline Color_t GetTeamColor(const int iTargetTeam, const int iLocalTeam, bool bRelativeColors)
-	{
-		if (bRelativeColors)
-			return iLocalTeam == iTargetTeam ? CFG::Colors_Team : CFG::Colors_Enemy;
-		else
+		if (pEntity->GetClassID() == ECSClientClass::CCSPlayer)
 		{
-			switch (iTargetTeam)
+			auto pPlayer = pEntity->As<C_CSPlayer>();
+
+			if (pPlayer != pLocal)
 			{
-			case 2: return CFG::Colors_TeamT;
-			case 3: return CFG::Colors_TeamCT;
+				PlayerManager::PlayerInfo custom_info{};
+
+				PlayerManager::GetInfo(pPlayer->entindex(), custom_info);
+
+				if (custom_info.m_bIgnored)
+				{
+					return CFG::Color_Friend;
+				}
+
+				if (custom_info.m_bCheater)
+				{
+					return CFG::Color_Cheater;
+				}
+
+				if (custom_info.m_bRetardLegit)
+				{
+					return CFG::Color_RetardLegit;
+				}
 			}
 		}
 
-		return Color_t(245, 229, 196, 255);
+		if (bRelativeColors)
+			return pLocal->m_iTeamNum() == pEntity->m_iTeamNum() ? CFG::Colors_Team : CFG::Colors_Enemy;
+		else
+		{
+			switch (pEntity->m_iTeamNum())
+			{
+				case 2: return CFG::Colors_TeamT;
+				case 3: return CFG::Colors_TeamCT;
+			}
+		}
+
+		return { 245, 229, 196, 255 };
 	}
 
 	inline std::wstring ConvertUtf8ToWide(const std::string& ansi)
@@ -211,52 +228,5 @@ namespace Util
 		strcpy_s(result.get(), utf8_str.size() + 1, utf8_str.c_str());
 
 		return result;
-	}
-
-	inline void MakeSafeName(const char* oldName, char* newName, int newNameBufSize)
-	{
-		assert(newNameBufSize >= sizeof(newName[0]));
-
-		int newpos = 0;
-
-		for (const char* p = oldName; *p != 0 && newpos < newNameBufSize - 1; p++)
-		{
-			//check for a '#' char at the beginning
-			if (p == oldName && *p == '#')
-			{
-				newName[newpos] = '*';
-				newpos++;
-			}
-			else if (*p == '%')
-			{
-				// remove % chars
-				newName[newpos] = '*';
-				newpos++;
-			}
-			else if (*p == '&')
-			{
-				//insert another & after this one
-				if (newpos + 2 < newNameBufSize)
-				{
-					newName[newpos] = '&';
-					newName[newpos + 1] = '&';
-					newpos += 2;
-				}
-			}
-			else
-			{
-				newName[newpos] = *p;
-				newpos++;
-			}
-		}
-		newName[newpos] = 0;
-	}
-
-	inline const char* SafeName(const char* oldName)
-	{
-		static char safeName[MAX_PLAYER_NAME_LENGTH * 2 + 1];
-		MakeSafeName(oldName, safeName, sizeof(safeName));
-
-		return safeName;
 	}
 }

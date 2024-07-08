@@ -5,7 +5,6 @@
 #include "../CFG.h"
 #include "../Notification/Notification.h"
 
-
 #define multiselect(label, unique, ...) static std::vector<std::pair<const char *, bool &>> unique##multiselect = __VA_ARGS__; \
 SelectMulti(label, unique##multiselect)
 
@@ -1120,8 +1119,8 @@ void CFeatures_Menu::MainWindow()
 	if (Button("Misc", MainTab == EMainTabs::MISC, CFG::Menu_Tab_Button_Width))
 		MainTab = EMainTabs::MISC;
 
-	/*if (Button("Players", MainTab == EMainTabs::PLAYERS, CFG::Menu_Tab_Button_Width))
-		MainTab = EMainTabs::PLAYERS;*/
+	if (Button("Players", MainTab == EMainTabs::PLAYERS, CFG::Menu_Tab_Button_Width))
+		MainTab = EMainTabs::PLAYERS;
 
 	if (Button("Configs", MainTab == EMainTabs::CONFIGS, CFG::Menu_Tab_Button_Width))
 		MainTab = EMainTabs::CONFIGS;
@@ -1139,7 +1138,7 @@ void CFeatures_Menu::MainWindow()
 
 	if (MainTab == EMainTabs::VISUALS)
 	{
-		enum class EVisualsTabs { ESP, RADAR, MATERIALS, OUTLINES, OTHER, OTHER2, COLORS };
+		enum class EVisualsTabs { ESP, OTHER, COLORS };
 		static EVisualsTabs VisualsTab = EVisualsTabs::ESP;
 
 		int anchor_x = m_nCursorX;
@@ -1282,6 +1281,7 @@ void CFeatures_Menu::MainWindow()
 					ColorPicker("Counter-Terrorists", CFG::Colors_TeamCT);
 				}
 				ColorPicker("Planted C4", CFG::Colors_PlantedC4);
+				ColorPicker("Dropped Weapons", CFG::Colors_DroppedWeapons);
 			}
 			GroupBoxEnd();
 		}
@@ -1302,7 +1302,7 @@ void CFeatures_Menu::MainWindow()
 		GroupBoxEnd();
 	}
 
-	/*if (MainTab == EMainTabs::PLAYERS)
+	if (MainTab == EMainTabs::PLAYERS)
 	{
 		m_nCursorX += CFG::Menu_Spacing_X;
 
@@ -1322,24 +1322,24 @@ void CFeatures_Menu::MainWindow()
 					continue;
 				}
 
-				players::PlayerInfo custom_info{};
+				PlayerManager::PlayerInfo custom_info{};
 
-				players::getInfo(n, custom_info);
+				PlayerManager::GetInfo(n, custom_info);
 
 				auto bx{ m_nCursorX };
 				auto by{ m_nCursorY };
 
-				if (custom_info.m_ignored)
+				if (custom_info.m_bIgnored)
 				{
 					playerListButton(Util::ConvertUtf8ToWide(player_info.name).c_str(), 150, CFG::Color_Friend, false);
 				}
 
-				else if (custom_info.m_cheater)
+				else if (custom_info.m_bCheater)
 				{
 					playerListButton(Util::ConvertUtf8ToWide(player_info.name).c_str(), 150, CFG::Color_Cheater, false);
 				}
 
-				else if (custom_info.m_retard_legit)
+				else if (custom_info.m_bRetardLegit)
 				{
 					playerListButton(Util::ConvertUtf8ToWide(player_info.name).c_str(), 150, CFG::Color_RetardLegit, false);
 				}
@@ -1352,25 +1352,25 @@ void CFeatures_Menu::MainWindow()
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 				m_nCursorY = by;
 
-				if (playerListButton(L"ignored", 60, custom_info.m_ignored ? CFG::Color_Friend : CFG::Menu_Text_Inactive, true))
+				if (playerListButton(L"Ignored", 60, custom_info.m_bIgnored ? CFG::Color_Friend : CFG::Menu_Text_Inactive, true))
 				{
-					players::mark(n, { !custom_info.m_ignored, false });
+					PlayerManager::Mark(n, {!custom_info.m_bIgnored, false});
 				}
 
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 				m_nCursorY = by;
 
-				if (playerListButton(L"cheater", 60, custom_info.m_cheater ? CFG::Color_Cheater : CFG::Menu_Text_Inactive, true))
+				if (playerListButton(L"Cheater", 60, custom_info.m_bCheater ? CFG::Color_Cheater : CFG::Menu_Text_Inactive, true))
 				{
-					players::mark(n, { false, !custom_info.m_cheater });
+					PlayerManager::Mark(n, { false, !custom_info.m_bCheater });
 				}
 
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 				m_nCursorY = by;
 
-				if (playerListButton(L"retard legit", 60, custom_info.m_retard_legit ? CFG::Color_RetardLegit : CFG::Menu_Text_Inactive, true))
+				if (playerListButton(L"Retard Legit", 60, custom_info.m_bRetardLegit ? CFG::Color_RetardLegit : CFG::Menu_Text_Inactive, true))
 				{
-					players::mark(n, { false, false, !custom_info.m_retard_legit });
+					PlayerManager::Mark(n, { false, false, !custom_info.m_bRetardLegit });
 				}
 
 				m_nCursorX = bx;
@@ -1380,7 +1380,7 @@ void CFeatures_Menu::MainWindow()
 			}
 		}
 	}
-	*/
+
 	if (MainTab == EMainTabs::CONFIGS)
 	{
 		static std::string strSelected = {};
@@ -1390,6 +1390,9 @@ void CFeatures_Menu::MainWindow()
 		for (const auto &entry : std::filesystem::directory_iterator(m_strConfigPath))
 		{
 			if (std::string(std::filesystem::path(entry).filename().string()).find(".json") == std::string_view::npos)
+				continue;
+
+			if (std::string(std::filesystem::path(entry).filename().string()).find("players.json") != std::string_view::npos)
 				continue;
 
 			nCount++;
@@ -1409,6 +1412,9 @@ void CFeatures_Menu::MainWindow()
 					for (const auto &entry : std::filesystem::directory_iterator(m_strConfigPath))
 					{
 						if (std::string(std::filesystem::path(entry).filename().string()).find(".json") == std::string_view::npos)
+							continue;
+
+						if (std::string(std::filesystem::path(entry).filename().string()).find("players.json") != std::string_view::npos)
 							continue;
 
 						if (!std::string(std::filesystem::path(entry).filename().string()).compare(strInput))
@@ -1437,6 +1443,9 @@ void CFeatures_Menu::MainWindow()
 					for (const auto &entry : std::filesystem::directory_iterator(m_strConfigPath))
 					{
 						if (std::string(std::filesystem::path(entry).filename().string()).find(".json") == std::string_view::npos)
+							continue;
+
+						if (std::string(std::filesystem::path(entry).filename().string()).find("players.json") != std::string_view::npos)
 							continue;
 
 						std::string s = entry.path().filename().string();

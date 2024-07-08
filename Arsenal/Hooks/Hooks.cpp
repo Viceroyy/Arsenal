@@ -14,6 +14,7 @@ void CGlobal_Hooks::Initialize()
 	Hooks::IBaseClientDLL_LevelShutdown::Initialize();
 	Hooks::CPrediction_RunCommand::Initialize();
 	Hooks::CBasePlayer_CalcPlayerView::Initialize();
+	//Hooks::ModelRender_DrawModelExecute::Initialize();
 
 	XASSERT(MH_EnableHook(MH_ALL_HOOKS) != MH_STATUS::MH_OK);
 

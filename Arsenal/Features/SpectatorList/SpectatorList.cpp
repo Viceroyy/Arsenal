@@ -47,12 +47,12 @@ void CFeatures_SpectatorList::Run()
 	int y = H::Draw.m_nScreenH / 4;
 
 	EAlign align = ALIGN_TOP;
-	if (x <= (100 + 50))
+	if (x <= 150)
 	{
 		x -= 42;
 		align = ALIGN_TOPLEFT;
 	}
-	else if (x >= H::Draw.m_nScreenW - (100 + 50))
+	else if (x >= H::Draw.m_nScreenW - 150)
 	{
 		x += 42;
 		align = ALIGN_TOPRIGHT;
