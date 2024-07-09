@@ -17,7 +17,7 @@ Free open-source Windows cheat software for **Counter-Strike Source** game. Desi
 *   **ESP** - show additional information about players and game world
     1.  *Teammates, Enemies*
 
-    2.  *Planted C4*
+    2.  *Planted C4, Dropped weapons*
 
     *   **Enabled** - on / off master switch
     *   **Box** - draw 2D box over player model
@@ -28,24 +28,46 @@ Free open-source Windows cheat software for **Counter-Strike Source** game. Desi
     *   **Armor bar** - draw rectangle indicating player armor
     *   **Money** - draw player money
     *   **Weapon** - draw player equipped weapon
+    *   **Arrows** - draw arrow to player when out of fov
     
 *   **Visuals** - miscellaneous visual options
     *   **No visual recoil** - remove visual recoil punch effect
     *   **Viewmodel FOV** - change view model FOV \[*70*-*120*\] (70 - default viewmodel, higher values - further away viewmodel)
     *   **FOV** - change view FOV \[*90*-*120*\] (90 - default fov, higher values - further away fov)
+    *   **Spread circle** - show the radius of spread in a circle
+    *   **Crosshair** - draw simple + crosshair
 
 *   **Misc** - miscellaneous features
     *   **Auto strafe** - automatically strafe in air following mouse movement
     *   **Bunny hop** - automatically simulate space bar press / release while jump button is being held; increases movement speed
+    *   **Spectator list** - show players who are spectating you
 
 *   **Config** - JSON-based configuration system
     *   **Create config** - create new configuration file
     *   **Load** - load selected configuration file
     *   **Save** - save selected configuration file
     *   **Delete** - delete selected configuration file
+
+*   **Other**
+    *   **Notification system** - notifies the user about stuff when needed
+
 </details>
 
 ## Getting started
+
+### Downloading the DLL
+
+If you haven't already, download the DLL by clicking [here](https://github.com/Viceroyy/Arsenal/releases/download/v1.0.0/Arsenal-Release.dll)
+
+### Loading / Injecting into game process
+
+Open your favorite [DLL injector](https://en.wikipedia.org/wiki/DLL_injection) and just inject `Arsenal-Release.dll` into `hl2.exe` process.
+
+When injected, menu is openable under `INSERT` key.
+
+### Compiling from source
+
+<details>
 
 ### Prerequisites
 Microsoft Visual Studio 2022 17.10.3 (or newer), platform toolset v143 and Windows SDK 10.0 are required in order to compile Arsenal. You can download VS [here](https://visualstudio.microsoft.com/) (Windows SDK is installed during Visual Studio Setup).
@@ -66,29 +88,15 @@ Choose this option if you're going to contribute to the repo or you want to use 
 
 Open git command prompt and enter following command:
 
-    git clone --depth=1 https://github.com/Viceroyy/Arsenal.git
+    git clone https://github.com/Viceroyy/Arsenal.git
 
 `Arsenal` folder should have been successfully created, containing all the source files.
-
-### Compiling from source
-
-<details>
 
 When you have equipped a copy of the source code, next step is opening **Arsenal.sln** in Microsoft Visual Studio 2022.
 
 Then change build configuration to `Release | x86` and simply press **Build solution**.
 
 If everything went right you should receive `Arsenal-Release.dll`  binary file.
-
-</details>
-
-### Loading / Injecting into game process
-
-<details>
-
-Open your favorite [DLL injector](https://en.wikipedia.org/wiki/DLL_injection) and just inject `Arsenal-Release.dll` into `hl2.exe` process.
-
-When injected, menu is openable under `INSERT` key.
 
 </details>
 
