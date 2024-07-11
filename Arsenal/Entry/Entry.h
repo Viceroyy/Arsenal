@@ -1,5 +1,5 @@
 #pragma once
-#include "../Hooks/Hooks.h"
+#include "../SDK/SDK.h"
 
 class CGlobal_Entry
 {

@@ -1,5 +1,5 @@
 #include "Entry.h"
-#include "../Hooks/Definitions/WINAPI_WndProc.h"
+#include "../Hooks/WINAPI_WndProc.h"
 #include "../Features/Notification/Notification.h"
 #include "../Features/Players/Players.h"
 
@@ -109,11 +109,7 @@ void CGlobal_Entry::Load()
 	//DumpTables();
 	H::Draw.Initialize();
 
-	if (I::EngineClient->IsInGame())
-		g_Globals.m_nLocalIndex = I::EngineClient->GetLocalPlayer();
-
-	G::Hooks.Initialize();
-	WINAPI_HOOK::WINAPI_WndProc::Init();
+	U::Hooks.Initialize();
 
 	PlayerManager::Parse();
 
@@ -129,8 +125,7 @@ void CGlobal_Entry::Unload()
 	CFG::Visual_FOV = 90;
 	CFG::Visual_ViewmodelFOV = 70;
 
-	G::Hooks.Uninitialize();
-	SetWindowLongPtr(WINAPI_HOOK::WINAPI_WndProc::hwWindow, GWL_WNDPROC, (LONG_PTR)WINAPI_HOOK::WINAPI_WndProc::Original);
+	U::Hooks.Unload();
 
 	Sleep(100);
 

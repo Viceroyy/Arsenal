@@ -51,34 +51,31 @@
     <ClCompile Include="Util\Hook\MinHook\trampoline.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Hooks.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SDK\DrawManager\DrawManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SDK\Includes\checksum_crc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Definitions\IEngineVGui_Paint.cpp">
+    <ClCompile Include="Hooks\IEngineVGui_Paint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SDK\Entities\NetVarManager\NetVarManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Definitions\IBaseClientDLL_FrameStageNotify.cpp">
+    <ClCompile Include="Hooks\IBaseClientDLL_FrameStageNotify.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Definitions\IBaseClientDLL_LevelInitPostEntity.cpp">
+    <ClCompile Include="Hooks\IBaseClientDLL_LevelInitPostEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Definitions\IBaseClientDLL_LevelShutdown.cpp">
+    <ClCompile Include="Hooks\IBaseClientDLL_LevelShutdown.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Definitions\CBasePlayer_CalcPlayerView.cpp">
+    <ClCompile Include="Hooks\CBasePlayer_CalcPlayerView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Definitions\ClientModeShared_CreateMove.cpp">
+    <ClCompile Include="Hooks\ClientModeShared_CreateMove.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Features\Misc\Misc.cpp">
@@ -90,7 +87,7 @@
     <ClCompile Include="Features\EnginePrediction\EnginePrediction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Definitions\CPrediction_RunCommand.cpp">
+    <ClCompile Include="Hooks\CPrediction_RunCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Features\ESP\ESP.cpp">
@@ -114,7 +111,7 @@
     <ClCompile Include="SDK\Input\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Definitions\WINAPI_WndProc.cpp">
+    <ClCompile Include="Hooks\WINAPI_WndProc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SDK\Interfaces\IInputSystem.h">
@@ -126,19 +123,13 @@
     <ClCompile Include="Features\PlayerArrows\PlayerArrows.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Definitions\ClientModeShared_OverrideView.cpp">
+    <ClCompile Include="Hooks\ClientModeShared_OverrideView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Features\Visual\Visual.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\Definitions\ClientModeShared_GetViewmodelFOV.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Hooks\Definitions\ClientModeShared_DoPostScreenSpaceEffects.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Hooks\Definitions\ModelRender_DrawModelExecute.cpp">
+    <ClCompile Include="Hooks\ClientModeShared_GetViewmodelFOV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SDK\Interfaces\IHudChat.h">
@@ -148,6 +139,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Features\Players\Players.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Hook\HooksUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -180,9 +174,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\VFunc\VFunc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Util\Hook\Hook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\Hook\MinHook\hde\hde32.h">
@@ -222,9 +213,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SDK\Includes\color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Hooks\Hooks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SDK\Includes\isurface.h">
@@ -425,7 +413,7 @@
     <ClInclude Include="Util\Icons.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hooks\Definitions\WINAPI_WndProc.h">
+    <ClInclude Include="Hooks\WINAPI_WndProc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\Color\Color.h">
@@ -459,6 +447,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Features\Players\Players.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Hook\HooksUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Assert\Assert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

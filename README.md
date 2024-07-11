@@ -57,13 +57,13 @@ Free open-source Windows cheat software for **Counter-Strike Source** game. Desi
 
 ### Downloading the DLL
 
-If you haven't already, download the DLL by clicking [here](https://github.com/Viceroyy/Arsenal/releases/download/v1.0.0/Arsenal-Release.dll)
+If you haven't already, download the DLL by clicking [here](https://github.com/Viceroyy/Arsenal/releases/download/v1.0.0/Arsenal-Release.dll). Download size ~600 kB.
 
 ### Loading / Injecting into game process
 
 Open your favorite [DLL injector](https://en.wikipedia.org/wiki/DLL_injection) and just inject `Arsenal-Release.dll` into `hl2.exe` process.
 
-When injected, menu is openable under `INSERT` key.
+When injected, menu is openable with the <kbd>INSERT</kbd> key. To unload the DLL from the game, press the <kbd>F11</kbd> key.
 
 ### Compiling from source
 
@@ -98,10 +98,10 @@ Then change build configuration to `Release | x86` and simply press **Build solu
 
 If everything went right you should receive `Arsenal-Release.dll`  binary file.
 
-</details>
-
 ### Instruction sets
 If your CPU doesn't support the AVX2 instruction set, you can use SSE2 instructions instead in project settings. Currently AVX2 instructions are selected in project settings.
+
+</details>
 
 ## FAQ
 

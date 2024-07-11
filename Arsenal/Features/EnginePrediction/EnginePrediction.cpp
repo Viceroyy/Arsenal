@@ -1,13 +1,8 @@
 #include "EnginePrediction.h"
 
-void CFeatures_EnginePrediction::Start(CUserCmd* cmd)
+void CFeatures_EnginePrediction::Start(C_CSPlayer* pLocal, CUserCmd* cmd)
 {
-	if (!I::MoveHelper)
-		return;
-
-	C_CSPlayer* pLocal = Util::CSPlayerByIndex(g_Globals.m_nLocalIndex);
-
-	if (!pLocal)
+	if (!pLocal || pLocal->deadflag() || !I::MoveHelper)
 		return;
 
 	cmd->random_seed = (MD5_PseudoRandom(cmd->command_number) & INT_MAX);
@@ -65,14 +60,9 @@ void CFeatures_EnginePrediction::Start(CUserCmd* cmd)
 	I::ClientPrediction->m_bFirstTimePredicted = bOldIsFirstPrediction;
 }
 
-void CFeatures_EnginePrediction::Finish()
+void CFeatures_EnginePrediction::Finish(C_CSPlayer* pLocal, CUserCmd* cmd)
 {
-	if (!I::MoveHelper)
-		return;
-
-	C_CSPlayer* pLocal = Util::CSPlayerByIndex(g_Globals.m_nLocalIndex);
-
-	if (!pLocal)
+	if (!pLocal || pLocal->deadflag())
 		return;
 
 	I::GameMovement->FinishTrackPredictionErrors(pLocal);

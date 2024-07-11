@@ -3,10 +3,7 @@
 
 void CFeatures_Misc::Run(C_CSPlayer* pLocal, CUserCmd* cmd)
 {
-	if (!pLocal || pLocal->deadflag()) //|| pLocal->IsSwimming())
-		return;
-
-	if (pLocal->m_MoveType() == MOVETYPE_NOCLIP || pLocal->m_MoveType() == MOVETYPE_LADDER || pLocal->m_MoveType() == MOVETYPE_OBSERVER)
+	if (!pLocal || pLocal->deadflag() || pLocal->m_MoveType() != MOVETYPE_WALK) //|| pLocal->IsSwimming()) TODO: fix swimming
 		return;
 
 	Bunnyhop(pLocal, cmd);

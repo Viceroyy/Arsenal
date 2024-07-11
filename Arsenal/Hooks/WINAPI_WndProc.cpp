@@ -2,7 +2,7 @@
 #include "../../SDK/Input/Input.h"
 #include "../../Features/Menu/Menu.h"
 
-LONG __stdcall WINAPI_HOOK::WINAPI_WndProc::Func(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LONG __stdcall WndProcHook::Func(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (F::Menu.IsOpen() && H::Input.IsGameFocused())
 	{
@@ -17,7 +17,12 @@ LONG __stdcall WINAPI_HOOK::WINAPI_WndProc::Func(HWND hWnd, UINT uMsg, WPARAM wP
 	return CallWindowProc(Original, hWnd, uMsg, wParam, lParam);
 }
 
-void WINAPI_HOOK::WINAPI_WndProc::Init()
+void WndProcHook::Init()
 {
-	Original = (WNDPROC)SetWindowLongPtr(hwWindow = FindWindowA("Valve001", NULL), GWL_WNDPROC, (LONG_PTR)Func);
+	Original = (WNDPROC)SetWindowLongPtr(hwWindow = FindWindowA("Valve001", NULL), GWLP_WNDPROC, (LONG_PTR)Func);
+}
+
+void WndProcHook::Uninit()
+{
+	SetWindowLongPtr(hwWindow, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(Original));
 }

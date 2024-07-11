@@ -1,5 +1,5 @@
 #pragma once
-
+#include "../Assert/Assert.h"
 #include "../Math/Math.h"
 
 class CUtil_Pattern

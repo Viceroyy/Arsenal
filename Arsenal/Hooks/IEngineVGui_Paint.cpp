@@ -1,4 +1,4 @@
-#include "../Hooks.h"
+#include "../SDK/SDK.h"
 
 #include "../../Features/ESP/ESP.h"
 #include "../../Features/Menu/Menu.h"
@@ -7,9 +7,9 @@
 #include "../../Features/Visual/Visual.h"
 #include "../../Features/SpectatorList/SpectatorList.h"
 
-DEFINE_HOOK(IEngineVGui_Paint, void, __fastcall, void* ecx, void* edx, int mode)
+MAKE_HOOK(IEngineVGui_Paint, U::VFunc.Get<void*>(I::EngineVGui, 13u), void, __fastcall, void* ecx, void* edx, int mode)
 {
-	Func.Original<FN>()(ecx, edx, mode);
+	CALL_ORIGINAL(ecx, edx, mode);
 
 	if (mode & PAINT_UIPANELS)
 	{

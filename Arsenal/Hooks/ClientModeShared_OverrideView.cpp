@@ -1,8 +1,8 @@
-#include "../Hooks.h"
+#include "../SDK/SDK.h"
 
-DEFINE_HOOK(ClientModeShared_OverrideView, void, __fastcall, void* _this, void* _edx, CViewSetup* pSetup)
+MAKE_HOOK(ClientModeShared_OverrideView, U::VFunc.Get<void*>(I::ClientMode, 16u), void, __fastcall, void* _this, void* _edx, CViewSetup* pSetup)
 {
-	Func.Original<FN>()(_this, _edx, pSetup);
+	CALL_ORIGINAL(_this, _edx, pSetup);
 	if (CFG::Visual_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
 		return;
 

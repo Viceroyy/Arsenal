@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Hook/Hook.h"
+#include "../Hook/HooksUtil.h"
 
 class CUtil_VFunc
 {

@@ -55,12 +55,8 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 		if (CFG::ESP_Players_Box)
 		{
 			H::Draw.OutlinedRect(x, y, w, h, clrTeam);
-
-			//Outline
-			H::Draw.OutlinedRect(x - 1, y - 1, w + 2, h + 2, COLOR_BLACK);
-
-			//Inline
-			H::Draw.OutlinedRect(x + 1, y + 1, w - 2, h - 2, COLOR_BLACK);
+			H::Draw.OutlinedRect(x - 1, y - 1, w + 2, h + 2, COLOR_BLACK); // Outline
+			H::Draw.OutlinedRect(x + 1, y + 1, w - 2, h - 2, COLOR_BLACK); // Inline
 		}
 
 		if (CFG::ESP_Players_HealthBar)
@@ -123,7 +119,7 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 		if (CFG::ESP_Players_Name && I::EngineClient->GetPlayerInfo(nIndex, &pi))
 		{
 			tOffset += H::Draw.GetFontHeight(fFont) + 2;
-			H::Draw.String(fFont, x + (w / 2), y - tOffset, COLOR_GREY, ALIGN_TOP, Util::ConvertUtf8ToWide(pi.name).data());
+			H::Draw.String(fFont, x + (w / 2), y - tOffset, COLOR_WHITE, ALIGN_TOP, Util::ConvertUtf8ToWide(pi.name).data());
 		}
 	}
 	
@@ -151,12 +147,8 @@ void CFeatures_ESP::DrawWorld()
 			if (CFG::ESP_World_Box)
 			{
 				H::Draw.OutlinedRect(x, y, w, h, CFG::Colors_PlantedC4);
-
-				//Outline
-				H::Draw.OutlinedRect(x - 1, y - 1, w + 2, h + 2, COLOR_BLACK);
-
-				//Inline
-				H::Draw.OutlinedRect(x + 1, y + 1, w - 2, h - 2, COLOR_BLACK);
+				H::Draw.OutlinedRect(x - 1, y - 1, w + 2, h + 2, COLOR_BLACK); // Outline
+				H::Draw.OutlinedRect(x + 1, y + 1, w - 2, h - 2, COLOR_BLACK); // Inline
 			}
 
 			if (CFG::ESP_World_Name)
@@ -178,13 +170,9 @@ void CFeatures_ESP::DrawWorld()
 
 			if (CFG::ESP_World_Box)
 			{
-				H::Draw.OutlinedRect(x, y, w, h, CFG::Colors_PlantedC4);
-
-				//Outline
-				H::Draw.OutlinedRect(x - 1, y - 1, w + 2, h + 2, COLOR_BLACK);
-
-				//Inline
-				H::Draw.OutlinedRect(x + 1, y + 1, w - 2, h - 2, COLOR_BLACK);
+				H::Draw.OutlinedRect(x, y, w, h, CFG::Colors_DroppedWeapons);
+				H::Draw.OutlinedRect(x - 1, y - 1, w + 2, h + 2, COLOR_BLACK); // Outline
+				H::Draw.OutlinedRect(x + 1, y + 1, w - 2, h - 2, COLOR_BLACK); // Inline
 			}
 
 			if (CFG::ESP_World_Name)
@@ -205,18 +193,22 @@ bool CFeatures_ESP::GetDynamicBounds(C_BaseEntity* pEntity, int& x, int& y, int&
 	if (!pEntity)
 		return false;
 
-	Vector vMins, vMaxs;
-	pEntity->GetRenderBounds(vMins, vMaxs);
+	Vector vMins = pEntity->m_vecMins(), vMaxs = pEntity->m_vecMaxs();
 
 	auto& transform = const_cast<matrix3x4_t&>(pEntity->RenderableToWorldTransform());
-	U::Math.AngleMatrix(pEntity->GetRenderAngles(), transform);
-	U::Math.MatrixSetColumn(pEntity->GetRenderOrigin(), 3, transform);
+	if (pEntity && pEntity->entindex() == I::EngineClient->GetLocalPlayer())
+	{
+		Vector vAngles = I::EngineClient->GetViewAngles();
+		vAngles.x = vAngles.z = 0.f;
+		U::Math.AngleMatrix(vAngles, transform);
+		U::Math.MatrixSetColumn(pEntity->GetAbsOrigin(), 3, transform);
+	}
 
 	float flLeft, flRight, flTop, flBottom;
 	if (!Util::IsOnScreen(pEntity, transform, &flLeft, &flRight, &flTop, &flBottom))
 		return false;
 
-	x = flLeft;
+	x = flLeft + (flRight - flLeft) / 8.f;
 	y = flBottom;
 	w = flRight - flLeft;
 	h = flTop - flBottom;
