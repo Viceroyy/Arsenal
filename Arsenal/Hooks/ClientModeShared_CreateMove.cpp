@@ -1,8 +1,8 @@
 #include "../SDK/SDK.h"
 
-#include "../../Features/EnginePrediction/EnginePrediction.h"
-#include "../../Features/Misc/Misc.h"
-#include "../../Features/NoSpread/NoSpread.h"
+#include "../Features/EnginePrediction/EnginePrediction.h"
+#include "../Features/Misc/Misc.h"
+#include "../Features/NoSpread/NoSpread.h"
 
 MAKE_HOOK(ClientModeShared_CreateMove, U::Offsets.ClientModeShared_CreateMove, bool, __fastcall, void* ecx, void* edx, float input_sample_frametime, CUserCmd* cmd)
 {

@@ -317,9 +317,6 @@
     <ClInclude Include="SDK\Includes\inetchannel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\Globals\Globals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SDK\Entities\C_BaseAnimating.h">
       <Filter>Header Files</Filter>
     </ClInclude>

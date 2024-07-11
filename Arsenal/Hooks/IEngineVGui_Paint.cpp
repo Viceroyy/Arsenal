@@ -1,11 +1,11 @@
 #include "../SDK/SDK.h"
 
-#include "../../Features/ESP/ESP.h"
-#include "../../Features/Menu/Menu.h"
-#include "../../Features/Notification/Notification.h"
-#include "../../Features/PlayerArrows/PlayerArrows.h"
-#include "../../Features/Visual/Visual.h"
-#include "../../Features/SpectatorList/SpectatorList.h"
+#include "../Features/ESP/ESP.h"
+#include "../Features/Menu/Menu.h"
+#include "../Features/Notification/Notification.h"
+#include "../Features/PlayerArrows/PlayerArrows.h"
+#include "../Features/Visual/Visual.h"
+#include "../Features/SpectatorList/SpectatorList.h"
 
 MAKE_HOOK(IEngineVGui_Paint, U::VFunc.Get<void*>(I::EngineVGui, 13u), void, __fastcall, void* ecx, void* edx, int mode)
 {

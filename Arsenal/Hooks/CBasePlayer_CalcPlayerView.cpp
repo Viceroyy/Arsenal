@@ -1,6 +1,6 @@
 #include "../SDK/SDK.h"
 
-#include "../../Features/CFG.h"
+#include "../Features/CFG.h"
 
 MAKE_HOOK(CBasePlayer_CalcPlayerView, U::Offsets.C_BasePlayer_CalcPlayerView, void, __fastcall, C_BasePlayer* pThis, void* edx, Vector& eyeOrigin, Vector& eyeAngles, float& fov)
 {

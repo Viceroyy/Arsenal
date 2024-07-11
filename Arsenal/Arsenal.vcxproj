@@ -167,7 +167,6 @@
     <ClInclude Include="SDK\Entities\NetVarManager\NetVarManager.h" />
     <ClInclude Include="SDK\Entities\PlayerResource.h" />
     <ClInclude Include="SDK\EntityCacher\EntityCacher.h" />
-    <ClInclude Include="SDK\Globals\Globals.h" />
     <ClInclude Include="SDK\Includes\basehandle.h" />
     <ClInclude Include="SDK\Includes\bitbuf.h" />
     <ClInclude Include="SDK\Includes\checksum_crc.h" />

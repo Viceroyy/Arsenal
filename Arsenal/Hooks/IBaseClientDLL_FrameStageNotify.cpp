@@ -1,5 +1,5 @@
 #include "../SDK/SDK.h"
-#include "../../SDK/Input/Input.h"
+#include "../SDK/Input/Input.h"
 
 MAKE_HOOK(IBaseClientDLL_FrameStageNotify, U::VFunc.Get<void*>(I::BaseClientDLL, 35u), void, __fastcall, void* ecx, void* edx, ClientFrameStage_t curStage)
 {
