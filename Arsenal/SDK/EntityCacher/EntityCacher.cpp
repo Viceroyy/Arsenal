@@ -25,13 +25,44 @@ void CHelpers_EntityCache::Fill()
 	for (int n = 1; n < I::ClientEntityList->GetHighestEntityIndex(); n++)
 	{
 		auto pClientEntity = I::ClientEntityList->GetClientEntity(n);
-		if (!pClientEntity || pClientEntity->IsDormant())
+		if (!pClientEntity)
 			continue;
 
 		auto pEntity = pClientEntity->As<C_BaseEntity>();
 
+		if (pEntity->IsDormant())
+		{
+			if (pEntity->GetClassID() != ECSClientClass::CCSPlayer)
+				continue;
+
+			auto pPlayer = pEntity->As<C_CSPlayer>();
+
+			// Is any dormant data available?
+			if (!G.DormancyMap.contains(n))
+				continue;
+
+			auto& dormantData = G.DormancyMap[n];
+			float lastUpdate = dormantData.LastUpdate;
+
+			if (I::EngineClient->Time() - lastUpdate > 5.f)
+				continue;
+
+			pPlayer->SetAbsOrigin(dormantData.Location);
+			pPlayer->m_vecOrigin() = dormantData.Location;
+
+			pPlayer->m_lifeState() = LIFE_ALIVE;
+			auto playerResource = GetPR();
+			if (playerResource)
+				pPlayer->m_iHealth() = playerResource->GetHealth(n);
+		}
+
 		switch (pEntity->GetClassID())
 		{
+			case ECSClientClass::CCSPlayerResource:
+			{
+				m_pPlayerResource = pEntity->As<C_CSPlayerResource>();
+				break;
+			}
 			case ECSClientClass::CCSPlayer:
 			{
 				m_mGroups[EGroupType::PLAYERS_ALL].push_back(pEntity);
@@ -85,5 +116,6 @@ void CHelpers_EntityCache::Clear()
 	m_pLocal = nullptr;
 	m_pLocalWeapon = nullptr;
 	m_pObservedTarget = nullptr;
+	m_pPlayerResource = nullptr;
 	m_mGroups.clear();
 }

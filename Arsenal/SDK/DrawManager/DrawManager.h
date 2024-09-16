@@ -2,6 +2,7 @@
 
 #include "../Entities/C_CSPlayer.h"
 #include "../../Util/Color/Color.h"
+#include "../Entities/KeyValues.h"
 
 enum EAlign
 {
@@ -19,7 +20,7 @@ enum EAlign
 enum class EFonts {
 	DEBUG,
 	ESP,
-	ESP_SMALL,
+	NAME,
 	MENU,
 	MENU_OTHER,
 	FONT_LAST

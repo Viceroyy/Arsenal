@@ -5,9 +5,11 @@ void CFeatures_EnginePrediction::Start(C_CSPlayer* pLocal, CUserCmd* cmd)
 	if (!pLocal || pLocal->deadflag() || !I::MoveHelper)
 		return;
 
-	cmd->random_seed = (MD5_PseudoRandom(cmd->command_number) & INT_MAX);
+	memset(&m_MoveData, 0, sizeof(CMoveData));
 
-	pLocal->SetCurrentCommand(cmd);
+	cmd->random_seed = MD5_PseudoRandom(cmd->command_number) & std::numeric_limits<int>::max();
+
+	pLocal->m_pCurrentCommand() = cmd;
 	C_BaseEntity::SetPredictionRandomSeed(cmd);
 	C_BaseEntity::SetPredictionPlayer(pLocal);
 
@@ -15,7 +17,6 @@ void CFeatures_EnginePrediction::Start(C_CSPlayer* pLocal, CUserCmd* cmd)
 	m_fOldFrameTime = I::GlobalVars->frametime;
 	m_nOldTickCount = I::GlobalVars->tickcount;
 
-	const int nOldFlags = pLocal->m_fFlags();
 	const int nOldTickBase = pLocal->m_nTickBase();
 	const bool bOldIsFirstPrediction = I::ClientPrediction->m_bFirstTimePredicted;
 	const bool bOldInPrediction = I::ClientPrediction->m_bInPrediction;
@@ -33,7 +34,7 @@ void CFeatures_EnginePrediction::Start(C_CSPlayer* pLocal, CUserCmd* cmd)
 
 	if (cmd->weaponselect != 0)
 	{
-		C_BaseCombatWeapon* pWeapon = Util::EntityByIndex(cmd->weaponselect)->As<C_BaseCombatWeapon>();
+		C_BaseCombatWeapon* pWeapon = dynamic_cast<C_BaseCombatWeapon*>(Util::EntityByIndex(cmd->weaponselect));
 
 		if (pWeapon)
 			pLocal->SelectItem(pWeapon->GetName(), cmd->weaponsubtype);
@@ -49,12 +50,22 @@ void CFeatures_EnginePrediction::Start(C_CSPlayer* pLocal, CUserCmd* cmd)
 
 	I::ClientPrediction->SetLocalViewAngles(cmd->viewangles);
 
+	if (pLocal->PhysicsRunThink())
+		pLocal->PreThink();
+
+	const int thinktick = pLocal->m_nNextThinkTick();
+
+	if (thinktick > 0 && thinktick < nServerTicks)
+	{
+		pLocal->m_nNextThinkTick() = TICK_NEVER_THINK;
+		pLocal->Think();
+	}
+
 	I::ClientPrediction->SetupMove(pLocal, cmd, I::MoveHelper, &m_MoveData);
 	I::GameMovement->ProcessMovement(pLocal, &m_MoveData);
 	I::ClientPrediction->FinishMove(pLocal, cmd, &m_MoveData);
 
 	pLocal->m_nTickBase() = nOldTickBase;
-	pLocal->m_fFlags() = nOldFlags;
 
 	I::ClientPrediction->m_bInPrediction = bOldInPrediction;
 	I::ClientPrediction->m_bFirstTimePredicted = bOldIsFirstPrediction;
@@ -67,18 +78,18 @@ void CFeatures_EnginePrediction::Finish(C_CSPlayer* pLocal, CUserCmd* cmd)
 
 	I::GameMovement->FinishTrackPredictionErrors(pLocal);
 
+	pLocal->m_pCurrentCommand() = NULL;
+	C_BaseEntity::SetPredictionRandomSeed(NULL);
+	C_BaseEntity::SetPredictionPlayer(NULL);
+
 	I::GlobalVars->curtime = m_fOldCurrentTime;
 	I::GlobalVars->frametime = m_fOldFrameTime;
 	I::GlobalVars->tickcount = m_nOldTickCount;
-
-	pLocal->SetCurrentCommand(nullptr);
-	C_BaseEntity::SetPredictionRandomSeed(nullptr);
-	C_BaseEntity::SetPredictionPlayer(nullptr);
 }
 
 int CFeatures_EnginePrediction::GetTickbase(C_CSPlayer* pLocal, CUserCmd* cmd)
 {
-	static int       s_nTick = 0;
+	static int s_nTick = 0;
 	static CUserCmd* s_pLastCmd = nullptr;
 
 	if (cmd)

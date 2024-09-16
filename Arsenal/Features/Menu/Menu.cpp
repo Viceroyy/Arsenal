@@ -4,6 +4,7 @@
 #include "../../SDK/Input/Input.h"
 #include "../CFG.h"
 #include "../Notification/Notification.h"
+#include "../Backtrack/Backtrack.h"
 
 #define multiselect(label, unique, ...) static std::vector<std::pair<const char *, bool &>> unique##multiselect = __VA_ARGS__; \
 SelectMulti(label, unique##multiselect)
@@ -1138,7 +1139,7 @@ void CFeatures_Menu::MainWindow()
 
 	if (MainTab == EMainTabs::VISUALS)
 	{
-		enum class EVisualsTabs { ESP, OTHER, COLORS };
+		enum class EVisualsTabs { ESP, MATERIALS, OUTLINES, OTHER, COLORS };
 		static EVisualsTabs VisualsTab = EVisualsTabs::ESP;
 
 		int anchor_x = m_nCursorX;
@@ -1146,6 +1147,18 @@ void CFeatures_Menu::MainWindow()
 
 		if (Button("ESP", VisualsTab == EVisualsTabs::ESP))
 			VisualsTab = EVisualsTabs::ESP;
+
+		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
+		m_nCursorY = anchor_y;
+
+		if (Button("Materials", VisualsTab == EVisualsTabs::MATERIALS))
+			VisualsTab = EVisualsTabs::MATERIALS;
+
+		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
+		m_nCursorY = anchor_y;
+
+		if (Button("Outlines", VisualsTab == EVisualsTabs::OUTLINES))
+			VisualsTab = EVisualsTabs::OUTLINES;
 
 		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 		m_nCursorY = anchor_y;
@@ -1181,15 +1194,31 @@ void CFeatures_Menu::MainWindow()
 			}
 			GroupBoxEnd();
 
+			GroupBoxStart("World", 150);
+			{
+				CheckBox("Active", CFG::ESP_World_Enabled);
+
+				multiselect("Ignore", WorldIgnore, {
+					{ "Planted C4", CFG::ESP_World_Ignore_PlantedC4 },
+					{ "Dropped Weapons", CFG::ESP_World_Ignore_DroppedWeapons }
+					});
+
+				multiselect("Draw", WorldDraw, {
+					{ "Name", CFG::ESP_World_Name },
+					{ "Box", CFG::ESP_World_Box }
+					});
+			}
+			GroupBoxEnd();
+
 			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
 			m_nCursorY = anchor_y;
 
 			GroupBoxStart("Players", 150);
 			{
 				CheckBox("Active", CFG::ESP_Players_Enabled);
-				CheckBox("Out of FOV Arrows", CFG::Visual_PlayerArrows_Enabled);
-				SliderInt("Arrow Max Distance", CFG::Visual_PlayerArrows_Offset, 0, 500, 25);
-				SliderFloat("Arrow Max Distance", CFG::Visual_PlayerArrows_MaxDist, 0.0f, 5000.0f, 50.0f, "%.0f");
+				CheckBox("Out of FOV Arrows", CFG::Visuals_PlayerArrows_Enabled);
+				SliderInt("Arrow Offset", CFG::Visuals_PlayerArrows_Offset, 0, 500, 25);
+				SliderFloat("Arrow Max Distance", CFG::Visuals_PlayerArrows_MaxDist, 0.0f, 5000.0f, 50.0f, "%.0f");
 
 				multiselect("Ignore", PlayerIgnore, {
 					{ "Local", CFG::ESP_Players_Ignore_Local },
@@ -1207,22 +1236,126 @@ void CFeatures_Menu::MainWindow()
 					});
 			}
 			GroupBoxEnd();
+		}
+
+		if (VisualsTab == EVisualsTabs::MATERIALS)
+		{
+			anchor_x = m_nCursorX;
+			anchor_y = m_nCursorY;
+
+			GroupBoxStart("Global", 150);
+			{
+				CheckBox("Active", CFG::Materials_Active);
+			}
+			GroupBoxEnd();
+
+			GroupBoxStart("World", 150);
+			{
+				CheckBox("Active", CFG::Materials_World_Active);
+				CheckBox("No Depth", CFG::Materials_World_No_Depth);
+				SliderFloat("Alpha", CFG::Materials_World_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
+
+				SelectSingle("Material", CFG::Materials_World_Material, {
+					{ "Original", 0 },
+					{ "Flat", 1 },
+					{ "Shaded", 2 },
+					{ "Glossy", 3 },
+					{ "Glow", 4 },
+					{ "Plastic", 5 }
+					});
+
+				multiselect("Ignore", WorldIgnore, {
+					{ "Planted C4", CFG::Materials_World_Ignore_PlantedC4 },
+					{ "Dropped Weapons", CFG::Materials_World_Ignore_DroppedWeapons }
+					/*{ "Local Projectiles", CFG::Materials_World_Ignore_LocalProjectiles },
+					{ "Enemy Projectiles", CFG::Materials_World_Ignore_EnemyProjectiles },
+					{ "Teammate Projectiles", CFG::Materials_World_Ignore_TeammateProjectiles }*/
+					});
+			}
+			GroupBoxEnd();
 
 			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
 			m_nCursorY = anchor_y;
 
-			GroupBoxStart("World", 150);
+			GroupBoxStart("Players", 150);
 			{
-				CheckBox("Active", CFG::ESP_World_Enabled);
+				CheckBox("Active", CFG::Materials_Players_Active);
+				CheckBox("No Depth", CFG::Materials_Players_No_Depth);
+				SliderFloat("Alpha", CFG::Materials_Players_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
 
-				multiselect("Ignore", WorldIgnore, {
-					{ "Planted C4", CFG::ESP_World_Ignore_PlantedC4 },
-					{ "Dropped Weapons", CFG::ESP_World_Ignore_DroppedWeapons }
+				SelectSingle("Material", CFG::Materials_Players_Material, {
+					{ "Original", 0 },
+					{ "Flat", 1 },
+					{ "Shaded", 2 },
+					{ "Glossy", 3 },
+					{ "Glow", 4 },
+					{ "Plastic", 5 }
 					});
 
-				multiselect("Draw", WorldDraw, {
-					{ "Name", CFG::ESP_World_Name },
-					{ "Box", CFG::ESP_World_Box }
+				SelectSingle("Lag Records Style", CFG::Materials_Players_LagRecords_Style, {
+					{ "All", 0 },
+					{ "Last Only", 1 }
+					});
+
+				multiselect("Ignore", PlayerIgnore, {
+					{ "Local", CFG::Materials_Players_Ignore_Local },
+					{ "Friends", CFG::Materials_Players_Ignore_Friends },
+					{ "Enemies", CFG::Materials_Players_Ignore_Enemies },
+					{ "Teammates", CFG::Materials_Players_Ignore_Teammates },
+					{ "Lag Records", CFG::Materials_Players_Ignore_LagRecords }
+					});
+			}
+			GroupBoxEnd();
+		}
+
+		if (VisualsTab == EVisualsTabs::OUTLINES)
+		{
+			anchor_x = m_nCursorX;
+			anchor_y = m_nCursorY;
+
+			GroupBoxStart("Global", 150);
+			{
+				CheckBox("Active", CFG::Outlines_Active);
+
+				SelectSingle("Style", CFG::Outlines_Style, {
+					{ "Bloom", 0 },
+					{ "Crisp", 1 },
+					{ "Cartoony", 2 },
+					{ "Cartoony Alt", 3 }
+					});
+
+				SliderInt("Bloom Amount", CFG::Outlines_Bloom_Amount, 1, 10, 1);
+			}
+			GroupBoxEnd();
+
+			GroupBoxStart("World", 150);
+			{
+				CheckBox("Active", CFG::Outlines_World_Active);
+				SliderFloat("Alpha", CFG::Outlines_World_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
+
+				multiselect("Ignore", WorldIgnore, {
+					{ "Planted C4", CFG::Outlines_World_Ignore_PlantedC4 },
+					{ "Dropped Weapons", CFG::Outlines_World_Ignore_DroppedWeapons }
+					/*{ "Local Projectiles", CFG::Outlines_World_Ignore_LocalProjectiles },
+					{ "Enemy Projectiles", CFG::Outlines_World_Ignore_EnemyProjectiles },
+					{ "Teammate Projectiles", CFG::Outlines_World_Ignore_TeammateProjectiles }*/
+					});
+			}
+			GroupBoxEnd();
+
+			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
+			m_nCursorY = anchor_y;
+
+			GroupBoxStart("Players", 150);
+			{
+				CheckBox("Active", CFG::Outlines_Players_Active);
+				SliderFloat("Alpha", CFG::Outlines_Players_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
+
+				multiselect("Ignore", PlayerIgnore, {
+					{ "Local", CFG::Outlines_Players_Ignore_Local },
+					{ "Friends", CFG::Outlines_Players_Ignore_Friends },
+					{ "Enemies", CFG::Outlines_Players_Ignore_Enemies },
+					{ "Teammates", CFG::Outlines_Players_Ignore_Teammates }
 					});
 			}
 			GroupBoxEnd();
@@ -1235,18 +1368,78 @@ void CFeatures_Menu::MainWindow()
 
 			GroupBoxStart("Local", 150);
 			{
-				CheckBox("Clear Screenshots", CFG::Visual_ClearScreenshots);
-				CheckBox("Draw Crosshair", CFG::Visual_DrawCrosshair);
-				CheckBox("Show Spread", CFG::Visual_DrawSpread);
-				CheckBox("Show Spectators", CFG::Visual_SpectatorList);
-				SliderInt("FOV", CFG::Visual_FOV, 90, 120, 1);
-				SliderInt("Viewmodel FOV", CFG::Visual_ViewmodelFOV, 70, 120, 1);
+				CheckBox("Clear Screenshots", CFG::Visuals_ClearScreenshots);
+				CheckBox("Draw Crosshair On Snipers", CFG::Visuals_DrawCrosshairOnSnipers);
+				CheckBox("Show Spread", CFG::Visuals_DrawSpread);
+				CheckBox("Low Graphics", CFG::Visuals_LowGraphics);
+				SliderInt("FOV", CFG::Visuals_FOV, 90, 120, 1);
+				SliderInt("Viewmodel FOV", CFG::Visuals_ViewmodelFOV, 70, 120, 1);
 
 				multiselect("Removals", LocalRemovals, {
-					{ "Viewmodel Recoil", CFG::Visual_NoRecoil },
+					{ "Interpolation", CFG::Visuals_NoInterpolation },
+					{ "DSP", CFG::Visuals_NoDSP },
+					{ "Post Processing", CFG::Visuals_NoPostProcessing },
+					{ "Ragdolls", CFG::Visuals_NoRagdolls },
+					{ "Angle Forcing", CFG::Visuals_NoForcedAngles },
+					{ "Convar Queries", CFG::Visuals_NoConvarQueries },
+					{ "Screen Effects", CFG::Visuals_NoScreenEffects },
+					{ "MOTD", CFG::Visuals_NoMOTD },
+					{ "Viewmodel Recoil", CFG::Visuals_NoRecoil },
 					{ "Recoil", CFG::Misc_NoRecoil },
 					{ "Spread", CFG::Misc_NoSpread }
 				});
+			}
+			GroupBoxEnd();
+
+			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
+			m_nCursorY = anchor_y;
+
+			GroupBoxStart("Thirdperson", 150);
+			{
+				CheckBox("Active", CFG::Visuals_Thirdperson_Active);
+				InputKey("Toggle Key", CFG::Visuals_Thirdperson_Key);
+				CheckBox("Show On Crosshair", CFG::Visuals_Thirdperson_Crosshair);
+				SliderFloat("Offset Forward", CFG::Visuals_Thirdperson_Offset_Forward, 100.0f, 300.0f, 1.0f, "%.0f");
+				SliderFloat("Offset Right", CFG::Visuals_Thirdperson_Offset_Right, -50.0f, 50.0f, 1.0f, "%.0f");
+				SliderFloat("Offset Up", CFG::Visuals_Thirdperson_Offset_Up, -50.0f, 50.0f, 1.0f, "%.0f");
+			}
+			GroupBoxEnd();
+
+			GroupBoxStart("Viewmodel", 150);
+			{
+				SliderInt("Offset Forward", CFG::Visuals_Viewmodel_OffsetY, -45, 45, 5);
+				SliderInt("Offset Right", CFG::Visuals_Viewmodel_OffsetX, -45, 45, 5);
+				SliderInt("Offset Up", CFG::Visuals_Viewmodel_OffsetZ, -45, 45, 5);
+				SliderInt("Roll", CFG::Visuals_Viewmodel_Roll, -180, 180, 5);
+			}
+			GroupBoxEnd();
+
+			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
+			m_nCursorY = anchor_y;
+
+			GroupBoxStart("World", 150);
+			{
+				CheckBox("Disable Fog", CFG::Visuals_Remove_Fog);
+				CheckBox("Disable Sky Fog", CFG::Visuals_Remove_Sky_Fog);
+				CheckBox("Distance Prop Alpha", CFG::Visuals_Distance_Prop_Alpha);
+				CheckBox("Don't Modulate Sky", CFG::Visuals_World_Modulation_No_Sky_Change);
+
+				SelectSingle("World Modulation Mode", CFG::Visuals_World_Modulation_Mode,
+					{
+						{ "Night Mode", 0 },
+						{ "Custom Color", 1 }
+					});
+
+				SliderFloat("Night Mode", CFG::Visuals_Night_Mode, 0.0f, 100.0f, 1.0f, "%.0f");
+			}
+			GroupBoxEnd();
+
+			GroupBoxStart("Spectator List", 150);
+			{
+				CheckBox("Active", CFG::Visuals_SpectatorList_Active);
+				SliderFloat("Outline Alpha", CFG::Visuals_SpectatorList_Outline_Alpha, 0.1f, 1.0f, 0.1f, "%.1f");
+				SliderFloat("Background Alpha", CFG::Visuals_SpectatorList_Background_Alpha, 0.1f, 1.0f, 0.1f, "%.1f");
+				SliderInt("Width", CFG::Visuals_SpectatorList_Width, 200, 1000, 1);
 			}
 			GroupBoxEnd();
 		}
@@ -1294,12 +1487,36 @@ void CFeatures_Menu::MainWindow()
 		int anchor_x = m_nCursorX;
 		int anchor_y = m_nCursorY;
 
-		GroupBoxStart("Misc", 160);
+		GroupBoxStart("Misc", 150);
 		{
 			CheckBox("Bunnyhop", CFG::Misc_Bunnyhop);
 			CheckBox("AutoStrafe", CFG::Misc_AutoStrafe);
 		}
 		GroupBoxEnd();
+
+		GroupBoxStart("Sequence Freeze", 150);
+		{
+			CheckBox("Active", CFG::Misc_SequenceFreeze_Active);
+			InputKey("Toggle Key", CFG::Misc_SequenceFreeze_Key);
+			SliderInt("Value", CFG::Misc_SequenceFreeze_Value, 1, 55, 1);
+		}
+		GroupBoxEnd();
+
+		/*m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
+		m_nCursorY = anchor_y;
+
+		GroupBoxStart("Backtrack", 150);
+		{
+			CheckBox("Prefer On Shot", CFG::Misc_Backtrack_PreferOnShot);
+			SelectSingle("Latency Mode", CFG::Misc_Backtrack_LatencyMode,
+				{
+					{ "Off", 0 },
+					{ "Optimized", 1 },
+					{ "Value", 2 }
+				});
+			SliderInt("Latency Amount", CFG::Misc_Backtrack_Latency, 0, F::Backtrack.flMaxUnlag * 1000, 5);
+		}
+		GroupBoxEnd();*/
 	}
 
 	if (MainTab == EMainTabs::PLAYERS)
@@ -1656,7 +1873,7 @@ Color_t HSLToRGB(float h, float s, float l)
 
 void CFeatures_Menu::Run()
 {
-	if (CFG::Visual_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
+	if (CFG::Visuals_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
 	{
 		return;
 	}

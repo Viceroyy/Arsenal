@@ -33,9 +33,9 @@ void CFeatures_PlayerArrows::DrawArrowTo(const Vector& vecFromPos, const Vector&
 		return;
 
 	Vector2D
-		p1 = { static_cast<float>(-CFG::Visual_PlayerArrows_Offset), 12.5f },
-		p2 = { static_cast<float>(-CFG::Visual_PlayerArrows_Offset), -12.5f },
-		p3 = { static_cast<float>(-CFG::Visual_PlayerArrows_Offset) - 25.f * sqrt(3.f) / 2.f, 0.f };
+		p1 = { static_cast<float>(-CFG::Visuals_PlayerArrows_Offset), 12.5f },
+		p2 = { static_cast<float>(-CFG::Visuals_PlayerArrows_Offset), -12.5f },
+		p3 = { static_cast<float>(-CFG::Visuals_PlayerArrows_Offset) - 25.f * sqrt(3.f) / 2.f, 0.f };
 
 	auto angle = Vector();
 	U::Math.VectorAngles(Vector(cx - vScreenPos.x, cy - vScreenPos.y, 0), angle);
@@ -53,7 +53,7 @@ void CFeatures_PlayerArrows::DrawArrowTo(const Vector& vecFromPos, const Vector&
 
 void CFeatures_PlayerArrows::Run()
 {
-	if (!CFG::Visual_PlayerArrows_Enabled || I::EngineVGui->IsGameUIVisible())
+	if (!CFG::Visuals_PlayerArrows_Enabled || I::EngineVGui->IsGameUIVisible())
 		return;
 
 	auto pLocal = H::EntityCache.GetLocal();
@@ -85,7 +85,7 @@ void CFeatures_PlayerArrows::Run()
 			{
 				return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 			};
-		const float fMap = std::clamp(MapFloat(vLocalPos.DistTo(vEnemyPos), CFG::Visual_PlayerArrows_MaxDist, CFG::Visual_PlayerArrows_MaxDist * 0.9f, 0.0f, 1.0f), 0.0f, 1.0f);
+		const float fMap = std::clamp(MapFloat(vLocalPos.DistTo(vEnemyPos), CFG::Visuals_PlayerArrows_MaxDist, CFG::Visuals_PlayerArrows_MaxDist * 0.9f, 0.0f, 1.0f), 0.0f, 1.0f);
 		color.a = static_cast<byte>(fMap * 255.f);
 
 		DrawArrowTo(vLocalPos, vEnemyPos, color);

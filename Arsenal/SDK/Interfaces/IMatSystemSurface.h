@@ -14,6 +14,10 @@
 #endif
 
 #include "IEngineTrace.h"
+#include "../../Util/Signatures/Signatures.h"
+
+MAKE_SIGNATURE(StartDrawing, "vguimatsurface.dll", "55 8B EC 64 A1 ? ? ? ? 6A FF 68 ? ? ? ? 50 64 89 25 ? ? ? ? 83 EC 14", 0x0);
+MAKE_SIGNATURE(FinishDrawing, "vguimatsurface.dll", "55 8B EC 6A FF 68 ? ? ? ? 64 A1 ? ? ? ? 50 64 89 25 ? ? ? ? 51 56 6A 00", 0x0);
 
 class VMatrix;
 class IMaterial;
@@ -54,12 +58,12 @@ public:
 
 	inline void StartDrawing()
 	{
-		reinterpret_cast<void(__thiscall*)(void*)>(U::Offsets.StartDrawing)(this);
+		reinterpret_cast<void(__thiscall*)(void*)>(S::StartDrawing())(this);
 	}
 
 	inline void FinishDrawing()
 	{
-		reinterpret_cast<void(__thiscall*)(void*)>(U::Offsets.FinishDrawing)(this);
+		reinterpret_cast<void(__thiscall*)(void*)>(S::FinishDrawing())(this);
 	}
 };
 

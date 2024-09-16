@@ -9,7 +9,7 @@ void CHelpers_DrawManager::Initialize()
 	m_Fonts[EFonts::MENU] = { "Verdana", 12, FW_DONTCARE, EFontFlags::FONTFLAG_ANTIALIAS };
 	m_Fonts[EFonts::MENU_OTHER] = { "Verdana", 12, FW_DONTCARE, EFontFlags::FONTFLAG_OUTLINE };
 	m_Fonts[EFonts::ESP] = { "Verdana", 12, FW_DONTCARE, EFontFlags::FONTFLAG_OUTLINE };
-	m_Fonts[EFonts::ESP_SMALL] = { "Small Fonts", 11, FW_DONTCARE, EFontFlags::FONTFLAG_OUTLINE };
+	m_Fonts[EFonts::NAME] = { "Verdana", 12, FW_BOLD, EFontFlags::FONTFLAG_DROPSHADOW };
 
 	for (std::pair<const EFonts, CFont>& f : m_Fonts)
 		I::MatSystemSurface->SetFontGlyphSet
@@ -22,8 +22,6 @@ void CHelpers_DrawManager::Initialize()
 			0,
 			f.second.m_nFlags
 		);
-
-	I::Cvar->ConsoleColorPrintf({ 15, 150, 15, 255 }, "[Arsenal] DrawManager Initialized!\n");
 }
 
 const CHelpers_DrawManager::CFont& CHelpers_DrawManager::Get(EFonts eFont)
@@ -34,8 +32,6 @@ const CHelpers_DrawManager::CFont& CHelpers_DrawManager::Get(EFonts eFont)
 void CHelpers_DrawManager::Uninitialize()
 {
 	m_Fonts.clear();
-
-	I::Cvar->ConsoleColorPrintf({ 220, 20, 60, 255 }, "[Arsenal] DrawManager Uninitialized!\n");
 }
 
 void CHelpers_DrawManager::UpdateMatrix()

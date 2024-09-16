@@ -99,162 +99,138 @@ public:
 	CThirdPersonManager() {}
 	virtual void	SetCameraOffsetAngles(const Vector& vecOffset) = 0;
 	virtual const Vector& GetCameraOffsetAngles(void) const = 0;
-
 	virtual void	SetDesiredCameraOffset(const Vector& vecOffset) = 0;
 	virtual const Vector& GetDesiredCameraOffset(void) const = 0;
-
 	virtual Vector	GetFinalCameraOffset(void) = 0;
-
 	virtual void	SetCameraOrigin(const Vector& vecOffset) = 0;
 	virtual const Vector& GetCameraOrigin(void) const = 0;
-
 	virtual void	Update(void) = 0;
-
 	virtual void	PositionCamera(C_BaseEntity* pPlayer, const Vector& angles) = 0;
-
 	virtual void	UseCameraOffsets(bool bUse) = 0;
 	virtual bool	UsingCameraOffsets(void) = 0;
-
 	virtual const Vector& GetCameraViewAngles(void) const = 0;
-
 	virtual Vector	GetDistanceFraction(void) = 0;
-
 	virtual bool	WantToUseGameThirdPerson(void) = 0;
-
 	virtual void	SetOverridingThirdPerson(bool bOverride) = 0;
 	virtual bool	IsOverridingThirdPerson(void) = 0;
-
 	virtual void	Init(void) = 0;
-
 	virtual void	SetForcedThirdPerson(bool bForced) = 0;
 	virtual bool	GetForcedThirdPerson() const = 0;
 public:
-	// What is the current camera offset from the view origin?
 	Vector		m_vecCameraOffset;
-	// Distances from the center
 	Vector		m_vecDesiredCameraOffset;
-
 	Vector m_vecCameraOrigin;
-
 	bool	m_bUseCameraOffsets;
-
 	Vector	m_ViewAngles;
-
 	float	m_flFraction;
 	float	m_flUpFraction;
-
 	float	m_flTargetFraction;
 	float	m_flTargetUpFraction;
-
 	bool	m_bOverrideThirdPerson;
-
 	bool	m_bForced;
-
 	float	m_flUpOffset;
-
 	float	m_flLerpTime;
 	float	m_flUpLerpTime;
 };
 
-class CInput {
+enum GameActionSetFlags_t
+{
+	GAME_ACTION_SET_FLAGS_NONE = 0,
+	GAME_ACTION_SET_FLAGS_TAUNTING = (1 << 0)
+};
+
+class CInput
+{
 public:
-	virtual void  Init_All(void) = 0;
-	virtual void  Shutdown_All(void) = 0;
-	virtual int   GetButtonBits(int) = 0;
-	virtual void  CreateMove(int sequence_number, float input_sample_frametime, bool active) = 0;
-	virtual void  ExtraMouseSample(float frametime, bool active) = 0;
-	virtual bool  WriteUsercmdDeltaToBuffer(bf_write* buf, int from, int to, bool isnewcommand) = 0;
-	virtual void  EncodeUserCmdToBuffer(bf_write& buf, int slot) = 0;
-	virtual void  DecodeUserCmdFromBuffer(bf_read& buf, int slot) = 0;
+	virtual	void Init_All(void) = 0;
+	virtual void Shutdown_All(void) = 0;
+	virtual int GetButtonBits(int) = 0;
+	virtual void CreateMove(int sequence_number, float input_sample_frametime, bool active) = 0;
+	virtual void ExtraMouseSample(float frametime, bool active) = 0;
+	virtual bool WriteUsercmdDeltaToBuffer(bf_write* buf, int from, int to, bool isnewcommand) = 0;
+	virtual void EncodeUserCmdToBuffer(bf_write& buf, int slot) = 0;
+	virtual void DecodeUserCmdFromBuffer(bf_read& buf, int slot) = 0;
+	virtual CUserCmd* GetUserCmd(int sequence_number) = 0;
+	virtual void MakeWeaponSelection(void* weapon) = 0;
+	virtual float KeyState(kbutton_t* key) = 0;
+	virtual int KeyEvent(int eventcode, ButtonCode_t keynum, const char* pszCurrentBinding) = 0;
+	virtual kbutton_t* FindKey(const char* name) = 0;
+	virtual void ControllerCommands(void) = 0;
+	virtual void Joystick_Advanced(void) = 0;
+	virtual void Joystick_SetSampleTime(float frametime) = 0;
+	virtual void IN_SetSampleTime(float frametime) = 0;
+	virtual void AccumulateMouse(void) = 0;
+	virtual void ActivateMouse(void) = 0;
+	virtual void DeactivateMouse(void) = 0;
+	virtual void ClearStates(void) = 0;
+	virtual float GetLookSpring(void) = 0;
+	virtual void GetFullscreenMousePos(int* mx, int* my, int* unclampedx = 0, int* unclampedy = 0) = 0;
+	virtual void SetFullscreenMousePos(int mx, int my) = 0;
+	virtual void ResetMouse(void) = 0;
+	virtual	float GetLastForwardMove(void) = 0;
+	virtual	float Joystick_GetForward(void) = 0;
+	virtual	float Joystick_GetSide(void) = 0;
+	virtual	float Joystick_GetPitch(void) = 0;
+	virtual	float Joystick_GetYaw(void) = 0;
+	virtual void CAM_Think(void) = 0;
+	virtual int CAM_IsThirdPerson(void) = 0;
+	virtual void CAM_ToThirdPerson(void) = 0;
+	virtual void CAM_ToFirstPerson(void) = 0;
+	virtual void CAM_StartMouseMove(void) = 0;
+	virtual void CAM_EndMouseMove(void) = 0;
+	virtual void CAM_StartDistance(void) = 0;
+	virtual void CAM_EndDistance(void) = 0;
+	virtual int CAM_InterceptingMouse(void) = 0;
+	virtual void CAM_ToOrthographic() = 0;
+	virtual	bool CAM_IsOrthographic() const = 0;
+	virtual	void CAM_OrthographicSize(float& w, float& h) const = 0;
+	virtual void SetPreferredGameActionSet(GameActionSet_t action_set) = 0;
+	virtual GameActionSet_t GetPreferredGameActionSet() = 0;
+	virtual void SetGameActionSetFlags(GameActionSetFlags_t action_set_flags) = 0;
+	virtual void LevelInit(void) = 0;
+	virtual void ClearInputButton(int bits) = 0;
+	virtual	void CAM_SetCameraThirdData(CameraThirdData_t* pCameraData, const Vector& vecCameraOffset) = 0;
+	virtual void CAM_CameraThirdThink(void) = 0;
+	virtual	bool EnableJoystickMode() = 0;
+	virtual bool IsSteamControllerActive() = 0;
 
-
-	CUserCmd* GetUserCmd(int sequence_number)
-	{
-		CUserCmd* usercmd = &m_pCommands[sequence_number % MULTIPLAYER_BACKUP];
-
-		return usercmd;
-	}
-
-	CVerifiedUserCmd* GetVerifiedCmd(int sequence_number)
-	{
-		return &m_pVerifiedCommands[sequence_number % MULTIPLAYER_BACKUP];
-	}
 public:
-
-	// Has the mouse been initialized?
 	bool		m_fMouseInitialized;
-	// Is the mosue active?
 	bool		m_fMouseActive;
-	// Has the joystick advanced initialization been run?
 	bool		m_fJoystickAdvancedInit;
-	// Used to support hotplugging by reinitializing the advanced joystick system when we toggle between some/none joysticks.
 	bool		m_fHadJoysticks;
-
-	// Accumulated mouse deltas
 	float		m_flAccumulatedMouseXMovement;
 	float		m_flAccumulatedMouseYMovement;
 	float		m_flPreviousMouseXPosition;
 	float		m_flPreviousMouseYPosition;
 	float		m_flRemainingJoystickSampleTime;
 	float		m_flKeyboardSampleTime;
-
-	// Flag to restore systemparameters when exiting
 	bool		m_fRestoreSPI;
-	// Original mouse parameters
 	int			m_rgOrigMouseParms[NUM_MOUSE_PARAMS];
-	// Current mouse parameters.
 	int			m_rgNewMouseParms[NUM_MOUSE_PARAMS];
 	bool		m_rgCheckMouseParam[NUM_MOUSE_PARAMS];
-	// Are the parameters valid
 	bool		m_fMouseParmsValid;
-	// Joystick Axis data
 	joy_axis_t m_rgAxes[MAX_JOYSTICK_AXES];
-	// List of queryable keys
 	CKeyboardKey* m_pKeys;
-
-	// Is the 3rd person camera using the mouse?
 	bool		m_fCameraInterceptingMouse;
-	// Are we in 3rd person view?
 	bool		m_fCameraInThirdPerson;
-	// Should we move view along with mouse?
 	bool		m_fCameraMovingWithMouse;
-
-
-	// Is the camera in distance moving mode?
 	bool		m_fCameraDistanceMove;
-	// Old and current mouse position readings.
 	int			m_nCameraOldX;
 	int			m_nCameraOldY;
 	int			m_nCameraX;
 	int			m_nCameraY;
-
-	// orthographic camera settings
 	bool		m_CameraIsOrthographic;
-
 	Vector		m_angPreviousViewAngles;
-
 	float		m_flLastForwardMove;
-
 	float m_flPreviousJoystickForward;
 	float m_flPreviousJoystickSide;
 	float m_flPreviousJoystickPitch;
 	float m_flPreviousJoystickYaw;
-
 	CUserCmd* m_pCommands;
 	CVerifiedUserCmd* m_pVerifiedCommands;
-
 	CameraThirdData_t* m_pCameraThirdData;
-
-	// Set until polled by CreateMove and cleared
 	CHandle<C_BaseCombatWeapon>* m_hSelectedWeapon;
-
-	/*constexpr void ToThirdPerson() noexcept {
-		U::VFunc.Get<void>(this, 32u);
-	}
-
-	constexpr void ToFirstPerson() noexcept {
-		U::VFunc.Get<void>(this, 33u);
-	}*/
 };
 
 namespace I { inline CInput* Input = nullptr; }

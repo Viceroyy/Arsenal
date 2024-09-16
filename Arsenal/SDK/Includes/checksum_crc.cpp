@@ -8,6 +8,7 @@
 
 #define CRC32_INIT_VALUE 0xFFFFFFFFUL
 #define CRC32_XOR_VALUE  0xFFFFFFFFUL
+#define LittleLong( val )( val )
 
 #define NUM_BYTES 256
 static const CRC32_t pulCRCTable[NUM_BYTES] =
@@ -92,6 +93,8 @@ CRC32_t	CRC32_GetTableEntry(unsigned int slot)
 {
     return pulCRCTable[(unsigned char)slot];
 }
+
+#pragma warning (disable : 26819)
 
 void CRC32_ProcessBuffer(CRC32_t* pulCRC, const void* pBuffer, int nBuffer)
 {

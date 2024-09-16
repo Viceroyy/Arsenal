@@ -66,12 +66,6 @@ enum
 	FRUSTUM_NUMPLANES = 6
 };
 
-struct Rect_t
-{
-	int x, y;
-	int width, height;
-};
-
 class VPlane
 {
 public:
@@ -221,6 +215,18 @@ public:
 	virtual void			Push3DView(const CViewSetup& view, int nFlags, ITexture* pRenderTarget, Frustum frustumPlanes, ITexture* pDepthTexture) = 0;
 	virtual void			GetMatricesForView(const CViewSetup& view, VMatrix* pWorldToView, VMatrix* pViewToProjection, VMatrix* pWorldToProjection, VMatrix* pWorldToPixels) = 0;
 	virtual void			DrawBrushModelEx(IClientEntity* baseentity, model_t* model, const Vector& origin, const Vector& angles, DrawBrushModelMode_t mode) = 0;
+
+	void SetColorModulation(float r, float g, float b)
+	{
+		float blend[3] = { r, g, b };
+		SetColorModulation(blend);
+	}
+
+	void SetColorModulation(Color_t clr)
+	{
+		float blend[3] = { clr.r / 255.f, clr.g / 255.f, clr.b / 255.f };
+		SetColorModulation(blend);
+	}
 };
 
 namespace I { inline IVRenderView* RenderView = nullptr; }

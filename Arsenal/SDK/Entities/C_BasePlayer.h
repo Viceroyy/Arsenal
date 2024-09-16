@@ -1,6 +1,9 @@
 #pragma once
 #include "C_BaseCombatCharacter.h"
 
+MAKE_SIGNATURE(C_BasePlayer_UsingStandardWeaponsInVehicle, "client.dll", "56 57 8B F9 8B B7 ? ? ? ? 83 FE FF 74 4D", 0x0);
+MAKE_SIGNATURE(C_BasePlayer_UpdateButtonState, "client.dll", "55 8B EC 8B 81 ? ? ? ? 8B D0", 0x0);
+
 class CSteamID;
 class CUserCmd;
 class IRagdoll;
@@ -141,7 +144,7 @@ public:
 	NETVAR(m_flConstraintWidth, float, "CBasePlayer", "m_flConstraintWidth");
 	NETVAR(m_flConstraintSpeedFactor, float, "CBasePlayer", "m_flConstraintSpeedFactor");
 	NETVAR(m_flDeathTime, float, "CBasePlayer", "m_flDeathTime");
-	NETVAR(m_nWaterLevel, int, "CBasePlayer", "m_nWaterLevel");
+	NETVAR(m_nWaterLevel, byte, "CBasePlayer", "m_nWaterLevel");
 	NETVAR(m_flLaggedMovementValue, float, "CBasePlayer", "m_flLaggedMovementValue");
 	NETVAR(pl, void*, "CBasePlayer", "pl");
 	NETVAR(deadflag, int, "CBasePlayer", "deadflag");
@@ -163,20 +166,20 @@ public:
 	NETVAR(m_hViewModel, EHANDLE, "CBasePlayer", "m_hViewModel[0]");
 	NETVAR(m_szLastPlaceName, const char*, "CBasePlayer", "m_szLastPlaceName");
 
-	inline void SetCurrentCommand(CUserCmd* cmd)
-	{
-		static const int nOffset = (H::NetVar.Get("CBasePlayer", "m_hConstraintEntity") - 0x4);
-		*reinterpret_cast<CUserCmd**>(reinterpret_cast<DWORD>(this) + nOffset) = cmd;
-	}
+	NETVAR_OFF(m_pCurrentCommand, CUserCmd*, "CBasePlayer", "m_hConstraintEntity", -4);
+	NETVAR_OFF(m_nButtons, int, "CBasePlayer", "m_hConstraintEntity", -8);
+	NETVAR_OFF(m_afButtonLast, int, "CBasePlayer", "m_hConstraintEntity", -20);
+
+public:
 
 	inline bool UsingStandardWeaponsInVehicle()
 	{
-		return reinterpret_cast<bool(__thiscall*)(void*)>(U::Offsets.C_BasePlayer_UsingStandardWeaponsInVehicle)(this);
+		return reinterpret_cast<bool(__thiscall*)(void*)>(S::C_BasePlayer_UsingStandardWeaponsInVehicle())(this);
 	}
 
 	inline void UpdateButtonState(int nUserCmdButtonMask)
 	{
-		reinterpret_cast<void(__thiscall*)(void*, int)>(U::Offsets.C_BasePlayer_UpdateButtonState)(this, nUserCmdButtonMask);
+		reinterpret_cast<void(__thiscall*)(void*, int)>(S::C_BasePlayer_UpdateButtonState())(this, nUserCmdButtonMask);
 	}
 
 	inline int& m_nImpulse()
@@ -191,12 +194,22 @@ public:
 
 	bool IsSwimming()
 	{
-		return m_nWaterLevel() > 1;
+		return m_nWaterLevel() > WL_Feet;
 	}
 
 	bool OnSolid()
 	{
 		return m_hGroundEntity() || (m_fFlags() & FL_ONGROUND);
+	}
+
+	Vector GetShootPos()
+	{
+		return (m_vecOrigin() + m_vecViewOffset());
+	}
+
+	Vector GetEyePosition()
+	{
+		return (GetAbsOrigin() + m_vecViewOffset());
 	}
 };
 

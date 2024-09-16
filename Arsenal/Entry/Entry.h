@@ -6,6 +6,8 @@ class CGlobal_Entry
 public:
 	void Load();
 	void Unload();
+
+	bool bUnload = false;
 };
 
-namespace G { inline CGlobal_Entry Entry; }
+namespace U { inline CGlobal_Entry Entry; }

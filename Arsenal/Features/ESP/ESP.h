@@ -8,7 +8,6 @@ public:
 
 private:
 	bool GetDynamicBounds(C_BaseEntity* pEntity, int& x, int& y, int& w, int& h);
-	std::wstring GetWeaponName(int wpnid);
 
 	void DrawPlayers(C_CSPlayer* pLocal);
 	void DrawWorld();

@@ -38,19 +38,12 @@ public:
 	void ClampAngles(Vector& v);
 	void RotateTriangle(Vector2D* v, const float flRotation);
 	void AngleVectors(const Vector& angles, Vector* forward, Vector* right, Vector* up);
-
-	float GetFovBetween(const Vector vSrc, const Vector vDst);
+	float CalcFov(const Vector vSrc, const Vector vDst);
+	Vector CalcAngle(const Vector& source, const Vector& destination, bool clamp = true);
 	float NormalizeAngle(const float ang);
-
-	float clip(float n, float lower, float upper);
-
 	float RemapValClamped(float val, float A, float B, float C, float D);
-
-	Vector GetAngleToPosition(const Vector vFrom, const Vector vTo);
 	Vector VelocityToAngles(const Vector direction);
-
 	void MatrixSetColumn(const Vector& in, int column, matrix3x4_t& out);
-
 	void AngleMatrix(const Vector& angles, matrix3x4_t& matrix);
 
 public:

@@ -6,7 +6,7 @@ int CHelpers_NetVarManager::Get(const char* const szClass, const char* const szV
 
 	while (pCC)
 	{
-		if (HASH_RT(szClass) == HASH_RT(pCC->m_pNetworkName))
+		if (FNV1A::Hash(szClass) == FNV1A::Hash(pCC->m_pNetworkName))
 			return GetOffset(pCC->m_pRecvTable, szVarName);
 
 		pCC = pCC->m_pNext;
@@ -22,7 +22,7 @@ int CHelpers_NetVarManager::GetOffset(RecvTable* pTable, const char* const szVar
 	{
 		RecvProp Prop = pTable->m_pProps[n];
 
-		if (HASH_RT(Prop.m_pVarName) == HASH_RT(szVarName))
+		if (FNV1A::Hash(Prop.m_pVarName) == FNV1A::Hash(szVarName))
 			return Prop.GetOffset();
 
 		RecvTable* pTable = Prop.GetDataTable();

@@ -7,6 +7,7 @@
 #include "../../Interfaces/IInput.h"
 #include "../../Interfaces/IMaterialSystem.h"
 #include "../../Interfaces/IHudChat.h"
+#include "../../Interfaces/IVModelInfo.h"
 
 class CHelpers_NetVarManager
 {
@@ -22,5 +23,11 @@ namespace H { inline CHelpers_NetVarManager NetVar; }
 #define NETVAR(_name, type, table, name) inline type &_name() \
 { \
 	static const int nOffset = H::NetVar.Get(table, name); \
+	return *reinterpret_cast<type *>(reinterpret_cast<DWORD>(this) + nOffset); \
+}
+
+#define NETVAR_OFF(_name, type, table, name, offset) inline type &_name() \
+{ \
+	static const int nOffset = H::NetVar.Get(table, name) + offset; \
 	return *reinterpret_cast<type *>(reinterpret_cast<DWORD>(this) + nOffset); \
 }

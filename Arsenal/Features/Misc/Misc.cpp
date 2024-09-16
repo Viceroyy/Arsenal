@@ -3,7 +3,7 @@
 
 void CFeatures_Misc::Run(C_CSPlayer* pLocal, CUserCmd* cmd)
 {
-	if (!pLocal || pLocal->deadflag() || pLocal->m_MoveType() != MOVETYPE_WALK) //|| pLocal->IsSwimming()) TODO: fix swimming
+	if (!pLocal || pLocal->deadflag() || pLocal->m_MoveType() != MOVETYPE_WALK || pLocal->IsSwimming()) // TODO: fix swimming
 		return;
 
 	Bunnyhop(pLocal, cmd);
@@ -22,10 +22,7 @@ void CFeatures_Misc::Bunnyhop(C_CSPlayer* pLocal, CUserCmd* cmd)
 	if (bCurJump && bLastJump)
 	{
 		if (!(bCurGrounded && !bLastGrounded))
-		{
 			cmd->buttons &= ~IN_JUMP;
-			cmd->buttons &= ~IN_DUCK;
-		}
 
 		if (!(cmd->buttons & IN_JUMP) && bCurGrounded && !bLastAttempted)
 			cmd->buttons |= IN_JUMP;
@@ -36,7 +33,7 @@ void CFeatures_Misc::Bunnyhop(C_CSPlayer* pLocal, CUserCmd* cmd)
 
 void CFeatures_Misc::AutoStrafe(C_CSPlayer* pLocal, CUserCmd* cmd)
 {
-	if (!CFG::Misc_AutoStrafe || pLocal->OnSolid() || (cmd->buttons & IN_JUMP))
+	if (!CFG::Misc_AutoStrafe || pLocal->OnSolid() || !(pLocal->m_afButtonLast() & IN_JUMP) && (cmd->buttons & IN_JUMP))
 		return;
 
 	if (!(cmd->buttons & (IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT)))

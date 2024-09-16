@@ -2,6 +2,8 @@
 #include "C_BasePlayer.h"
 #include "C_WeaponCSBase.h"
 
+MAKE_SIGNATURE(C_CSPlayer_ThirdPersonSwitch, "client.dll", "57 8B F9 8B 07 FF 90 ? ? ? ? 39 3D", 0);
+
 class C_WeaponCSBase;
 
 class ICSPlayerAnimStateHelpers
@@ -33,7 +35,8 @@ public:
 	NETVAR(m_bInBuyZone, bool, "CCSPlayer", "m_bInBuyZone");
 	NETVAR(m_iClass, int, "CCSPlayer", "m_iClass");
 	NETVAR(m_ArmorValue, int, "CCSPlayer", "m_ArmorValue");
-	NETVAR(m_angEyeAngles, float, "CCSPlayer", "m_angEyeAngles[0]");
+	NETVAR(m_angEyeAnglesX, float, "CCSPlayer", "m_angEyeAngles[0]");
+	NETVAR(m_angEyeAnglesY, float, "CCSPlayer", "m_angEyeAngles[1]");
 	NETVAR(m_bHasDefuser, bool, "CCSPlayer", "m_bHasDefuser");
 	NETVAR(m_bNightVisionOn, bool, "CCSPlayer", "m_bNightVisionOn");
 	NETVAR(m_bHasNightVision, bool, "CCSPlayer", "m_bHasNightVision");
@@ -57,6 +60,16 @@ public:
 		C_BaseCombatWeapon* pWeapon = GetActiveWeapon();
 
 		return pWeapon ? pWeapon->As<C_WeaponCSBase>() : nullptr;
+	}
+
+	inline Vector GetEyeAngles()
+	{
+		return { m_angEyeAnglesX(), m_angEyeAnglesY(), 0.f };
+	}
+
+	void ThirdPersonSwitch()
+	{
+		reinterpret_cast<void(__thiscall*)(C_CSPlayer*)>(S::C_CSPlayer_ThirdPersonSwitch())(this);
 	}
 };
 

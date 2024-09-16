@@ -2,8 +2,8 @@
 
 MAKE_HOOK(ClientModeShared_GetViewmodelFOV, U::VFunc.Get<void*>(I::ClientMode, 32u), float, __fastcall)
 {
-	if (CFG::Visual_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
+	if (CFG::Visuals_ViewmodelFOV == 70 || CFG::Visuals_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
 		return CALL_ORIGINAL();
 
-	return CFG::Visual_ViewmodelFOV;
+	return CFG::Visuals_ViewmodelFOV;
 }

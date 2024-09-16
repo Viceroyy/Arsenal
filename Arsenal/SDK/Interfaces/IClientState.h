@@ -5,7 +5,7 @@ class CClientState
 {
 public:
 	char pad_0x0000[0x10]; //0x0000
-	INetChannel* m_NetChannel; //0x0010 
+	CNetChannel* m_NetChannel; //0x0010 
 	char pad_0x0014[0x11C]; //0x0014
 	__int32 m_nSignonState; //0x0130 
 	char pad_0x0134[0x60]; //0x0134

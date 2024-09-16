@@ -11,7 +11,6 @@
 #endif
 
 #include "ehandle.h"
-
 typedef unsigned int CRC32_t;
 
 void CRC32_Init(CRC32_t* pulCRC);
@@ -28,19 +27,6 @@ inline CRC32_t CRC32_ProcessSingleBuffer(const void* p, int len)
 	CRC32_Final(&crc);
 
 	return crc;
-}
-
-#define DWordSwap DWordSwapAsm
-#define LittleLong( val ) DWordSwap( val )
-
-template <typename T>
-inline T DWordSwapAsm(T dw)
-{
-	__asm
-	{
-		mov eax, dw
-		bswap eax
-	}
 }
 
 #endif // CHECKSUM_CRC_H

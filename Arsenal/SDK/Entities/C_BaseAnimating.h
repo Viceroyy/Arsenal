@@ -95,4 +95,32 @@ public:
 	NETVAR(m_fadeMaxDist, float, "CBaseAnimating", "m_fadeMaxDist");
 	NETVAR(m_flFadeScale, float, "CBaseAnimating", "m_flFadeScale");
 
+public:
+	CUtlVector<matrix3x4_t>* GetCachedBoneData()
+	{
+		static int nOffset = H::NetVar.Get("CBaseAnimating", "m_hLightingOrigin") - 88;
+		return reinterpret_cast<CUtlVector<matrix3x4_t> *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
+		//return reinterpret_cast<CUtlVector<matrix3x4_t> *>(reinterpret_cast<DWORD>(this) + 0x80C);
+	}
+
+	Vector GetHitboxPosMatrix(const int nHitbox, matrix3x4_t BoneMatrix[128])
+	{
+		if (const auto& pModel = GetModel())
+		{
+			if (const auto& pHdr = I::ModelInfoClient->GetStudiomodel(pModel))
+			{
+				if (const auto& pSet = pHdr->pHitboxSet(m_nHitboxSet()))
+				{
+					if (const auto& pBox = pSet->pHitbox(nHitbox))
+					{
+						Vector vPos = (pBox->bbmin + pBox->bbmax) * 0.5f, vOut;
+						U::Math.VectorTransform(vPos, BoneMatrix[pBox->bone], vOut);
+						return vOut;
+					}
+				}
+			}
+		}
+
+		return Vector();
+	}
 };

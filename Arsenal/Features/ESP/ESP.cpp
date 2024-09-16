@@ -1,6 +1,8 @@
 #include "ESP.h"
 #include "../CFG.h"
 #include "../Players/Players.h"
+#include "../Backtrack/Backtrack.h"
+#include "../../SDK/Entities/C_PlantedC4.h"
 
 void CFeatures_ESP::Run()
 {
@@ -19,7 +21,9 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 	if (!CFG::ESP_Players_Enabled)
 		return;
 
-	I::MatSystemSurface->DrawSetAlphaMultiplier(CFG::ESP_Alpha);
+	auto pResource = H::EntityCache.GetPR();
+	if (!pResource)
+		return;
 
 	for (auto pEntity : H::EntityCache.GetGroup(EGroupType::PLAYERS_ALL))
 	{
@@ -28,7 +32,7 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 			continue;
 
 		bool bIsLocal = pPlayer == pLocal;
-		if (CFG::ESP_Players_Ignore_Local && bIsLocal)
+		if ((CFG::ESP_Players_Ignore_Local && bIsLocal) || (!I::Input->CAM_IsThirdPerson() && bIsLocal))
 			continue;
 
 		if (!bIsLocal)
@@ -40,15 +44,16 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 				continue;
 		}
 
+		I::MatSystemSurface->DrawSetAlphaMultiplier(pPlayer->IsDormant() ? 0.7f : CFG::ESP_Alpha);
+
 		int x = 0, y = 0, w = 0, h = 0;
 		if (!GetDynamicBounds(pPlayer, x, y, w, h))
 			continue;
 
 		const int nIndex = pPlayer->entindex();
 		int lOffset = 0, rOffset = 0, bOffset = 2, tOffset = 0;
-		const EFonts& fFont = EFonts::ESP_SMALL;
-		const int iHealth = pPlayer->GetHealth();
-		const int iMaxHealth = pPlayer->GetMaxHealth();
+		const EFonts& fFont = EFonts::ESP;
+		const int iMaxHealth = pPlayer->GetMaxHealth(), iHealth = pPlayer->IsDormant() ? pResource->GetHealth(pPlayer->entindex()) : pPlayer->GetHealth();
 
 		const Color_t clrTeam = Util::GetEntityColor(pLocal, pPlayer, CFG::Colors_Relative);
 
@@ -107,19 +112,40 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 		{
 			if (const auto& pWeapon = pPlayer->GetActiveCSWeapon())
 			{
-				if (auto weapon_name = Util::ConvertToUppercase(GetWeaponName(pWeapon->GetWeaponID())))
-				{
-					H::Draw.String(fFont, x + (w / 2), y + h + bOffset, COLOR_WHITE, ALIGN_TOP, weapon_name.get());
-					bOffset += H::Draw.GetFontHeight(fFont);
-				}
+				H::Draw.String(fFont, x + (w / 2), y + h + bOffset, COLOR_WHITE, ALIGN_TOP, "%ls [%d/%d]", Util::GetWeaponName(pWeapon->GetWeaponID()).data(), pWeapon->m_iClip1(), pWeapon->GetMaxClip1());
+				bOffset += H::Draw.GetFontHeight(fFont);
 			}
 		}
+
+		/*if (!pPlayer->IsDormant() && pPlayer != pLocal)
+		{
+			if (F::Backtrack.mLagCompensation[pPlayer])
+			{
+				H::Draw.String(fFont, x + w + 4, y + rOffset, { 255, 95, 95, 255 }, ALIGN_TOPLEFT, "LAGCOMP");
+				rOffset += H::Draw.GetFontHeight(fFont);
+			}
+		}
+
+		const auto& pRecords = F::Backtrack.GetRecords(pEntity);
+		auto vRecords = F::Backtrack.GetValidRecords(pRecords);
+		if (vRecords.size())
+		{
+			auto vLastRec = vRecords.end() - 1;
+			if (vLastRec != vRecords.end() && pEntity->GetAbsOrigin().DistTo(vLastRec->vOrigin) > 0.1f)
+			{
+				Vector2D vScreenPos;
+				if (H::Draw.WorldPosToScreenPos(vLastRec->vOrigin, vScreenPos))
+				{
+					H::Draw.Circle(vScreenPos.x, vScreenPos.y, 2, 360, COLOR_GREEN);
+				}
+			}
+		}*/
 
 		player_info_t pi;
 		if (CFG::ESP_Players_Name && I::EngineClient->GetPlayerInfo(nIndex, &pi))
 		{
-			tOffset += H::Draw.GetFontHeight(fFont) + 2;
-			H::Draw.String(fFont, x + (w / 2), y - tOffset, COLOR_WHITE, ALIGN_TOP, Util::ConvertUtf8ToWide(pi.name).data());
+			tOffset += H::Draw.GetFontHeight(EFonts::NAME) + 2;
+			H::Draw.String(EFonts::NAME, x + (w / 2), y - tOffset, COLOR_WHITE, ALIGN_TOP, Util::ConvertUtf8ToWide(pi.name).data());
 		}
 	}
 	
@@ -131,7 +157,7 @@ void CFeatures_ESP::DrawWorld()
 	if (!CFG::ESP_World_Enabled)
 		return;
 
-	const EFonts& fFont = EFonts::ESP_SMALL;
+	const EFonts& fFont = EFonts::NAME;
 	const int nTextTopOffset = (H::Draw.GetFontHeight(fFont) + 2);
 
 	I::MatSystemSurface->DrawSetAlphaMultiplier(CFG::ESP_Alpha);
@@ -166,7 +192,7 @@ void CFeatures_ESP::DrawWorld()
 			if (!GetDynamicBounds(pWeapons, x, y, w, h))
 				continue;
 
-			auto pWeps = pWeapons->As<C_WeaponCSBase>();
+			auto pWeapon = pWeapons->As<C_WeaponCSBase>();
 
 			if (CFG::ESP_World_Box)
 			{
@@ -177,10 +203,7 @@ void CFeatures_ESP::DrawWorld()
 
 			if (CFG::ESP_World_Name)
 			{
-				if (auto weapon_name = Util::ConvertToUppercase(GetWeaponName(pWeps->GetWeaponID())))
-				{
-					H::Draw.String(fFont, x + w / 2, y - nTextTopOffset, COLOR_WHITE, ALIGN_TOP, weapon_name.get());
-				}
+				H::Draw.String(fFont, x + w / 2, y - nTextTopOffset, COLOR_WHITE, ALIGN_TOP, "%ls [%d/%d]", Util::GetWeaponName(pWeapon->GetWeaponID()).data(), pWeapon->m_iClip1(), pWeapon->GetMaxClip1());
 			}
 		}
 	}
@@ -193,16 +216,9 @@ bool CFeatures_ESP::GetDynamicBounds(C_BaseEntity* pEntity, int& x, int& y, int&
 	if (!pEntity)
 		return false;
 
-	Vector vMins = pEntity->m_vecMins(), vMaxs = pEntity->m_vecMaxs();
-
-	auto& transform = const_cast<matrix3x4_t&>(pEntity->RenderableToWorldTransform());
-	if (pEntity && pEntity->entindex() == I::EngineClient->GetLocalPlayer())
-	{
-		Vector vAngles = I::EngineClient->GetViewAngles();
-		vAngles.x = vAngles.z = 0.f;
-		U::Math.AngleMatrix(vAngles, transform);
-		U::Math.MatrixSetColumn(pEntity->GetAbsOrigin(), 3, transform);
-	}
+	matrix3x4_t transform;
+	U::Math.AngleMatrix(pEntity->GetRenderAngles(), transform);
+	U::Math.MatrixSetColumn(pEntity->GetRenderOrigin(), 3, transform);
 
 	float flLeft, flRight, flTop, flBottom;
 	if (!Util::IsOnScreen(pEntity, transform, &flLeft, &flRight, &flTop, &flBottom))
@@ -210,24 +226,14 @@ bool CFeatures_ESP::GetDynamicBounds(C_BaseEntity* pEntity, int& x, int& y, int&
 
 	x = flLeft + (flRight - flLeft) / 8.f;
 	y = flBottom;
-	w = flRight - flLeft;
+	w = flRight - flLeft - (flRight - flLeft) / 8.f * 2.f;
 	h = flTop - flBottom;
 
+	if (pEntity->IsPlayer())
+	{
+		y -= 10.f;
+		h += 10.f;
+	}
+
 	return !(x > H::Draw.m_nScreenW || x + w < 0 || y > H::Draw.m_nScreenH || y + h < 0);
-}
-
-std::uintptr_t get_rel32(std::uintptr_t address, std::uintptr_t offset, std::uintptr_t instruction_size)
-{
-	return address + *reinterpret_cast<std::uintptr_t*>(address + offset) + instruction_size;
-}
-
-std::wstring CFeatures_ESP::GetWeaponName(int wpnid)
-{
-	static auto function = reinterpret_cast<const char* (*)(int)>(
-		get_rel32(U::Pattern.Find("client.dll", "E8 ? ? ? ? 50 FF 75 94"), 1, 5));
-
-	if (!function(wpnid))
-		return L"unknown";
-
-	return Util::ConvertUtf8ToWide(function(wpnid));
 }

@@ -3,7 +3,7 @@
 
 struct Player
 {
-	hash::hash_t m_iSteamID{};
+	FNV1A_t m_iSteamID{};
 	PlayerManager::PlayerInfo m_Info{};
 };
 
@@ -56,7 +56,7 @@ void PlayerManager::Parse()
 	{
 		Player p
 		{
-			HASH_RT(item.key().c_str()),
+			FNV1A::Hash(item.key().c_str()),
 			{
 				j[item.key()]["ignored"].get<bool>(),
 				j[item.key()]["cheater"].get<bool>(),
@@ -84,7 +84,7 @@ void PlayerManager::Mark(int entindex, const PlayerInfo& info)
 
 	Player* ptr{};
 
-	auto steam_id{ HASH_RT(std::string_view(player_info.guid).data()) };
+	auto steam_id{ FNV1A::Hash(std::string_view(player_info.guid).data()) };
 
 	for (auto& pl : m_vecPlayers)
 	{
@@ -155,7 +155,7 @@ bool PlayerManager::GetInfo(int entindex, PlayerInfo& out)
 		return false;
 	}
 
-	auto steam_id{ HASH_RT(std::string_view(player_info.guid).data()) };
+	auto steam_id{ FNV1A::Hash(std::string_view(player_info.guid).data()) };
 
 	for (const auto& pl : m_vecPlayers)
 	{
@@ -174,7 +174,7 @@ bool PlayerManager::GetInfo(int entindex, PlayerInfo& out)
 
 bool PlayerManager::GetInfoGUID(const std::string& guid, PlayerInfo& out)
 {
-	auto steam_id{ HASH_RT(guid.c_str()) };
+	auto steam_id{ FNV1A::Hash(guid.c_str()) };
 
 	for (const auto& pl : m_vecPlayers)
 	{

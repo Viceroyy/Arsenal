@@ -2,84 +2,92 @@
 #include "../Hooks/WINAPI_WndProc.h"
 #include "../Features/Notification/Notification.h"
 #include "../Features/Players/Players.h"
+#include "../Features/Materials/Materials.h"
+#include "../Features/Outlines/Outlines.h"
+#include "../Features/WorldModulation/WorldModulation.h"
+#include "../Features/Commands/Commands.h"
+#include "../Util/ConVars/ConVars.h"
+#include <iostream>
 
-//#include <iostream>
-//#include <fstream>
+MAKE_SIGNATURE(GlobalVars, "engine.dll", "A1 ? ? ? ? 8B 11 68", 0x0);
+MAKE_SIGNATURE(C_ClientState, "engine.dll", "B9 ? ? ? ? E8 ? ? ? ? 83 3D ? ? ? ? ? 75 4A", 0x0);
+MAKE_SIGNATURE(PredictionPlayer, "client.dll", "89 3D ? ? ? ? F3 0F", 0x0);
+
+//// Constants for property types.
+//constexpr std::array<std::string_view, 7> PROPERTY_TYPES = {
+//	"int", "float", "Vector", "Vector2D", "const char *", "Array", "void *"
+//};
 //
-//std::ofstream File;
-//const char *szClassName;
+//std::ofstream outputFile;
+//std::string_view currentClassName;
 //
-//void DumpTable(RecvTable *pTable, int nDepth)
-//{
-//	if (!pTable)
-//		return;
-//
-//	const char *Types[7] = { "int", "float", "Vector", "Vector2D", "const char *", "Array", "void *" };
-//
-//	if (nDepth == 0)
-//		File << "class " << szClassName << "\n{\npublic:\n";
-//
-//	for (int n = 0; n < pTable->m_nProps; n++)
-//	{
-//		RecvProp *pProp = pTable->GetProp(n);
-//
-//		if (!pProp)
-//			continue;
-//
-//		std::string_view sVarName(pProp->m_pVarName);
-//
-//		if (!sVarName.find("baseclass") || !sVarName.find("0") || !sVarName.find("1") || !sVarName.find("2"))
-//			continue;
-//
-//		const char *szType = Types[pProp->GetType()];
-//
-//		if (sVarName.find("m_b") == 0 && pProp->GetType() == 0)
-//			szType = "bool";
-//
-//		if (sVarName.find("m_vec") == 0)
-//			szType = "Vector";
-//
-//		if (sVarName.find("m_h") == 0)
-//			szType = "EHANDLE";
-//
-//		if (pProp->GetOffset())
-//			File << "\tNETVAR(" << sVarName << ", " << szType << ", \"" << szClassName << "\", \"" << sVarName << "\");\n";
-//
-//		if (auto DataTable = pProp->GetDataTable())
-//			DumpTable(DataTable, nDepth + 1);
-//	}
-//
-//	if (nDepth == 0)
-//		File << "};\n";
+//// Function to determine the property type based on the variable name.
+//auto getPropertyType(std::string_view varName, int propType) -> std::string_view {
+//	if (varName.starts_with("m_b") && propType == 0) return "bool";
+//	if (varName.starts_with("m_vec")) return "Vector";
+//	if (varName.starts_with("m_h")) return "EHANDLE";
+//	return PROPERTY_TYPES[propType];
 //}
 //
-//void DumpTables()
-//{
-//	File.open("NETVAR_DUMP_NEW.h");
+//// Recursive function to dump a table's properties.
+//void dumpTable(RecvTable* table, int depth) {
+//	if (!table) return;
 //
-//	for (ClientClass *pClass = I::BaseClientDLL->GetAllClasses(); pClass; pClass = pClass->m_pNext) {
-//		szClassName = pClass->m_pNetworkName;
-//		DumpTable(pClass->m_pRecvTable, 0);
+//	if (depth == 0) outputFile << "class " << currentClassName << "\n{\npublic:\n";
+//
+//	for (int i = 0; i < table->m_nProps; ++i) {
+//		if (auto* prop = table->GetProp(i); prop) {
+//			std::string_view varName(prop->m_pVarName);
+//
+//			// Skip properties that are base classes or follow certain patterns.
+//			if (varName.starts_with("baseclass") || varName.find_first_of("012") != std::string_view::npos) continue;
+//
+//			auto propType = getPropertyType(varName, prop->GetType());
+//			if (prop->GetOffset()) {
+//				outputFile << "\tNETVAR(" << varName << ", " << propType
+//					<< ", \"" << currentClassName << "\", \"" << varName << "\");\n";
+//			}
+//
+//			// Recursively dump nested data tables.
+//			if (auto dataTable = prop->GetDataTable()) {
+//				dumpTable(dataTable, depth + 1);
+//			}
+//		}
 //	}
 //
-//	File.close();
+//	if (depth == 0) outputFile << "};\n";
+//}
+//
+//// Function to handle dumping all tables.
+//void dumpAllTables() {
+//	const auto filePath = std::filesystem::path("NETVAR_DUMP_NEW.h");
+//
+//	if (outputFile.open(filePath); !outputFile.is_open()) {
+//		std::cerr << "Failed to open the file: " << filePath << '\n';
+//		return;
+//	}
+//
+//	for (auto* clientClass = I::BaseClientDLL->GetAllClasses(); clientClass; clientClass = clientClass->m_pNext) {
+//		currentClassName = clientClass->m_pNetworkName;
+//		dumpTable(clientClass->m_pRecvTable, 0);
+//	}
+//
+//	outputFile.close();
 //}
 
 void CGlobal_Entry::Load()
 {
-	while (!GetModuleHandleW(L"mss32.dll"))
-		Sleep(100);
-
-	U::Offsets.Initialize();
+	U::Signatures.Initialize();
 
 	//Interfaces
 	{
 		I::BaseClientDLL = U::Interface.Get<IBaseClientDLL*>("client.dll", "VClient017");
-		I::Input = **reinterpret_cast<CInput***>((*reinterpret_cast<uintptr_t**>(I::BaseClientDLL))[15] + 2);
+		I::Input = **reinterpret_cast<CInput***>((*reinterpret_cast<uintptr_t**>(I::BaseClientDLL))[15] + 0x2);
 		I::ClientEntityList = U::Interface.Get<IClientEntityList*>("client.dll", "VClientEntityList003");
 		I::GameMovement = U::Interface.Get<IGameMovement*>("client.dll", "GameMovement001");
 		I::ClientPrediction = U::Interface.Get<CPrediction*>("client.dll", "VClientPrediction001");
 		I::EngineClient = U::Interface.Get<IVEngineClient*>("engine.dll", "VEngineClient014");
+		I::ModelInfoClient = U::Interface.Get<IVModelInfoClient*>("engine.dll", "VModelInfoClient006");
 		I::EngineVGui = U::Interface.Get<IEngineVGui*>("engine.dll", "VEngineVGui001");
 		I::InputSystem = U::Interface.Get<IInputSystem*>("inputsystem.dll", "InputSystemVersion001");
 		I::EngineTrace = U::Interface.Get<IEngineTrace*>("engine.dll", "EngineTraceClient003");
@@ -90,49 +98,68 @@ void CGlobal_Entry::Load()
 		I::MatSystemSurface = U::Interface.Get<IMatSystemSurface*>("vguimatsurface.dll", "VGUI_Surface030");
 		I::MaterialSystem = U::Interface.Get<IMaterialSystem*>("MaterialSystem.dll", "VMaterialSystem080");
 		I::Cvar = U::Interface.Get<ICvar*>("vstdlib.dll", "VEngineCvar004");
-		I::ClientMode = **(ClientModeShared***)(U::Pattern.Find("client.dll", "8B 0D ? ? ? ? 8B 01 5D FF 60 28 CC") + 2);
+		I::ClientMode = **(ClientModeShared***)(U::Pattern.Find("client.dll", "8B 0D ? ? ? ? 8B 01 5D FF 60 28 CC") + 0x2);
 		I::HudChat = (CHudChat*)(((uintptr_t*)(I::ClientMode))[4]);
 
 		//Other shenanigans
 		{
-			I::GlobalVars = *reinterpret_cast<CGlobalVarsBase**>(U::Offsets.GlobalVars + 0x8);
+			I::GlobalVars = *reinterpret_cast<CGlobalVarsBase**>(S::GlobalVars() + 0x8);
 			XASSERT(I::GlobalVars == nullptr);
 
-			I::ClientState = *reinterpret_cast<CClientState**>(U::Offsets.C_ClientState + 0x1);
+			I::ClientState = *reinterpret_cast<CClientState**>(S::C_ClientState() + 0x1);
 			XASSERT(I::ClientState == nullptr);
 
-			I::PredictionPlayer = *reinterpret_cast<C_BasePlayer***>(U::Offsets.PredictionPlayer + 0x2);
+			I::PredictionPlayer = *reinterpret_cast<C_BasePlayer***>(S::PredictionPlayer() + 0x2);
 			XASSERT(I::PredictionPlayer == nullptr);
 		}
 	}
 
-	//DumpTables();
+	U::ConVars.Initialize();
+	//dumpAllTables();
 	H::Draw.Initialize();
 
 	U::Hooks.Initialize();
-
+	F::Commands.Initialize();
 	PlayerManager::Parse();
 
 	Config::Load((std::filesystem::current_path().string() + "\\Arsenal\\default.json").c_str());
 	F::Notifications.Add("Config default loaded!");
 
-	I::MatSystemSurface->PlaySound("bot\\owned.wav");
-	I::Cvar->ConsoleColorPrintf({ 15, 150, 15, 255 }, "[Arsenal] Loaded!\n");
+	I::MatSystemSurface->PlaySound("hl1/fvox/activated.wav");
+	I::Cvar->ConsoleColorPrintf({ 175, 150, 255, 255 }, "[Arsenal] Loaded!\n");
 }
 
 void CGlobal_Entry::Unload()
 {
-	CFG::Visual_FOV = 90;
-	CFG::Visual_ViewmodelFOV = 70;
+	if (!bUnload)
+	{
+		G.Unload = true;
 
-	U::Hooks.Unload();
+		CFG::Visuals_FOV = 90;
+		CFG::Visuals_ViewmodelFOV = 70;
 
-	Sleep(100);
+		U::Hooks.Unload();
+		U::ConVars.Unload();
 
-	H::Draw.Uninitialize();
+		Sleep(250);
 
-	Sleep(100);
+		F::Materials.CleanUp();
+		F::Outlines.CleanUp();
+		F::WorldModulation.RestoreWorldModulation();
+		if (I::Input->CAM_IsThirdPerson())
+		{
+			auto pLocal = H::EntityCache.GetLocal();
+			if (pLocal)
+			{
+				I::Input->CAM_ToFirstPerson();
+				pLocal->ThirdPersonSwitch();
+			}
+		}
+		H::Draw.Uninitialize();
 
-	I::MatSystemSurface->PlaySound("bot\\that_was_it.wav");
-	I::Cvar->ConsoleColorPrintf({ 220, 20, 60, 255 }, "[Arsenal] Unloaded!\n");
+		Sleep(250);
+	}
+
+	I::MatSystemSurface->PlaySound("hl1/fvox/deactivated.wav");
+	I::Cvar->ConsoleColorPrintf({ 175, 150, 255, 255 }, "[Arsenal] Unloaded!\n");
 }

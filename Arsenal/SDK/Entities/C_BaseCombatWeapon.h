@@ -1,6 +1,8 @@
 #pragma once
 #include "C_BaseAnimating.h"
 
+MAKE_SIGNATURE(C_BaseCombatWeapon_GetWpnData, "client.dll", "0F B7 81 ? ? ? ? 50 E8 ? ? ? ? 83 C4 ? C3", 0x0);
+
 class Activity;
 struct WeaponProficiency_t;
 struct WeaponProficiencyInfo_t;
@@ -337,7 +339,6 @@ public:
 
 	CCSWeaponInfo* GetWpnData()
 	{
-		static uint64_t oGetWpnData = U::Pattern.Find("client.dll", "0F B7 81 ? ? ? ? 50 E8 ? ? ? ? 83 C4 04 C3");
-		return reinterpret_cast<CCSWeaponInfo * (__thiscall*)(C_BaseCombatWeapon*)>(oGetWpnData)(this);
+		return reinterpret_cast<CCSWeaponInfo*(__thiscall*)(C_BaseCombatWeapon*)>(S::C_BaseCombatWeapon_GetWpnData())(this);
 	}
 };

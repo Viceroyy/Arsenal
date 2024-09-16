@@ -4,10 +4,11 @@
 #include "../Features/Menu/Menu.h"
 #include "../Features/Notification/Notification.h"
 #include "../Features/PlayerArrows/PlayerArrows.h"
-#include "../Features/Visual/Visual.h"
+#include "../Features/Visuals/Visuals.h"
 #include "../Features/SpectatorList/SpectatorList.h"
 
-MAKE_HOOK(IEngineVGui_Paint, U::VFunc.Get<void*>(I::EngineVGui, 13u), void, __fastcall, void* ecx, void* edx, int mode)
+MAKE_HOOK(IEngineVGui_Paint, U::VFunc.Get<void*>(I::EngineVGui, 13u), void, __fastcall, 
+	void* ecx, void* edx, int mode)
 {
 	CALL_ORIGINAL(ecx, edx, mode);
 
@@ -17,11 +18,11 @@ MAKE_HOOK(IEngineVGui_Paint, U::VFunc.Get<void*>(I::EngineVGui, 13u), void, __fa
 
 		I::MatSystemSurface->StartDrawing();
 		{
-			if (CFG::Visual_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
+			if (CFG::Visuals_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
 				return I::MatSystemSurface->FinishDrawing();
 
 			F::Notifications.Draw();
-			F::Visual.Run();
+			F::Visuals.Run();
 			F::ESP.Run();
 			F::PlayerArrows.Run();
 			F::SpectatorList.Run();

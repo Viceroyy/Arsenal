@@ -56,13 +56,18 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <StringPooling>false</StringPooling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -71,17 +76,20 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -93,36 +101,92 @@
   <ItemGroup>
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="Entry\Entry.cpp" />
+    <ClCompile Include="Features\Backtrack\Backtrack.cpp" />
+    <ClCompile Include="Features\Commands\Commands.cpp" />
     <ClCompile Include="Features\EnginePrediction\EnginePrediction.cpp" />
     <ClCompile Include="Features\ESP\ESP.cpp" />
+    <ClCompile Include="Features\Materials\Materials.cpp" />
     <ClCompile Include="Features\Menu\LateRenderer\LateRenderer.cpp" />
     <ClCompile Include="Features\Menu\Menu.cpp" />
     <ClCompile Include="Features\Misc\Misc.cpp" />
+    <ClCompile Include="Features\NetworkFix\NetworkFix.cpp" />
     <ClCompile Include="Features\NoSpread\NoSpread.cpp" />
     <ClCompile Include="Features\Notification\Notification.cpp" />
+    <ClCompile Include="Features\Outlines\Outlines.cpp" />
     <ClCompile Include="Features\PlayerArrows\PlayerArrows.cpp" />
     <ClCompile Include="Features\Players\Players.cpp" />
+    <ClCompile Include="Features\SequenceFreeze\SequenceFreeze.cpp" />
     <ClCompile Include="Features\SpectatorList\SpectatorList.cpp" />
-    <ClCompile Include="Features\Visual\Visual.cpp" />
+    <ClCompile Include="Features\Visuals\Visuals.cpp" />
+    <ClCompile Include="Features\WorldModulation\WorldModulation.cpp" />
+    <ClCompile Include="Hooks\CBaseClientState_ProcessStringCmd.cpp" />
+    <ClCompile Include="Hooks\CBaseClient_Connect.cpp" />
+    <ClCompile Include="Hooks\CBaseClient_Disconnect.cpp" />
     <ClCompile Include="Hooks\CBasePlayer_CalcPlayerView.cpp" />
+    <ClCompile Include="Hooks\CClientState_GetClientInterpAmount.cpp" />
+    <ClCompile Include="Hooks\CClientState_GetTime.cpp" />
+    <ClCompile Include="Hooks\CClientState_ProcessFixAngle.cpp" />
+    <ClCompile Include="Hooks\CHudCrosshair_GetDrawPosition.cpp" />
+    <ClCompile Include="Hooks\CInput_WriteUsercmdDeltaToBuffer.cpp" />
     <ClCompile Include="Hooks\ClientModeShared_CreateMove.cpp" />
+    <ClCompile Include="Hooks\ClientModeShared_DoPostScreenSpaceEffects.cpp" />
     <ClCompile Include="Hooks\ClientModeShared_GetViewmodelFOV.cpp" />
     <ClCompile Include="Hooks\ClientModeShared_OverrideView.cpp" />
+    <ClCompile Include="Hooks\CL_CheckForPureServerWhitelist.cpp" />
+    <ClCompile Include="Hooks\CL_Move.cpp" />
+    <ClCompile Include="Hooks\CL_SendMove.cpp" />
+    <ClCompile Include="Hooks\CMaterial_Uncache.cpp" />
+    <ClCompile Include="Hooks\CNetChan_SendDatagram.cpp" />
+    <ClCompile Include="Hooks\CNetChan_SendNetMsg.cpp" />
+    <ClCompile Include="Hooks\CParticleSystemMgr_DrawRenderCache.cpp" />
     <ClCompile Include="Hooks\CPrediction_RunCommand.cpp" />
+    <ClCompile Include="Hooks\CRendering3dView_EnableWorldFog.cpp" />
+    <ClCompile Include="Hooks\CSequenceTransitioner_CheckForSequenceChange.cpp" />
+    <ClCompile Include="Hooks\CSkyboxView_Enable3dSkyboxFog.cpp" />
+    <ClCompile Include="Hooks\CStudioRender_DrawModelStaticProp.cpp" />
+    <ClCompile Include="Hooks\CUserMessages_DispatchUserMessage.cpp" />
+    <ClCompile Include="Hooks\CViewRender_DrawViewModels.cpp" />
+    <ClCompile Include="Hooks\CViewRender_LevelInit.cpp" />
+    <ClCompile Include="Hooks\CViewRender_LevelShutdown.cpp" />
+    <ClCompile Include="Hooks\C_BaseAnimating_FrameAdvance.cpp" />
+    <ClCompile Include="Hooks\C_BaseAnimating_Interpolate.cpp" />
+    <ClCompile Include="Hooks\C_BaseAnimating_SetupBones.cpp" />
+    <ClCompile Include="Hooks\C_BaseEntity_AddVar.cpp" />
+    <ClCompile Include="Hooks\C_BaseEntity_BaseInterpolatePart1.cpp" />
+    <ClCompile Include="Hooks\C_BaseEntity_EstimateAbsVelocity.cpp" />
+    <ClCompile Include="Hooks\C_BaseEntity_Interpolate.cpp" />
+    <ClCompile Include="Hooks\C_BaseEntity_InterpolateServerEntities.cpp" />
+    <ClCompile Include="Hooks\C_BaseEntity_ResetLatched.cpp" />
+    <ClCompile Include="Hooks\C_BasePlayer_CalcViewModelView.cpp" />
+    <ClCompile Include="Hooks\C_CSRagdoll_CreateCSRagdoll.cpp" />
+    <ClCompile Include="Hooks\C_WeaponCSBase_DrawCrosshair.cpp" />
+    <ClCompile Include="Hooks\DoEnginePostProcessing.cpp" />
+    <ClCompile Include="Hooks\DSP_Process.cpp" />
+    <ClCompile Include="Hooks\EngineClient_ClientCmd_Unrestricted.cpp" />
+    <ClCompile Include="Hooks\GetClientInterpAmount.cpp" />
     <ClCompile Include="Hooks\IBaseClientDLL_FrameStageNotify.cpp" />
     <ClCompile Include="Hooks\IBaseClientDLL_LevelInitPostEntity.cpp" />
     <ClCompile Include="Hooks\IBaseClientDLL_LevelShutdown.cpp" />
     <ClCompile Include="Hooks\IEngineVGui_Paint.cpp" />
+    <ClCompile Include="Hooks\CInput_GetUserCmd.cpp" />
+    <ClCompile Include="Hooks\ModelRender_DrawModelExecute.cpp" />
+    <ClCompile Include="Hooks\ModelRender_ForcedMaterialOverride.cpp" />
+    <ClCompile Include="Hooks\Panel_OnScreenSizeChanged.cpp" />
+    <ClCompile Include="Hooks\S_StartDynamicSound.cpp" />
     <ClCompile Include="Hooks\WINAPI_WndProc.cpp" />
     <ClCompile Include="SDK\DrawManager\DrawManager.cpp" />
+    <ClCompile Include="SDK\Entities\C_PlantedC4.h" />
+    <ClCompile Include="SDK\Entities\KeyValues.cpp" />
     <ClCompile Include="SDK\Entities\NetVarManager\NetVarManager.cpp" />
     <ClCompile Include="SDK\EntityCacher\EntityCacher.cpp" />
+    <ClCompile Include="SDK\Includes\bitbuf.cpp" />
     <ClCompile Include="SDK\Includes\checksum_crc.cpp" />
     <ClCompile Include="SDK\Includes\checksum_md5.cpp" />
     <ClCompile Include="SDK\Interfaces\IHudChat.h" />
     <ClCompile Include="SDK\Interfaces\IInputSystem.h" />
     <ClCompile Include="SDK\Input\Input.cpp" />
     <ClCompile Include="SDK\Interfaces\ICvar.cpp" />
+    <ClCompile Include="Util\ConVars\ConVars.cpp" />
     <ClCompile Include="Util\Hook\HooksUtil.cpp" />
     <ClCompile Include="Util\Hook\MinHook\buffer.c" />
     <ClCompile Include="Util\Hook\MinHook\hde\hde32.c" />
@@ -131,24 +195,31 @@
     <ClCompile Include="Util\Hook\MinHook\trampoline.c" />
     <ClCompile Include="Util\Interface\Interface.cpp" />
     <ClCompile Include="Util\Math\Math.cpp" />
-    <ClCompile Include="Util\Offsets\Offsets.cpp" />
     <ClCompile Include="Util\Pattern\Pattern.cpp" />
+    <ClCompile Include="Util\Signatures\Signatures.cpp" />
     <ClCompile Include="Util\VFunc\VFunc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entry\Entry.h" />
+    <ClInclude Include="Features\Backtrack\Backtrack.h" />
+    <ClInclude Include="Features\Commands\Commands.h" />
     <ClInclude Include="Features\EnginePrediction\EnginePrediction.h" />
     <ClInclude Include="Features\ESP\ESP.h" />
+    <ClInclude Include="Features\Materials\Materials.h" />
     <ClInclude Include="Features\Menu\LateRenderer\LateRenderer.h" />
     <ClInclude Include="Features\Menu\Menu.h" />
     <ClInclude Include="Features\Misc\Misc.h" />
+    <ClInclude Include="Features\NetworkFix\NetworkFix.h" />
     <ClInclude Include="Features\NoSpread\NoSpread.h" />
     <ClInclude Include="Features\CFG.h" />
     <ClInclude Include="Features\Notification\Notification.h" />
+    <ClInclude Include="Features\Outlines\Outlines.h" />
     <ClInclude Include="Features\PlayerArrows\PlayerArrows.h" />
     <ClInclude Include="Features\Players\Players.h" />
+    <ClInclude Include="Features\SequenceFreeze\SequenceFreeze.h" />
     <ClInclude Include="Features\SpectatorList\SpectatorList.h" />
-    <ClInclude Include="Features\Visual\Visual.h" />
+    <ClInclude Include="Features\Visuals\Visuals.h" />
+    <ClInclude Include="Features\WorldModulation\WorldModulation.h" />
     <ClInclude Include="Hooks\WINAPI_WndProc.h" />
     <ClInclude Include="SDK\DrawManager\DrawManager.h" />
     <ClInclude Include="SDK\Entities\C_BaseAnimating.h" />
@@ -164,9 +235,12 @@
     <ClInclude Include="SDK\Entities\IClientRenderable.h" />
     <ClInclude Include="SDK\Entities\IClientThinkable.h" />
     <ClInclude Include="SDK\Entities\IClientUnknown.h" />
+    <ClInclude Include="SDK\Entities\KeyValues.h" />
     <ClInclude Include="SDK\Entities\NetVarManager\NetVarManager.h" />
     <ClInclude Include="SDK\Entities\PlayerResource.h" />
     <ClInclude Include="SDK\EntityCacher\EntityCacher.h" />
+    <ClInclude Include="SDK\Globals\Globals.h" />
+    <ClInclude Include="SDK\Includes\Activity.h" />
     <ClInclude Include="SDK\Includes\basehandle.h" />
     <ClInclude Include="SDK\Includes\bitbuf.h" />
     <ClInclude Include="SDK\Includes\checksum_crc.h" />
@@ -212,6 +286,7 @@
     <ClInclude Include="SDK\Interfaces\IPrediction.h" />
     <ClInclude Include="SDK\Interfaces\IStudioRender.h" />
     <ClInclude Include="SDK\Interfaces\IVEngineClient.h" />
+    <ClInclude Include="SDK\Interfaces\IVModelInfo.h" />
     <ClInclude Include="SDK\Interfaces\IVModelRender.h" />
     <ClInclude Include="SDK\Interfaces\IVRenderView.h" />
     <ClInclude Include="SDK\SDK.h" />
@@ -219,6 +294,7 @@
     <ClInclude Include="Util\Color\Color.h" />
     <ClInclude Include="Util\Config\Config.h" />
     <ClInclude Include="Util\Config\json.hpp" />
+    <ClInclude Include="Util\ConVars\ConVars.h" />
     <ClInclude Include="Util\Hash\Hash.h" />
     <ClInclude Include="Util\Hook\HooksUtil.h" />
     <ClInclude Include="Util\Hook\MinHook\buffer.h" />
@@ -234,8 +310,8 @@
     <ClInclude Include="Util\Math\Math.h" />
     <ClInclude Include="Util\Math\Vector\Vector.h" />
     <ClInclude Include="Util\Math\Vector\Vector2D.h" />
-    <ClInclude Include="Util\Offsets\Offsets.h" />
     <ClInclude Include="Util\Pattern\Pattern.h" />
+    <ClInclude Include="Util\Signatures\Signatures.h" />
     <ClInclude Include="Util\Util.h" />
     <ClInclude Include="Util\VFunc\VFunc.h" />
   </ItemGroup>

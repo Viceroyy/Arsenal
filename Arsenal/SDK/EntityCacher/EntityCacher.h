@@ -12,7 +12,7 @@ class CHelpers_EntityCache
 {
 	C_CSPlayer* m_pLocal = nullptr;
 	C_WeaponCSBase* m_pLocalWeapon = nullptr;
-	//CCSPlayerResource* m_pPlayerResource = nullptr;
+	C_CSPlayerResource* m_pPlayerResource = nullptr;
 	C_CSPlayer* m_pObservedTarget = nullptr;
 
 	std::unordered_map<EGroupType, std::vector<C_BaseEntity*>> m_mGroups = {};
@@ -23,7 +23,7 @@ public:
 
 	C_CSPlayer* GetLocal() { return m_pLocal; }
 	C_WeaponCSBase* GetWeapon() { return m_pLocalWeapon; }
-	//CCSPlayerResource* GetPR() { return m_pPlayerResource; }
+	C_CSPlayerResource* GetPR() { return m_pPlayerResource; }
 	C_CSPlayer* GetObservedTarget() { return m_pObservedTarget; }
 
 	const std::vector<C_BaseEntity*>& GetGroup(const EGroupType& Group) { return m_mGroups[Group]; }

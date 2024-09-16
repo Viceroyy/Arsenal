@@ -7,9 +7,31 @@
 #include <random>
 #include "../Util/Icons.h"
 #include "../Features/Players/Players.h"
+#include "../Util/ConVars/ConVars.h"
+
+MAKE_SIGNATURE(WeaponIDToAlias, "client.dll", "55 8B EC 8B 4D ? 33 C0 EB", 0x0);
 
 namespace Util
 {
+	inline bool IsZoomed()
+	{
+		auto pLocal = H::EntityCache.GetLocal();
+		if (!pLocal)
+			return false;
+
+		if (const auto& pWeapon = pLocal->GetActiveCSWeapon())
+			return G.FOV < pLocal->m_iDefaultFOV() && pWeapon->GetWpnData()->m_WeaponType == WEAPONTYPE_SNIPER_RIFLE;
+
+		return false;
+	}
+
+	inline void Trace(const Vector& vecStart, const Vector& vecEnd, unsigned int nMask, ITraceFilter* pFilter, CGameTrace* pTrace)
+	{
+		Ray_t ray;
+		ray.Init(vecStart, vecEnd);
+		I::EngineTrace->TraceRay(ray, nMask, pFilter, pTrace);
+	}
+
 	inline Color_t Rainbow()
 	{
 		float t = TICKS_TO_TIME(I::GlobalVars->tickcount);
@@ -115,9 +137,12 @@ namespace Util
 		return distr(gen);
 	}
 
-	inline bool IsOnScreen(C_BaseEntity* pEntity, const matrix3x4_t& transform, float* pLeft, float* pRight, float* pTop, float* pBottom)
+	inline bool IsOnScreen(C_BaseEntity* pEntity, const matrix3x4_t& transform, float* pLeft = nullptr, float* pRight = nullptr, float* pTop = nullptr, float* pBottom = nullptr)
 	{
-		Vector vMins = pEntity->m_vecMins(), vMaxs = pEntity->m_vecMaxs();
+		ICollideable* coll = pEntity->GetCollideable();
+
+		Vector vMins = coll->OBBMins();
+		Vector vMaxs = coll->OBBMaxs();
 
 		float flLeft = 0.f, flRight = 0.f, flTop = 0.f, flBottom = 0.f;
 		const Vector vPoints[] =
@@ -149,6 +174,65 @@ namespace Util
 		if (pBottom) *pBottom = flBottom;
 
 		return !(flRight < 0 || flLeft > H::Draw.m_nScreenW || flTop < 0 || flBottom > H::Draw.m_nScreenH);
+	}
+
+	inline bool IsOnScreen(C_BaseEntity* pLocal, C_BaseEntity* pEntity)
+	{
+		Vector vPos = pEntity->GetAbsOrigin();
+
+		if (vPos.DistTo(pLocal->GetAbsOrigin()) > 300.0f)
+		{
+			Vector2D vScreen = {};
+
+			if (H::Draw.WorldPosToScreenPos(vPos, vScreen))
+			{
+				if (vScreen.x < -400
+					|| vScreen.x > H::Draw.m_nScreenW + 400
+					|| vScreen.y < -400
+					|| vScreen.y > H::Draw.m_nScreenH + 400)
+					return false;
+			}
+
+			else return false;
+		}
+
+		return true;
+	}
+
+	inline bool IsOnScreen(C_BaseEntity* pEntity, Vector vOrigin)
+	{
+		Vector vMins = pEntity->m_vecMins(), vMaxs = pEntity->m_vecMaxs();
+
+		float flLeft = 0.f, flRight = 0.f, flTop = 0.f, flBottom = 0.f;
+		const Vector vPoints[] =
+		{
+			Vector(0.f, 0.f, vMins.z),
+			Vector(0.f, 0.f, vMaxs.z),
+			Vector(vMins.x, vMins.y, vMaxs.z * 0.5f),
+			Vector(vMins.x, vMaxs.y, vMaxs.z * 0.5f),
+			Vector(vMaxs.x, vMins.y, vMaxs.z * 0.5f),
+			Vector(vMaxs.x, vMaxs.y, vMaxs.z * 0.5f)
+		};
+		for (int n = 0; n < 6; n++)
+		{
+			Vector vPoint = vOrigin + vPoints[n];
+
+			Vector2D vScreenPos;
+			if (!H::Draw.WorldPosToScreenPos(vPoint, vScreenPos))
+				return false;
+
+			flLeft = n ? std::min(flLeft, vScreenPos.x) : vScreenPos.x;
+			flRight = n ? std::max(flRight, vScreenPos.x) : vScreenPos.x;
+			flTop = n ? std::max(flTop, vScreenPos.y) : vScreenPos.y;
+			flBottom = n ? std::min(flBottom, vScreenPos.y) : vScreenPos.y;
+		}
+
+		return !(flRight < 0 || flLeft > H::Draw.m_nScreenW || flTop < 0 || flBottom > H::Draw.m_nScreenH);
+	}
+
+	inline bool IsOnScreen(C_BaseEntity* pEntity)
+	{
+		return IsOnScreen(pEntity, pEntity->RenderableToWorldTransform());
 	}
 
 	inline Color_t GetEntityColor(C_CSPlayer* pLocal, C_BaseEntity* pEntity, bool bRelativeColors)
@@ -229,4 +313,113 @@ namespace Util
 
 		return result;
 	}
+
+	inline std::wstring GetWeaponName(int wpnid)
+	{
+		static auto WeaponIDToAlias = reinterpret_cast<const char* (*)(int)>(S::WeaponIDToAlias());
+
+		if (!WeaponIDToAlias(wpnid))
+			return L"unknown";
+
+		auto wstr = ConvertUtf8ToWide(WeaponIDToAlias(wpnid));
+		return wstr;
+	}
 }
+
+struct ShaderStencilState_t
+{
+	bool m_bEnable = false;
+	StencilOperation_t m_FailOp = {};
+	StencilOperation_t m_ZFailOp = {};
+	StencilOperation_t m_PassOp = {};
+	StencilComparisonFunction_t m_CompareFunc = {};
+	int m_nReferenceValue = 0;
+	uint32_t m_nTestMask = 0;
+	uint32_t m_nWriteMask = 0;
+
+	ShaderStencilState_t()
+	{
+		m_bEnable = false;
+		m_PassOp = m_FailOp = m_ZFailOp = STENCILOPERATION_KEEP;
+		m_CompareFunc = STENCILCOMPARISONFUNCTION_ALWAYS;
+		m_nReferenceValue = 0;
+		m_nTestMask = m_nWriteMask = 0xFFFFFFFF;
+	}
+
+	void SetStencilState(IMatRenderContext* pRenderContext)
+	{
+		pRenderContext->SetStencilEnable(m_bEnable);
+		pRenderContext->SetStencilFailOperation(m_FailOp);
+		pRenderContext->SetStencilZFailOperation(m_ZFailOp);
+		pRenderContext->SetStencilPassOperation(m_PassOp);
+		pRenderContext->SetStencilCompareFunction(m_CompareFunc);
+		pRenderContext->SetStencilReferenceValue(m_nReferenceValue);
+		pRenderContext->SetStencilTestMask(m_nTestMask);
+		pRenderContext->SetStencilWriteMask(m_nWriteMask);
+	}
+};
+
+class CTraceFilterWorldCustom : public CTraceFilter
+{
+public:
+	virtual bool ShouldHitEntity(IHandleEntity* pServerEntity, int contentsMask)
+	{
+		if (auto pEntity = static_cast<IClientEntity*>(pServerEntity)->As<C_BaseEntity>())
+		{
+			switch (pEntity->GetClassID())
+			{
+			case ECSClientClass::CCSPlayer: return pEntity == m_pTarget;
+
+			case ECSClientClass::CBaseDoor:
+			case ECSClientClass::CPhysicsProp:
+			case ECSClientClass::CDynamicProp:
+			case ECSClientClass::CBaseEntity:
+			case ECSClientClass::CFuncTrackTrain: return true;
+
+			default: return false;
+			}
+		}
+
+		return false;
+	}
+	virtual TraceType_t GetTraceType() const
+	{
+		return TRACE_EVERYTHING;
+	}
+
+public:
+	C_BaseEntity* m_pTarget = nullptr;
+};
+
+class CTraceFilterHitscan : public ITraceFilter
+{
+public:
+	bool ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask)
+	{
+		{
+			if (!pServerEntity || pServerEntity == pSkip)
+				return false;
+
+			auto pEntity = static_cast<IClientEntity*>(pServerEntity)->As<C_BaseEntity>();
+			auto pLocal = H::EntityCache.GetLocal();
+			auto pWeapon = H::EntityCache.GetWeapon();
+
+			const int iTargetTeam = pEntity->m_iTeamNum(), iLocalTeam = pLocal ? pLocal->m_iTeamNum() : iTargetTeam;
+
+			switch (pEntity->GetClassID())
+			{
+			case ECSClientClass::CFuncAreaPortalWindow: return false;
+			case ECSClientClass::CCSPlayer:
+				if (iTargetTeam == iLocalTeam)
+					return false;
+			}
+
+			return true;
+		}
+	}
+	TraceType_t GetTraceType() const
+	{
+		return TRACE_EVERYTHING;
+	}
+	C_BaseEntity* pSkip = nullptr;
+};

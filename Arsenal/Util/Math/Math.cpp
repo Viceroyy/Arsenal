@@ -1,4 +1,5 @@
 #include "Math.h"
+#include <algorithm>
 
 void CUtil_Math::SinCos(float r, float* s, float* c)
 {
@@ -167,7 +168,7 @@ void CUtil_Math::AngleVectors(const Vector& angles, Vector* forward, Vector* rig
 	}
 }
 
-float CUtil_Math::GetFovBetween(const Vector vSrc, const Vector vDst)
+float CUtil_Math::CalcFov(const Vector vSrc, const Vector vDst)
 {
 	Vector v_src = { };
 	AngleVectors(vSrc, &v_src);
@@ -178,9 +179,28 @@ float CUtil_Math::GetFovBetween(const Vector vSrc, const Vector vDst)
 	float result = RAD2DEG(::acosf(v_dst.Dot(v_src) / v_dst.LenghtSqr()));
 
 	if (!isfinite(result) || isinf(result) || isnan(result))
-		result = FLT_MAX;
+		result = 0.0f;
 
 	return result;
+}
+
+Vector CUtil_Math::CalcAngle(const Vector& source, const Vector& destination, bool clamp)
+{
+	Vector angles = {};
+	Vector delta = source - destination;
+	float fHyp = std::sqrtf((delta.x * delta.x) + (delta.y * delta.y));
+
+	angles.x = (atanf(delta.z / fHyp) * M_RADPI);
+	angles.y = (atanf(delta.y / delta.x) * M_RADPI);
+	angles.z = 0.0f;
+
+	if (delta.x >= 0.0f)
+		angles.y += 180.0f;
+
+	if (clamp)
+		ClampAngles(angles);
+
+	return angles;
 }
 
 float CUtil_Math::NormalizeAngle(const float ang)
@@ -191,27 +211,15 @@ float CUtil_Math::NormalizeAngle(const float ang)
 	return ::remainderf(ang, 360.0f);
 }
 
-float CUtil_Math::clip(float n, float lower, float upper) {
-	return std::max(lower, std::min(n, upper));
-}
-
 float CUtil_Math::RemapValClamped(float val, float A, float B, float C, float D)
 {
 	if (A == B)
 		return val >= B ? D : C;
 
 	float cVal = (val - A) / (B - A);
-	cVal = clip(cVal, 0.0f, 1.0f);
+	cVal = std::clamp(cVal, 0.0f, 1.0f);
 
 	return C + (D - C) * cVal;
-}
-
-Vector CUtil_Math::GetAngleToPosition(const Vector vFrom, const Vector vTo)
-{
-	const Vector vDelta = (vFrom - vTo);
-	const float flHyp = ::sqrtf((vDelta.x * vDelta.x) + (vDelta.y * vDelta.y));
-
-	return { (::atanf(vDelta.z / flHyp) * M_RADPI), (::atanf(vDelta.y / vDelta.x) * M_RADPI) + (180.0f * (vDelta.x >= 0.0f)), 0.0f };
 }
 
 Vector CUtil_Math::VelocityToAngles(const Vector direction)

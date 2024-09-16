@@ -1,5 +1,12 @@
 #pragma once
 #include "IClientEntity.h"
+//#include "../../Util/Signatures/Signatures.h"
+
+MAKE_SIGNATURE(C_BaseEntity_SetPredictionRandomSeed, "client.dll", "55 8B EC 8B 45 08 85 C0 75 0C", 0x0);
+MAKE_SIGNATURE(C_BaseEntity_SetAbsOrigin, "client.dll", "55 8B EC 56 57 8B F1 E8 ? ? ? ? 8B 7D", 0x0);
+MAKE_SIGNATURE(C_BaseEntity_SetAbsAngles, "client.dll", "55 8B EC 83 EC ? 56 57 8B F1 E8 ? ? ? ? 8B 7D", 0x0);
+MAKE_SIGNATURE(C_BaseEntity_InvalidateBoneCache, "client.dll", "A1 ? ? ? ? 48 C7 81", 0x0);
+MAKE_SIGNATURE(C_BaseEntity_PhysicsRunThink, "client.dll", "55 8B EC 53 8B D9 56 57 8B 83", 0x0);
 
 namespace I { inline C_BasePlayer** PredictionPlayer = nullptr; }
 
@@ -19,6 +26,30 @@ struct CollideType_t;
 class CNewParticleEffect;
 class CDamageModifier;
 class KeyValues;
+class IInterpolatedVar;
+
+class VarMapEntry_t
+{
+public:
+	unsigned short type;
+	unsigned short m_bNeedsToInterpolate;
+	void* data;
+	IInterpolatedVar* watcher;
+};
+
+struct VarMapping_t
+{
+	CUtlVector<VarMapEntry_t> m_Entries;
+	int m_nInterpolatedEntries;
+	float m_lastInterpolationTime;
+};
+
+enum thinkmethods_t
+{
+	THINK_FIRE_ALL_FUNCTIONS,
+	THINK_FIRE_BASE_ONLY,
+	THINK_FIRE_ALL_BUT_BASE,
+};
 
 typedef CHandle<C_BaseEntity> EHANDLE;
 
@@ -175,8 +206,8 @@ public:
 	virtual void					PerformCustomPhysics(Vector* pNewPosition, Vector* pNewVelocity, Vector* pNewAngles, Vector* pNewAngVelocity) = 0;
 
 public:
-	NETVAR(m_flAnimTime, int, "CBaseEntity", "m_flAnimTime");
-	NETVAR(m_flSimulationTime, int, "CBaseEntity", "m_flSimulationTime");
+	NETVAR(m_flAnimTime, float, "CBaseEntity", "m_flAnimTime");
+	NETVAR(m_flSimulationTime, float, "CBaseEntity", "m_flSimulationTime");
 	NETVAR(m_ubInterpolationFrame, int, "CBaseEntity", "m_ubInterpolationFrame");
 	NETVAR(m_vecOrigin, Vector, "CBaseEntity", "m_vecOrigin");
 	NETVAR(m_angRotation, Vector, "CBaseEntity", "m_angRotation");
@@ -213,7 +244,66 @@ public:
 	NETVAR(m_bAnimatedEveryTick, bool, "CBaseEntity", "m_bAnimatedEveryTick");
 	NETVAR(m_bAlternateSorting, bool, "CBaseEntity", "m_bAlternateSorting");
 
+	NETVAR_OFF(m_flOldSimulationTime, float, "CBaseEntity", "m_flSimulationTime", 4);
+
 public:
+	void SetInterpolation(bool m_bInterpolation)
+	{
+		VarMapping_t* map = reinterpret_cast<VarMapping_t*>(uintptr_t(this) + 0x14);
+
+		for (int i = 0; i < map->m_nInterpolatedEntries; i++)
+		{
+			VarMapEntry_t* e = &map->m_Entries[i];
+
+			e->m_bNeedsToInterpolate = m_bInterpolation;
+		}
+
+		// da real interp killa
+		map->m_nInterpolatedEntries = m_bInterpolation ? 6 : 0;
+	}
+
+	C_BaseEntity* GetMoveParent()
+	{
+		static auto offset{ H::NetVar.Get("CBaseEntity", "moveparent") - 4 };
+
+		auto m_pMoveParent{ reinterpret_cast<EHANDLE*>(reinterpret_cast<uintptr_t>(this) + offset) };
+
+		if (!m_pMoveParent)
+		{
+			return nullptr;
+		}
+
+		return m_pMoveParent->Get();
+	}
+
+	C_BaseEntity* FirstMoveChild()
+	{
+		static auto offset{ H::NetVar.Get("CBaseEntity", "moveparent") - 12 };
+
+		auto m_pMoveChild{ reinterpret_cast<EHANDLE*>(reinterpret_cast<uintptr_t>(this) + offset) };
+
+		if (!m_pMoveChild)
+		{
+			return nullptr;
+		}
+
+		return m_pMoveChild->Get();
+	}
+
+	C_BaseEntity* NextMovePeer()
+	{
+		static auto offset{ H::NetVar.Get("CBaseEntity", "moveparent") - 8 };
+
+		auto m_pMovePeer{ reinterpret_cast<EHANDLE*>(reinterpret_cast<uintptr_t>(this) + offset) };
+
+		if (!m_pMovePeer)
+		{
+			return nullptr;
+		}
+
+		return m_pMovePeer->Get();
+	}
+
 	Vector GetCenter()
 	{
 		return m_vecOrigin() + Vector(0, 0, (m_vecMins().z + m_vecMaxs().z) / 2);
@@ -226,13 +316,82 @@ public:
 		return GetRenderOrigin() + Vector(0.f, 0.f, (vMin.z + vMax.z) / 2);
 	}
 
+	void SetAbsOrigin(const Vector& absOrigin)
+	{
+		reinterpret_cast<void(__thiscall*)(void*, const Vector&)>(S::C_BaseEntity_SetAbsOrigin())(this, absOrigin);
+	}
+
+	void SetAbsAngles(const Vector& absAngles)
+	{
+		reinterpret_cast<void(__thiscall*)(void*, const Vector&)>(S::C_BaseEntity_SetAbsAngles())(this, absAngles);
+	}
+
 	static void SetPredictionRandomSeed(const CUserCmd* cmd)
 	{
-		reinterpret_cast<void(*)(const CUserCmd*)>(U::Offsets.C_BaseEntity_SetPredictionRandomSeed)(cmd);
+		reinterpret_cast<void(*)(const CUserCmd*)>(S::C_BaseEntity_SetPredictionRandomSeed())(cmd);
 	}
 
 	static void SetPredictionPlayer(C_BasePlayer* pPlayer)
 	{
 		*I::PredictionPlayer = pPlayer;
+	}
+
+	void InvalidateBoneCache()
+	{
+		reinterpret_cast<void(__thiscall*)(void*)>(S::C_BaseEntity_InvalidateBoneCache())(this);
+	}
+
+	inline bool PhysicsRunThink(thinkmethods_t thinkMethod = THINK_FIRE_ALL_FUNCTIONS)
+	{
+		return S::C_BaseEntity_PhysicsRunThink.As<bool(__thiscall*)(void*, thinkmethods_t)>()(this, thinkMethod);
+	}
+};
+
+class IGameResources
+{
+public:
+};
+
+class C_PlayerResource : public C_BaseEntity, public IGameResources
+{
+public:
+	NETVAR(m_iPing, int, "CPlayerResource", "m_iPing");
+	NETVAR(m_iScore, int, "CPlayerResource", "m_iScore");
+	NETVAR(m_iDeaths, int, "CPlayerResource", "m_iDeaths");
+	NETVAR(m_bConnected, bool, "CPlayerResource", "m_bConnected");
+	NETVAR(m_iTeam, int, "CPlayerResource", "m_iTeam");
+	NETVAR(m_bAlive, bool, "CPlayerResource", "m_bAlive");
+	NETVAR(m_iHealth, int, "CPlayerResource", "m_iHealth");
+};
+
+class C_CSPlayerResource : public C_PlayerResource
+{
+public:
+	NETVAR(m_iPlayerC4, int, "CCSPlayerResource", "m_iPlayerC4");
+	NETVAR(m_iPlayerVIP, int, "CCSPlayerResource", "m_iPlayerVIP");
+	NETVAR(m_vecC4, Vector, "CCSPlayerResource", "m_vecC4");
+	NETVAR(m_bHostageAlive, void*, "CCSPlayerResource", "m_bHostageAlive");
+	NETVAR(m_isHostageFollowingSomeone, void*, "CCSPlayerResource", "m_isHostageFollowingSomeone");
+	NETVAR(m_iHostageEntityIDs, void*, "CCSPlayerResource", "m_iHostageEntityIDs");
+	NETVAR(m_iHostageX, void*, "CCSPlayerResource", "m_iHostageX");
+	NETVAR(m_iHostageY, void*, "CCSPlayerResource", "m_iHostageY");
+	NETVAR(m_iHostageZ, void*, "CCSPlayerResource", "m_iHostageZ");
+	NETVAR(m_bombsiteCenterA, Vector, "CCSPlayerResource", "m_bombsiteCenterA");
+	NETVAR(m_bombsiteCenterB, Vector, "CCSPlayerResource", "m_bombsiteCenterB");
+	NETVAR(m_hostageRescueX, void*, "CCSPlayerResource", "m_hostageRescueX");
+	NETVAR(m_hostageRescueY, void*, "CCSPlayerResource", "m_hostageRescueY");
+	NETVAR(m_hostageRescueZ, void*, "CCSPlayerResource", "m_hostageRescueZ");
+	NETVAR(m_bBombSpotted, bool, "CCSPlayerResource", "m_bBombSpotted");
+	NETVAR(m_bPlayerSpotted, void*, "CCSPlayerResource", "m_bPlayerSpotted");
+	NETVAR(m_iMVPs, void*, "CCSPlayerResource", "m_iMVPs");
+	NETVAR(m_bHasDefuser, void*, "CCSPlayerResource", "m_bHasDefuser");
+	NETVAR(m_szClan, void*, "CCSPlayerResource", "m_szClan");
+
+public:
+
+	int GetHealth(int idx)
+	{
+		static int nOffset = H::NetVar.Get("CCSPlayerResource", "m_iHealth");
+		return *reinterpret_cast<int*>(std::uintptr_t(this) + nOffset + idx * 4);
 	}
 };

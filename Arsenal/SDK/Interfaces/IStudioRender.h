@@ -19,7 +19,6 @@ class Vector;
 struct LightDesc_t;
 class IMaterial;
 struct studiohwdata_t;
-struct Ray_t;
 class Vector4D;
 class IMaterialSystem;
 class IMesh;
@@ -29,6 +28,56 @@ class VMatrix;
 namespace OptimizedModel { struct FileHeader_t; }
 class IPooledVBAllocator;
 class CUtlBuffer;
+
+struct Ray_t
+{
+	VectorAligned m_Start{};
+	VectorAligned m_Delta{};
+	VectorAligned m_StartOffset{};
+	VectorAligned m_Extents{};
+	bool m_IsRay{};
+	bool m_IsSwept{};
+
+	void Init(Vector const& start, Vector const& end)
+	{
+		m_Delta = end - start;
+		m_IsSwept = (m_Delta.LenghtSqr() != 0);
+		m_Extents.Init();
+		m_IsRay = true;
+		m_StartOffset.Init();
+		m_Start = start;
+	}
+
+	void Init(Vector const& start, Vector const& end, Vector const& mins, Vector const& maxs)
+	{
+		m_Delta = end - start;
+		m_IsSwept = (m_Delta.LenghtSqr() != 0);
+		m_Extents = maxs - mins;
+		m_Extents *= 0.5f;
+		m_IsRay = (m_Extents.LenghtSqr() < 1e-6);
+		m_StartOffset = mins + maxs;
+		m_StartOffset *= 0.5f;
+		m_Start = start + m_StartOffset;
+		m_StartOffset *= -1.0f;
+	}
+
+	Vector InvDelta() const
+	{
+		Vector vecInvDelta;
+		for (int iAxis = 0; iAxis < 3; ++iAxis)
+		{
+			if (m_Delta[iAxis] != 0.0f)
+			{
+				vecInvDelta[iAxis] = 1.0f / m_Delta[iAxis];
+			}
+			else
+			{
+				vecInvDelta[iAxis] = 3.402823e+38f;
+			}
+		}
+		return vecInvDelta;
+	}
+};
 
 typedef void (*StudioRender_Printf_t)(const char* fmt, ...);
 
@@ -250,6 +299,16 @@ public:
 	virtual int GetMaterialListFromBodyAndSkin(MDLHandle_t studio, int nSkin, int nBody, int nCountOutputMaterials, IMaterial** ppOutputMaterials) = 0;
 	virtual void DrawModelArray(const DrawModelInfo_t& drawInfo, int arrayCount, model_array_instance_t* pInstanceData, int instanceStride, int flags = STUDIORENDER_DRAW_ENTIRE_MODEL) = 0;
 	virtual void GetMaterialOverride(IMaterial** ppOutForcedMaterial, OverrideType_t* pOutOverrideType) = 0;
+
+	void SetColorModulation(float r, float g, float b) {
+		const float clr[3] = { r, g, b };
+		SetColorModulation(clr);
+	}
+
+	void SetColorModulation(Color_t clr) {
+		float _clr[3] = { clr.r / 255.0f, clr.g / 255.0f, clr.b / 255.0f };
+		SetColorModulation(_clr);
+	}
 };
 
 namespace I { inline IStudioRender* StudioRender = nullptr; }

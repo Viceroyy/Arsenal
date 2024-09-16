@@ -2,12 +2,15 @@
 
 DWORD APIENTRY MainThread(LPVOID lpParam)
 {
-	G::Entry.Load();
+	while (!GetModuleHandleW(L"mss32.dll"))
+		Sleep(2000);
 
-	while (!GetAsyncKeyState(VK_F11))
-		Sleep(420);
+	U::Entry.Load();
 
-	G::Entry.Unload();
+	while (!(GetAsyncKeyState(VK_F11) & 0x8000))
+		Sleep(50);
+
+	U::Entry.Unload();
 
 	FreeLibraryAndExitThread(static_cast<HMODULE>(lpParam), EXIT_SUCCESS);
 }
@@ -18,12 +21,10 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 
 	if ((fdwReason == DLL_PROCESS_ATTACH) && !s_bAttached)
 	{
-		const HANDLE hMain = CreateThread(NULL, NULL, MainThread, hinstDLL, NULL, NULL);
-
-		if (hMain)
+		DisableThreadLibraryCalls(hinstDLL);
+		if (const HANDLE hMain = CreateThread(nullptr, 0, MainThread, hinstDLL, 0, nullptr))
 		{
-			s_bAttached = true;
-			CloseHandle(hMain);
+			s_bAttached = true; CloseHandle(hMain);
 		}
 	}
 
