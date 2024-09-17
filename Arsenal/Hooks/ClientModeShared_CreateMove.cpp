@@ -19,7 +19,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, S::ClientModeShared_CreateMove(), bool, _
 
 	I::ClientPrediction->Update(I::ClientState->m_nDeltaTick, I::ClientState->m_nDeltaTick > 0, I::ClientState->last_command_ack, I::ClientState->lastoutgoingcommand + I::ClientState->chokedcommands);
 
-	//cmd->tick_count += TICKS_TO_TIME(F::Backtrack.flFakeInterp) - (CFG::Visuals_NoInterpolation ? 0 : TICKS_TO_TIME(G.Lerp));
+	cmd->tick_count += TICKS_TO_TIME(F::Backtrack.flFakeInterp) - (CFG::Visuals_NoInterpolation ? 0 : TICKS_TO_TIME(G.Lerp));
 
 	auto pLocal = H::EntityCache.GetLocal();
 	auto pWeapon = H::EntityCache.GetWeapon();
@@ -30,7 +30,7 @@ MAKE_HOOK(ClientModeShared_CreateMove, S::ClientModeShared_CreateMove(), bool, _
 	F::EnginePrediction.Start(pLocal, cmd);
 	{
 		F::NoSpread.Run(pLocal, pWeapon, cmd);
-		//F::Backtrack.BacktrackToCrosshair(cmd);
+		F::Backtrack.BacktrackToCrosshair(cmd);
 	}
 	F::EnginePrediction.Finish(pLocal, cmd);
 

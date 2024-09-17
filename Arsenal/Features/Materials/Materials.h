@@ -4,13 +4,6 @@
 
 class CMaterials
 {
-public:
-	IMaterial* m_pFlat = nullptr;
-	IMaterial* m_pShaded = nullptr;
-	IMaterial* m_pFlatNoInvis = nullptr;
-	IMaterial* m_pShadedNoInvis = nullptr;
-
-private:
 	void Initialize();
 
 	std::map<C_BaseEntity*, bool> m_mapDrawnEntities = {};
@@ -19,35 +12,49 @@ private:
 	bool m_bCleaningUp = false;
 
 	void DrawEntity(C_BaseEntity* pEntity);
-
-private:
 	void RunLagRecords();
 
 public:
+	IMaterial* m_pFlat = nullptr;
+	IMaterial* m_pShaded = nullptr;
+	IMaterial* m_pGlossy = nullptr;
+	IMaterial* m_pGlow = nullptr;
+	IMaterial* m_pPlastic = nullptr;
+	IMaterialVar* m_pGlowEnvmapTint = nullptr;
+	IMaterialVar* m_pGlowSelfillumTint = nullptr;
+	IMaterial* m_pFlatNoInvis = nullptr;
+	IMaterial* m_pShadedNoInvis = nullptr;
+
 	void Run();
 	void CleanUp();
 
-	inline bool HasDrawn(C_BaseEntity* pEntity) {
-		return m_mapDrawnEntities.find(pEntity) != m_mapDrawnEntities.end();
+	bool HasDrawn(C_BaseEntity* pEntity)
+	{
+		return m_mapDrawnEntities.contains(pEntity);
 	}
 
-	inline bool IsRendering() {
+	bool IsRendering()
+	{
 		return m_bRendering;
 	}
 
-	inline bool IsRenderingOriginalMat() {
+	bool IsRenderingOriginalMat()
+	{
 		return m_bRenderingOriginalMat;
 	}
 
-	inline bool IsUsedMaterial(IMaterial* pMaterial)
+	bool IsUsedMaterial(const IMaterial* pMaterial)
 	{
 		return pMaterial == m_pFlat
 			|| pMaterial == m_pShaded
+			|| pMaterial == m_pGlossy
+			|| pMaterial == m_pGlow
+			|| pMaterial == m_pPlastic
 			|| pMaterial == m_pFlatNoInvis
 			|| pMaterial == m_pShadedNoInvis;
 	}
 
-	inline bool IsCleaningUp() { return m_bCleaningUp; }
+	bool IsCleaningUp() { return m_bCleaningUp; }
 };
 
 namespace F { inline CMaterials Materials; }

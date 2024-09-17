@@ -33,28 +33,7 @@ MAKE_HOOK(IBaseClientDLL_FrameStageNotify, U::VFunc.Get<void*>(I::BaseClientDLL,
 		case FRAME_NET_UPDATE_END:
 		{
 			H::EntityCache.Fill();
-
-			if (auto pLocal = H::EntityCache.GetLocal())
-			{
-				for (auto pEntity : H::EntityCache.GetGroup(EGroupType::PLAYERS_ALL))
-				{
-					if (!pEntity || pEntity == pLocal)
-						continue;
-
-					auto pPlayer = pEntity->As<C_CSPlayer>();
-
-					if (auto nDifference = std::clamp(TIME_TO_TICKS(pPlayer->m_flSimulationTime() - pPlayer->m_flOldSimulationTime()), 0, 22))
-					{
-						if (pPlayer->m_iTeamNum() != pLocal->m_iTeamNum() && !pPlayer->deadflag())
-						{
-							F::LagRecords.AddRecord(pPlayer);
-						}
-					}
-				}
-			}
-
-			F::LagRecords.UpdateRecords();
-			//F::Backtrack.FrameStageNotify();
+			F::Backtrack.FrameStageNotify();
 			break;
 		}
 		case FRAME_RENDER_START:

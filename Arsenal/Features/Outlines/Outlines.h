@@ -4,7 +4,6 @@
 
 class COutlines
 {
-private:
 	IMaterial* m_pMatGlowColor = nullptr, * m_pMatHaloAddToScreen = nullptr;
 	ITexture* m_pRtFullFrame = nullptr, * m_pRenderBuffer0 = nullptr, * m_pRenderBuffer1 = nullptr;
 	IMaterial* m_pMatBlurX = nullptr, * m_pMatBlurY = nullptr;
@@ -19,7 +18,6 @@ private:
 
 	void DrawEntity(C_BaseEntity* pEntity, bool bModel);
 
-private:
 	struct OutlineEntity_t
 	{
 		C_BaseEntity* m_pEntity = nullptr;
@@ -35,19 +33,22 @@ public:
 	void CleanUp();
 	void SetModelStencil(IMatRenderContext* pRenderContext);
 
-	inline bool HasDrawn(C_BaseEntity* pEntity) {
-		return m_mapDrawnEntities.find(pEntity) != m_mapDrawnEntities.end();
+	bool HasDrawn(C_BaseEntity* pEntity)
+	{
+		return m_mapDrawnEntities.contains(pEntity);
 	}
 
-	inline bool IsRendering() {
+	bool IsRendering()
+	{
 		return m_bRendering;
 	}
 
-	inline bool IsRenderingOutlines() {
+	bool IsRenderingOutlines()
+	{
 		return m_bRenderingOutlines;
 	}
 
-	inline bool IsUsedMaterial(IMaterial* pMaterial)
+	bool IsUsedMaterial(const IMaterial* pMaterial)
 	{
 		return pMaterial == m_pMatGlowColor
 			|| pMaterial == m_pMatBlurX
@@ -55,7 +56,7 @@ public:
 			|| pMaterial == m_pMatHaloAddToScreen;
 	}
 
-	inline bool IsCleaningUp() { return m_bCleaningUp; }
+	bool IsCleaningUp() { return m_bCleaningUp; }
 };
 
 namespace F { inline COutlines Outlines; }

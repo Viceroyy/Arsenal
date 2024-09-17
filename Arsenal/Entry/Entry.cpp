@@ -120,7 +120,7 @@ void CGlobal_Entry::Load()
 
 	U::Hooks.Initialize();
 	F::Commands.Initialize();
-	PlayerManager::Parse();
+	F::Players.Parse();
 
 	Config::Load((std::filesystem::current_path().string() + "\\Arsenal\\default.json").c_str());
 	F::Notifications.Add("Config default loaded!");

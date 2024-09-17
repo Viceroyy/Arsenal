@@ -3,57 +3,86 @@
 #include "../../SDK/SDK.h"
 #include <deque>
 
-struct LagRecord_t
+#pragma warning ( disable : 4091 )
+
+class CIncomingSequence
 {
-	C_CSPlayer* m_pPlayer = nullptr;
-	matrix3x4_t m_BoneMatrix[128] = {};
-	float m_flSimulationTime = -1.0f;
-	Vector m_vAbsOrigin = {};
-	Vector m_vVecOrigin = {};
-	Vector m_vAbsAngles = {};
-	Vector m_vEyeAngles = {};
-	Vector m_vVelocity = {};
-	Vector m_vCenter = {};
-	int m_nFlags = 0;
-	float m_flFeetYaw = 0.0f;
+public:
+	int InReliableState;
+	int SequenceNr;
+	float CurTime;
+
+	CIncomingSequence(int inState, int seqNr, float time)
+	{
+		InReliableState = inState;
+		SequenceNr = seqNr;
+		CurTime = time;
+	}
 };
 
-class CLagRecords
+using BoneMatrixes = struct
 {
-private:
-	std::unordered_map<C_CSPlayer*, std::deque<LagRecord_t>> m_LagRecords = {};
-	bool m_bSettingUpBones = false;
+	float BoneMatrix[128][3][4];
+};
 
-	void EraseRecord(C_CSPlayer* pPlayer, int nRecord);
-	void EraseAllRecords(C_CSPlayer* pPlayer);
+struct TickRecord
+{
+	float flSimTime = 0.f;
+	float flCreateTime = 0.f;
+	int iTickCount = 0;
+	bool bOnShot = false;
+	BoneMatrixes BoneMatrix{};
+	Vector vOrigin = {};
+	bool bInvalid = false;
+};
 
-private:
-	bool IsSimulationTimeValid(float flCurSimTime, float flCmprSimTime);
+class CBacktrack
+{
+	// logic
+	bool WithinRewind(const TickRecord& record);
+
+	// utils
+	void UpdateDatagram();
+	void StoreNolerp();
+	void MakeRecords();
+	void CleanRecords();
+
+	// data
+	std::unordered_map<int, bool> mDidShoot;
+	int iLastCreationTick = 0;
+
+	// data - fake latency
+	std::deque<CIncomingSequence> dSequences;
+	int iLastInSequence = 0;
+
+	bool bLastTickHeld = false;
 
 public:
-	void AddRecord(C_CSPlayer* pPlayer);
-	const LagRecord_t* GetRecord(C_CSPlayer* pPlayer, int nRecord, bool bSafe = false);
-	bool HasRecords(C_CSPlayer* pPlayer, int* pTotalRecords = nullptr);
-	void UpdateRecords();
-	bool DiffersFromCurrent(const LagRecord_t* pRecord);
-	inline bool IsSettingUpBones() { return m_bSettingUpBones; }
+	float GetFake();
+	float GetReal(int iFlow = -1);
+
+	std::deque<TickRecord>* GetRecords(C_BaseEntity* pEntity);
+	std::deque<TickRecord> GetValidRecords(std::deque<TickRecord>* pRecords, C_CSPlayer* pLocal = nullptr, bool bDistance = false);
+
+	void Restart();
+	void FrameStageNotify();
+	void AdjustPing(CNetChannel* netChannel);
+
+	std::optional<TickRecord> GetHitRecord(CUserCmd* pCmd, C_CSPlayer* pEntity, const Vector vAngles, const Vector vPos);
+	void BacktrackToCrosshair(CUserCmd* pCmd);
+
+	bool bFakeLatency = false;
+	float flWishInterp = 0.015f;
+	float flFakeInterp = 0.015f;
+	std::unordered_map<C_BaseEntity*, std::deque<TickRecord>> mRecords;
+	std::unordered_map<C_BaseEntity*, std::pair<int, matrix3x4_t[128]>> mBones;
+	std::unordered_map<C_BaseEntity*, Vector> mEyeAngles;
+	std::unordered_map<C_BaseEntity*, bool> mLagCompensation;
+
+	bool bSettingUpBones = false;
+
+	int iTickCount = 0;
+	float flMaxUnlag = 1.f;
 };
 
-namespace F { inline CLagRecords LagRecords; }
-
-class CLagRecordMatrixHelper
-{
-private:
-	C_CSPlayer* m_pPlayer = nullptr;
-	Vector m_vAbsOrigin = {};
-	Vector m_vAbsAngles = {};
-	matrix3x4_t m_BoneMatrix[128] = {};
-
-	bool m_bSuccessfullyStored = false;
-
-public:
-	void Set(const LagRecord_t* pRecord);
-	void Restore();
-};
-
-namespace F { inline CLagRecordMatrixHelper LagRecordMatrixHelper; }
+namespace F { inline CBacktrack Backtrack; }

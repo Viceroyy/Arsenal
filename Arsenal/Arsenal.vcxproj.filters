@@ -312,6 +312,9 @@
     <ClCompile Include="Hooks\C_BaseAnimating_SetupBones.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SDK\Entities\C_CSPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entry\Entry.h">

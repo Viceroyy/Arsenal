@@ -9,7 +9,7 @@ MAKE_HOOK(ModelRender_DrawModelExecute, U::VFunc.Get<void*>(I::ModelRender, 19u)
 	if (CFG::Visuals_LowGraphics)
 		*const_cast<int*>(&pState.m_lod) = 7;
 
-	auto pClientEntity = I::ClientEntityList->GetClientEntity(pInfo.entity_index);
+	const auto pClientEntity = I::ClientEntityList->GetClientEntity(pInfo.entity_index);
 
 	if (pClientEntity)
 	{
@@ -38,7 +38,7 @@ MAKE_HOOK(ModelRender_DrawModelExecute, U::VFunc.Get<void*>(I::ModelRender, 19u)
 
 		if (!I::EngineClient->IsTakingScreenshot())
 		{
-			auto pEntity = pClientEntity->As<C_BaseEntity>();
+			const auto pEntity = pClientEntity->As<C_BaseEntity>();
 
 			if (!F::Materials.IsRendering() && !F::Outlines.IsRendering() && (F::Outlines.HasDrawn(pEntity) || F::Materials.HasDrawn(pEntity)))
 				return;

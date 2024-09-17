@@ -9,7 +9,7 @@ MAKE_HOOK(CViewRender_LevelInit, S::CViewRender_LevelInit(), void, __fastcall,
 	void* ecx, void* edx)
 {
 	//F::Materials.ReloadMaterials();
-	//F::Backtrack.Restart();
+	F::Backtrack.Restart();
 
 	CALL_ORIGINAL(ecx, edx);
 }

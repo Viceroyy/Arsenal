@@ -1369,7 +1369,7 @@ void CFeatures_Menu::MainWindow()
 			GroupBoxStart("Local", 150);
 			{
 				CheckBox("Clear Screenshots", CFG::Visuals_ClearScreenshots);
-				CheckBox("Draw Crosshair On Snipers", CFG::Visuals_DrawCrosshairOnSnipers);
+				CheckBox("Crosshair On Snipers", CFG::Visuals_DrawCrosshairOnSnipers);
 				CheckBox("Show Spread", CFG::Visuals_DrawSpread);
 				CheckBox("Low Graphics", CFG::Visuals_LowGraphics);
 				SliderInt("FOV", CFG::Visuals_FOV, 90, 120, 1);
@@ -1502,7 +1502,7 @@ void CFeatures_Menu::MainWindow()
 		}
 		GroupBoxEnd();
 
-		/*m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
+		m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
 		m_nCursorY = anchor_y;
 
 		GroupBoxStart("Backtrack", 150);
@@ -1516,7 +1516,7 @@ void CFeatures_Menu::MainWindow()
 				});
 			SliderInt("Latency Amount", CFG::Misc_Backtrack_Latency, 0, F::Backtrack.flMaxUnlag * 1000, 5);
 		}
-		GroupBoxEnd();*/
+		GroupBoxEnd();
 	}
 
 	if (MainTab == EMainTabs::PLAYERS)
@@ -1539,24 +1539,23 @@ void CFeatures_Menu::MainWindow()
 					continue;
 				}
 
-				PlayerManager::PlayerInfo custom_info{};
-
-				PlayerManager::GetInfo(n, custom_info);
+				PlayerPriority custom_info{};
+				F::Players.GetInfo(n, custom_info);
 
 				auto bx{ m_nCursorX };
 				auto by{ m_nCursorY };
 
-				if (custom_info.m_bIgnored)
+				if (custom_info.Ignored)
 				{
 					playerListButton(Util::ConvertUtf8ToWide(player_info.name).c_str(), 150, CFG::Color_Friend, false);
 				}
 
-				else if (custom_info.m_bCheater)
+				else if (custom_info.Cheater)
 				{
 					playerListButton(Util::ConvertUtf8ToWide(player_info.name).c_str(), 150, CFG::Color_Cheater, false);
 				}
 
-				else if (custom_info.m_bRetardLegit)
+				else if (custom_info.RetardLegit)
 				{
 					playerListButton(Util::ConvertUtf8ToWide(player_info.name).c_str(), 150, CFG::Color_RetardLegit, false);
 				}
@@ -1569,25 +1568,25 @@ void CFeatures_Menu::MainWindow()
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 				m_nCursorY = by;
 
-				if (playerListButton(L"Ignored", 60, custom_info.m_bIgnored ? CFG::Color_Friend : CFG::Menu_Text_Inactive, true))
+				if (playerListButton(L"Ignored", 60, custom_info.Ignored ? CFG::Color_Friend : CFG::Menu_Text_Inactive, true))
 				{
-					PlayerManager::Mark(n, {!custom_info.m_bIgnored, false});
+					F::Players.Mark(n, {!custom_info.Ignored, false});
 				}
 
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 				m_nCursorY = by;
 
-				if (playerListButton(L"Cheater", 60, custom_info.m_bCheater ? CFG::Color_Cheater : CFG::Menu_Text_Inactive, true))
+				if (playerListButton(L"Cheater", 60, custom_info.Cheater ? CFG::Color_Cheater : CFG::Menu_Text_Inactive, true))
 				{
-					PlayerManager::Mark(n, { false, !custom_info.m_bCheater });
+					F::Players.Mark(n, { false, !custom_info.Cheater });
 				}
 
 				m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 				m_nCursorY = by;
 
-				if (playerListButton(L"Retard Legit", 60, custom_info.m_bRetardLegit ? CFG::Color_RetardLegit : CFG::Menu_Text_Inactive, true))
+				if (playerListButton(L"Retard Legit", 60, custom_info.RetardLegit ? CFG::Color_RetardLegit : CFG::Menu_Text_Inactive, true))
 				{
-					PlayerManager::Mark(n, { false, false, !custom_info.m_bRetardLegit });
+					F::Players.Mark(n, { false, false, !custom_info.RetardLegit });
 				}
 
 				m_nCursorX = bx;

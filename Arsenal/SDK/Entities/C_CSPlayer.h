@@ -2,7 +2,7 @@
 #include "C_BasePlayer.h"
 #include "C_WeaponCSBase.h"
 
-MAKE_SIGNATURE(C_CSPlayer_ThirdPersonSwitch, "client.dll", "57 8B F9 8B 07 FF 90 ? ? ? ? 39 3D", 0);
+MAKE_SIGNATURE(C_CSPlayer_ThirdPersonSwitch, "client.dll", "57 8B F9 8B 07 FF 90 ? ? ? ? 39 3D", 0x0);
 
 class C_WeaponCSBase;
 
@@ -66,6 +66,8 @@ public:
 	{
 		return { m_angEyeAnglesX(), m_angEyeAnglesY(), 0.f };
 	}
+
+	bool HasPlayerAsFriend();
 
 	void ThirdPersonSwitch()
 	{

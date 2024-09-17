@@ -242,25 +242,22 @@ namespace Util
 
 		if (pEntity->GetClassID() == ECSClientClass::CCSPlayer)
 		{
-			auto pPlayer = pEntity->As<C_CSPlayer>();
+			const auto pPlayer = pEntity->As<C_CSPlayer>();
+
+			if (pPlayer != pLocal && pPlayer->HasPlayerAsFriend())
+				return CFG::Color_Friend;
 
 			if (pPlayer != pLocal)
 			{
-				PlayerManager::PlayerInfo custom_info{};
+				PlayerPriority info{};
+				F::Players.GetInfo(pPlayer->entindex(), info);
 
-				PlayerManager::GetInfo(pPlayer->entindex(), custom_info);
-
-				if (custom_info.m_bIgnored)
-				{
-					return CFG::Color_Friend;
-				}
-
-				if (custom_info.m_bCheater)
+				if (info.Cheater)
 				{
 					return CFG::Color_Cheater;
 				}
 
-				if (custom_info.m_bRetardLegit)
+				if (info.RetardLegit)
 				{
 					return CFG::Color_RetardLegit;
 				}

@@ -117,7 +117,7 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 			}
 		}
 
-		/*if (!pPlayer->IsDormant() && pPlayer != pLocal)
+		if (!pPlayer->IsDormant() && pPlayer != pLocal)
 		{
 			if (F::Backtrack.mLagCompensation[pPlayer])
 			{
@@ -136,10 +136,10 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 				Vector2D vScreenPos;
 				if (H::Draw.WorldPosToScreenPos(vLastRec->vOrigin, vScreenPos))
 				{
-					H::Draw.Circle(vScreenPos.x, vScreenPos.y, 2, 360, COLOR_GREEN);
+					H::Draw.Circle(vScreenPos.x, vScreenPos.y, 2, 360, Util::RainbowTickOffset(vLastRec->iTickCount));
 				}
 			}
-		}*/
+		}
 
 		player_info_t pi;
 		if (CFG::ESP_Players_Name && I::EngineClient->GetPlayerInfo(nIndex, &pi))

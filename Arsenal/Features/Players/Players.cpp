@@ -1,31 +1,23 @@
 #include "Players.h"
 #include "../../SDK/SDK.h"
 
-struct Player
+void CPlayers::Parse()
 {
-	FNV1A_t m_iSteamID{};
-	PlayerManager::PlayerInfo m_Info{};
-};
-
-std::vector<Player> m_vecPlayers{};
-std::string m_szLogPath{};
-
-void PlayerManager::Parse()
-{
-	if (m_szLogPath.empty())
+	// Init player data file path
+	if (m_LogPath.empty())
 	{
-		m_szLogPath = std::filesystem::current_path().string() + "\\Arsenal";
+		m_LogPath = std::filesystem::current_path().string() + "\\Arsenal";
 
-		if (!std::filesystem::exists(m_szLogPath))
+		if (!std::filesystem::exists(m_LogPath))
 		{
-			std::filesystem::create_directories(m_szLogPath);
+			std::filesystem::create_directories(m_LogPath);
 		}
 
-		m_szLogPath += "\\players.json";
+		m_LogPath += "\\players.json";
 
-		if (!std::filesystem::exists(m_szLogPath))
+		if (!std::filesystem::exists(m_LogPath))
 		{
-			std::ofstream file(m_szLogPath, std::ios::app);
+			std::ofstream file(m_LogPath, std::ios::app);
 
 			if (!file.is_open())
 			{
@@ -36,155 +28,104 @@ void PlayerManager::Parse()
 		}
 	}
 
-	if (!m_vecPlayers.empty())
+	if (!m_Players.empty())
 	{
 		return;
 	}
 
-	std::ifstream file(m_szLogPath);
-
-	if (!file.is_open() || file.peek() == std::ifstream::traits_type::eof())
+	// Open the file
+	std::ifstream logFile(m_LogPath);
+	if (!logFile.is_open() || logFile.peek() == std::ifstream::traits_type::eof())
 	{
 		return;
 	}
 
-	nlohmann::json j{};
-
-	file >> j;
-
+	// Load all players
+	nlohmann::json j = nlohmann::json::parse(logFile);
 	for (const auto& item : j.items())
 	{
-		Player p
-		{
-			FNV1A::Hash(item.key().c_str()),
-			{
-				j[item.key()]["ignored"].get<bool>(),
-				j[item.key()]["cheater"].get<bool>(),
-				j[item.key()]["retardlegit"].get<bool>()
-			}
+		const auto key = FNV1A::Hash(item.key().c_str());
+		auto& playerEntry = j[item.key()];
+
+		m_Players[key] = {
+			playerEntry["ignored"].get<bool>(),
+			playerEntry["cheater"].get<bool>(),
+			playerEntry["retardlegit"].get<bool>()
 		};
-
-		m_vecPlayers.push_back(p);
 	}
 }
 
-void PlayerManager::Mark(int entindex, const PlayerInfo& info)
+void CPlayers::Mark(int entindex, const PlayerPriority& info)
 {
 	if (entindex == I::EngineClient->GetLocalPlayer())
 	{
 		return;
 	}
 
-	player_info_t player_info{};
-
-	if (!I::EngineClient->GetPlayerInfo(entindex, &player_info) || player_info.fakeplayer)
+	player_info_t playerInfo{};
+	if (!I::EngineClient->GetPlayerInfo(entindex, &playerInfo) || playerInfo.fakeplayer)
 	{
 		return;
 	}
 
-	Player* ptr{};
+	auto steamID = FNV1A::Hash(std::string_view(playerInfo.guid).data());
+	m_Players[steamID] = info;
 
-	auto steam_id{ FNV1A::Hash(std::string_view(player_info.guid).data()) };
-
-	for (auto& pl : m_vecPlayers)
-	{
-		if (pl.m_iSteamID != steam_id)
-		{
-			continue;
-		}
-
-		ptr = &pl;
-
-		break;
-	}
-
-	if (!ptr)
-	{
-		m_vecPlayers.push_back({ steam_id, info });
-
-		ptr = &m_vecPlayers.back();
-	}
-
-	ptr->m_Info = info;
-
+	// Load the current playerlist
 	nlohmann::json j{};
-
-	std::ifstream read_file(m_szLogPath);
-
-	if (read_file.is_open() && read_file.peek() != std::ifstream::traits_type::eof())
+	std::ifstream readFile(m_LogPath);
+	if (readFile.is_open() && readFile.peek() != std::ifstream::traits_type::eof())
 	{
-		read_file >> j;
+		readFile >> j;
 	}
 
-	read_file.close();
+	readFile.close();
 
-	std::ofstream file(m_szLogPath);
-
-	if (!file.is_open())
+	// Open the output file
+	std::ofstream outFile(m_LogPath);
+	if (!outFile.is_open())
 	{
 		return;
 	}
 
-	auto key{ std::string(player_info.guid) };
+	auto& playerEntry = j[playerInfo.guid];
+	playerEntry["ignored"] = info.Ignored;
+	playerEntry["cheater"] = info.Cheater;
+	playerEntry["retardlegit"] = info.RetardLegit;
 
-	j[key]["ignored"] = ptr->m_Info.m_bIgnored;
-	j[key]["cheater"] = ptr->m_Info.m_bCheater;
-	j[key]["retardlegit"] = ptr->m_Info.m_bRetardLegit;
-
-	if (!ptr->m_Info.m_bIgnored && !ptr->m_Info.m_bCheater && !ptr->m_Info.m_bRetardLegit)
+	if (!info.Ignored && !info.Cheater && !info.RetardLegit)
 	{
-		j.erase(std::string(player_info.guid));
+		j.erase(std::string(playerInfo.guid));
 	}
 
-	file << std::setw(4) << j;
-
-	file.close();
+	outFile << std::setw(4) << j;
+	outFile.close();
 }
 
-bool PlayerManager::GetInfo(int entindex, PlayerInfo& out)
+bool CPlayers::GetInfo(int entindex, PlayerPriority& out)
 {
 	if (entindex == I::EngineClient->GetLocalPlayer())
 	{
 		return false;
 	}
 
-	player_info_t player_info{};
-
-	if (!I::EngineClient->GetPlayerInfo(entindex, &player_info) || player_info.fakeplayer)
+	player_info_t playerInfo{};
+	if (!I::EngineClient->GetPlayerInfo(entindex, &playerInfo) || playerInfo.fakeplayer)
 	{
 		return false;
 	}
 
-	auto steam_id{ FNV1A::Hash(std::string_view(player_info.guid).data()) };
-
-	for (const auto& pl : m_vecPlayers)
-	{
-		if (pl.m_iSteamID != steam_id)
-		{
-			continue;
-		}
-
-		out = pl.m_Info;
-
-		return true;
-	}
-
-	return false;
+	return GetInfoGUID(playerInfo.guid, out);
 }
 
-bool PlayerManager::GetInfoGUID(const std::string& guid, PlayerInfo& out)
+bool CPlayers::GetInfoGUID(const std::string& guid, PlayerPriority& out)
 {
-	auto steam_id{ FNV1A::Hash(guid.c_str()) };
+	const auto steamID = FNV1A::Hash(guid.c_str());
 
-	for (const auto& pl : m_vecPlayers)
+	if (auto it = m_Players.find(steamID); it != std::end(m_Players))
 	{
-		if (pl.m_iSteamID != steam_id)
-		{
-			continue;
-		}
-
-		out = pl.m_Info;
-
+		const auto& [key, value] { *it };
+		out = value;
 		return true;
 	}
 

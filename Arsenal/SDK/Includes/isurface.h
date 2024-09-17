@@ -55,7 +55,7 @@ public:
 	virtual bool IsTranslucent() const = 0;
 	virtual bool IsMipmapped() const = 0;
 	virtual void GetLowResColorSample(float s, float t, float* color) const = 0;
-	virtual void* GetResourceData(unsigned int eDataType, size_t* pNumBytes) const = 0;
+	virtual void* GetResourceData(uint32_t eDataType, size_t* pNumBytes) const = 0;
 	virtual void IncrementReferenceCount(void) = 0;
 	virtual void DecrementReferenceCount(void) = 0;
 	inline void AddRef() { IncrementReferenceCount(); }

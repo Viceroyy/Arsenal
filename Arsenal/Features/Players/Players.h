@@ -1,17 +1,30 @@
 #pragma once
+#include <unordered_map>
 #include <string>
 
-namespace PlayerManager
+struct PlayerPriority
 {
-	struct PlayerInfo
+	bool Ignored{};
+	bool Cheater{};
+	bool RetardLegit{};
+};
+
+class CPlayers
+{
+	struct Player
 	{
-		bool m_bIgnored{};
-		bool m_bCheater{};
-		bool m_bRetardLegit{};
+		uint32_t SteamID = {};
+		PlayerPriority Info = {};
 	};
-	
+
+	std::unordered_map<uint32_t, PlayerPriority> m_Players;
+	std::string m_LogPath;
+
+public:
 	void Parse();
-	void Mark(int entindex, const PlayerInfo& info);
-	bool GetInfo(int entindex, PlayerInfo& out);
-	bool GetInfoGUID(const std::string& guid, PlayerInfo& out);
-}
+	void Mark(int entindex, const PlayerPriority& info);
+	bool GetInfo(int entindex, PlayerPriority& out);
+	bool GetInfoGUID(const std::string& guid, PlayerPriority& out);
+};
+
+namespace F { inline CPlayers Players; }

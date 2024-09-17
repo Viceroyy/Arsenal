@@ -3,7 +3,7 @@
 #include "../Features/Materials/Materials.h"
 #include "../Features/Outlines/Outlines.h"
 
-auto drawing_world{ false };
+bool isDrawingWorld = false;
 
 enum view_id_t
 {
@@ -26,9 +26,9 @@ MAKE_SIGNATURE(CBaseWorldView_DrawExecute, "client.dll", "55 8B EC 83 EC ? A1 ? 
 MAKE_HOOK(CBaseWorldView_DrawExecute, S::CBaseWorldView_DrawExecute(), void, __fastcall, 
 	void* ecx, void* edx, float waterHeight, view_id_t viewID, float waterZAdjust)
 {
-	drawing_world = true;
+	isDrawingWorld = true;
 	CALL_ORIGINAL(ecx, edx, waterHeight, viewID, waterZAdjust);
-	drawing_world = false;
+	isDrawingWorld = false;
 }
 
 MAKE_SIGNATURE(CParticleSystemMgr_DrawRenderCache, "client.dll", "55 8B EC 81 EC ? ? ? ? 53 8B D9 57 89 5D ? 8B BB", 0x0);
@@ -36,9 +36,9 @@ MAKE_SIGNATURE(CParticleSystemMgr_DrawRenderCache, "client.dll", "55 8B EC 81 EC
 MAKE_HOOK(CParticleSystemMgr_DrawRenderCache, S::CParticleSystemMgr_DrawRenderCache(), void, __fastcall, 
 	void* ecx, void* edx, bool bShadowDepth)
 {
-	if (drawing_world)
+	if (isDrawingWorld)
 	{
-		if (auto rc{ I::MaterialSystem->GetRenderContext() })
+		if (const auto rc = I::MaterialSystem->GetRenderContext())
 		{
 			rc->ClearBuffers(false, false, true);
 		}

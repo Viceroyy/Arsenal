@@ -175,6 +175,7 @@
     <ClCompile Include="Hooks\S_StartDynamicSound.cpp" />
     <ClCompile Include="Hooks\WINAPI_WndProc.cpp" />
     <ClCompile Include="SDK\DrawManager\DrawManager.cpp" />
+    <ClCompile Include="SDK\Entities\C_CSPlayer.cpp" />
     <ClCompile Include="SDK\Entities\C_PlantedC4.h" />
     <ClCompile Include="SDK\Entities\KeyValues.cpp" />
     <ClCompile Include="SDK\Entities\NetVarManager\NetVarManager.cpp" />

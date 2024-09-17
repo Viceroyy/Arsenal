@@ -14,9 +14,9 @@ MAKE_HOOK(CL_Move, S::CL_Move(), void, __cdecl,
 	};
 
 	if (G.Unload)
-		return CallOriginal(bFinalTick);
+		return CALL_ORIGINAL(accumulated_extra_samples, bFinalTick);
 
-	//F::Backtrack.iTickCount = I::GlobalVars->tickcount;
+	F::Backtrack.iTickCount = I::GlobalVars->tickcount;
 
 	CallOriginal(bFinalTick);
 }

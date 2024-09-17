@@ -131,9 +131,9 @@ namespace CFG
 	CFGVAR(Misc_NoSpread, true);
 	CFGVAR(Misc_NoRecoil, true);
 
-	//CFGVAR(Misc_Backtrack_PreferOnShot, false);
-	//CFGVAR(Misc_Backtrack_LatencyMode, 0); //0 Off 1 Optimized 2 Value
-	//CFGVAR(Misc_Backtrack_Latency, 0);
+	CFGVAR(Misc_Backtrack_PreferOnShot, false);
+	CFGVAR(Misc_Backtrack_LatencyMode, 0); //0 Off 1 Optimized 2 Value
+	CFGVAR(Misc_Backtrack_Latency, 0);
 
 	CFGVAR(Misc_SequenceFreeze_Active, false);
 	CFGVAR(Misc_SequenceFreeze_Key, 0);
