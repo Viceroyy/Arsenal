@@ -47,7 +47,6 @@ This cheat disables sv_pure, servers being able to issue commands to your client
     *   **Enabled** - on / off master switch
     *   **No depth** - removes depth on materials, allowing to see through walls
     *   **Alpha** - modify material alpha
-    *   **Health** - draw player health
 
 *   **Outlines** - draw an outline on players, aka glow
     1.  *Local, Teammates, Enemies*
@@ -57,13 +56,6 @@ This cheat disables sv_pure, servers being able to issue commands to your client
     *   **Enabled** - on / off master switch
     *   **Bloom amount** - modify the bloom amount of outlines, aka thickness
     *   **Alpha** - modify outlines alpha
-    *   **Health** - draw player health
-    *   **Health bar** - draw rectangle indicating player health
-    *   **Armor** - draw player armor
-    *   **Armor bar** - draw rectangle indicating player armor
-    *   **Money** - draw player money
-    *   **Weapon** - draw player equipped weapon
-    *   **Arrows** - draw arrow to player when out of fov
     
 *   **Visuals** - miscellaneous visual options
     *   **No visual recoil** - remove visual recoil punch effect
