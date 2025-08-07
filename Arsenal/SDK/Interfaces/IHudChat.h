@@ -1,6 +1,6 @@
 #pragma once
 #include "../Includes/inetchannel.h"
-
+/*
 class CHudChat
 {
 public:
@@ -15,8 +15,8 @@ public:
 
 		using Type = void(__cdecl*)(void*, int, int, const char*);
 
-		U::VFunc.Get<Type>(this, 18)(this, 0, 0, buf);
+		U::VFunc.Get<Type>(this, 19)(this, 0, 0, buf);
 	}
 };
 
-namespace I { inline CHudChat* HudChat = nullptr; }
+namespace I { inline CHudChat* HudChat = nullptr; }*/

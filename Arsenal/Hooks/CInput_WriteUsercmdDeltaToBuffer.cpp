@@ -1,6 +1,4 @@
 //#include "../SDK/SDK.h"
-//#include "../Features/Backtrack/Backtrack.h"
-//#include "../Features/NetworkFix/NetworkFix.h"
 //
 //CUserCmd* GetUsercmd(int sequence_number)
 //{
@@ -10,8 +8,8 @@
 //MAKE_SIGNATURE(CInput_WriteUsercmdDeltaToBuffer, "client.dll", "55 8B EC 83 EC ? 33 C0 C7 45 ? ? ? ? ? 89 45 ? 88 45 ? 8B 45", 0x0);
 //MAKE_SIGNATURE(WriteUsercmd, "client.dll", "55 8B EC 8B 45 ? 83 EC ? 8B 40", 0x0);
 //
-//MAKE_HOOK(CInput_WriteUsercmdDeltaToBuffer, S::CInput_WriteUsercmdDeltaToBuffer(), bool, __fastcall,
-//	void* ecx, void* edx, bf_write* buf, int from, int to)
+//MAKE_HOOK(CInput_WriteUsercmdDeltaToBuffer, S::CInput_WriteUsercmdDeltaToBuffer(), bool,
+//	void* rcx, bf_write* buf, int from, int to)
 //{
 //	CUserCmd nullcmd = {};
 //	CUserCmd* f = nullptr;

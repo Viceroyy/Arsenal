@@ -5,10 +5,10 @@
 class CUtil_Pattern
 {
 public:
-	DWORD Find(const char* const szModule, const char* const szPattern);
+	DWORD_PTR Find(const char* const szModule, const char* const szPattern);
 
 private:
-	DWORD FindPattern(const DWORD dwAddress, const DWORD dwLen, const char* const szPattern);
+	DWORD_PTR FindPattern(const DWORD_PTR dwAddress, const DWORD_PTR dwLen, const char* const szPattern);
 };
 
 namespace U { inline CUtil_Pattern Pattern; }

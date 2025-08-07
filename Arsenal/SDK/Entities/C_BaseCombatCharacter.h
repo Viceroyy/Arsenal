@@ -24,6 +24,9 @@ public:
 	virtual	bool				Weapon_Switch(C_BaseCombatWeapon* pWeapon, int viewmodelindex = 0) = 0;
 	virtual bool				Weapon_CanSwitchTo(C_BaseCombatWeapon* pWeapon) = 0;
 	virtual C_BaseCombatWeapon* GetActiveWeapon(void) const = 0;
+	virtual void				GetGlowEffectColor(float* r, float* g, float* b) = 0;
+	virtual void				UpdateGlowEffect(void) = 0;
+	virtual void				DestroyGlowEffect(void) = 0;
 
 	NETVAR(m_flNextAttack, float, "CBaseCombatCharacter", "m_flNextAttack");
 	NETVAR(m_hActiveWeapon, EHANDLE, "CBaseCombatCharacter", "m_hActiveWeapon");

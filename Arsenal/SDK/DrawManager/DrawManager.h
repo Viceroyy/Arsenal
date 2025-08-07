@@ -40,9 +40,13 @@ public:
 
 
 	const CFont& Get(EFonts eFont);
+	void Start(bool bBadFontCheck = false);
+	void End();
+	Vector2D GetTextSize(const char* text, const EFonts& tFont);
+	Vector2D GetTextSize(const wchar_t* text, const EFonts& tFont);
 	void Initialize();
 	void Uninitialize();
-	void UpdateMatrix();
+	void UpdateW2SMatrix();
 
 public:
 	bool WorldPosToScreenPos(const Vector vWorld, Rect_t& vScreen);

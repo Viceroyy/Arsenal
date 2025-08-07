@@ -4,7 +4,7 @@
 
 void CFeatures_Visuals::Run()
 {
-	auto pLocal = H::EntityCache.GetLocal();
+	auto pLocal = H::Entities.GetLocal();
 	if (!pLocal || pLocal->deadflag())
 		return;
 
@@ -16,16 +16,17 @@ void CFeatures_Visuals::DoFOV(CViewSetup* pSetup)
 	if (CFG::Visuals_ClearScreenshots && I::EngineClient->IsTakingScreenshot()) //CFG::Visuals_FOV == 90 || pSetup->fov < 90.f ||
 		return;
 
-	auto pLocal = H::EntityCache.GetLocal();
+	auto pLocal = H::Entities.GetLocal();
 	if (!pLocal || Util::IsZoomed())
 		return;
 
-	pSetup->fov = CFG::Visuals_FOV;
+	H::Draw.String(EFonts::DEBUG, H::Draw.m_nScreenW / 2, H::Draw.m_nScreenH / 2, COLOR_BLACK, ALIGN_CENTER, std::format("pSetup->fov: {}, pSetup->fovViewmodel: {}", std::to_string(pSetup->fov), std::to_string(pSetup->fovViewmodel)).c_str());
+	//pSetup->fov = CFG::Visuals_FOV;
 }
 
 void CFeatures_Visuals::DoThirdperson(CViewSetup* pSetup)
 {
-	auto pLocal = H::EntityCache.GetLocal();
+	/*auto pLocal = H::Entities.GetLocal();
 
 	if (!pLocal || pLocal->deadflag())
 		return;
@@ -68,28 +69,25 @@ void CFeatures_Visuals::DoThirdperson(CViewSetup* pSetup)
 		I::EngineTrace->TraceRay(Ray, MASK_SOLID, &Filter, &Trace);
 
 		pSetup->origin -= vOffset * Trace.fraction;
-	}
+	}*/
 }
 
-void CFeatures_Visuals::ManualNetwork(const StartSoundParams_t& params)
+/*void CFeatures_Visuals::ManualNetwork(const StartSoundParams_t& params)
 {
-	if (params.soundsource <= 0)
+	if (params.soundsource <= 0 || params.soundsource == I::EngineClient->GetLocalPlayer())
 		return;
 
-	Vector vOrigin = params.origin;
-	const int iEntIndex = params.soundsource;
-	auto pEntity = I::ClientEntityList->GetClientEntity(iEntIndex);
-
-	if (pEntity && iEntIndex != I::EngineClient->GetLocalPlayer() && pEntity->IsDormant() && pEntity->GetClassID() == ECSClientClass::CCSPlayer)
-		G.DormancyMap[iEntIndex] = { vOrigin, I::EngineClient->Time() };
-}
+	auto pEntity = I::ClientEntityList->GetClientEntity(params.soundsource)->As<C_BaseEntity>();
+	if (pEntity && pEntity->IsDormant() && pEntity->IsPlayer())
+		G.DormancyMap[params.soundsource] = { params.origin, I::EngineClient->Time() };
+}*/
 
 void CFeatures_Visuals::SpreadCircle()
 {
 	if (!CFG::Visuals_DrawSpread || CFG::Misc_NoSpread || I::EngineVGui->IsGameUIVisible())
 		return;
 
-	auto weapon = H::EntityCache.GetWeapon();
+	auto weapon = H::Entities.GetWeapon();
 	if (!weapon)
 		return;
 

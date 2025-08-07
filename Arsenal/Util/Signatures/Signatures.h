@@ -6,23 +6,33 @@
 class CSignature
 {
 private:
-	std::uintptr_t m_dwVal = 0x0;
-	const char* m_pszDLLName = {};
-	const char* m_pszSignature = {};
-	int m_nOffset = 0;
-	const char* m_pszName = {};
+	uintptr_t m_dwVal;
+	const char* m_pszDLLName;
+	const char* m_pszSignature;
+	int m_nOffset;
+	const char* m_pszName;
 
 public:
 	CSignature(const char* sDLLName, const char* sSignature, int nOffset, const char* sName);
 
-	void Initialize();
+	bool Initialize();
 
-	inline std::uintptr_t operator()()
+	inline uintptr_t operator()()
 	{
 		return m_dwVal;
 	}
 
-	template <typename T> T As() { return reinterpret_cast<T>(this->operator()()); }
+	template <typename T>
+	inline T As()
+	{
+		return reinterpret_cast<T>(m_dwVal);
+	}
+
+	template <typename T, typename... Args>
+	inline T Call(Args... args) const
+	{
+		return reinterpret_cast<T(__fastcall*)(Args...)>(m_dwVal)(args...);
+	}
 };
 
 #define MAKE_SIGNATURE(name, dll, sig, offset) namespace S { inline CSignature name(dll, sig, offset, #name); }
@@ -30,15 +40,26 @@ public:
 class CSignatures
 {
 private:
-	std::vector<CSignature*> m_vecSignatures = {};
+	std::vector<CSignature*> m_vSignatures = {};
+	bool m_bFailed = false;
 
 public:
-	void Initialize();
+	bool Initialize();
 
 	inline void AddSignature(CSignature* pSignature)
 	{
-		m_vecSignatures.push_back(pSignature);
+		m_vSignatures.push_back(pSignature);
 	}
 };
 
 namespace U { inline CSignatures Signatures; }
+
+#define SIGNATURE(name, type, sig, ...) inline type name() \
+{ \
+	return S::sig##_##name.Call<type>(##__VA_ARGS__); \
+}
+
+#define SIGNATURE_ARGS(name, type, sig, args, ...) inline type name##args \
+{ \
+	return S::sig##_##name.Call<type>(##__VA_ARGS__); \
+}

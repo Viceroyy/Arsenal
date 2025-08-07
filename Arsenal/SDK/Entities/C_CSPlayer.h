@@ -2,7 +2,7 @@
 #include "C_BasePlayer.h"
 #include "C_WeaponCSBase.h"
 
-MAKE_SIGNATURE(C_CSPlayer_ThirdPersonSwitch, "client.dll", "57 8B F9 8B 07 FF 90 ? ? ? ? 39 3D", 0x0);
+//MAKE_SIGNATURE(C_CSPlayer_ThirdPersonSwitch, "client.dll", "57 8B F9 8B 07 FF 90 ? ? ? ? 39 3D", 0x0);
 
 class C_WeaponCSBase;
 
@@ -55,12 +55,12 @@ public:
 
 
 public:
-	inline C_WeaponCSBase* GetActiveCSWeapon()
+	/*inline C_WeaponCSBase* GetActiveCSWeapon()
 	{
 		C_BaseCombatWeapon* pWeapon = GetActiveWeapon();
 
 		return pWeapon ? pWeapon->As<C_WeaponCSBase>() : nullptr;
-	}
+	}*/
 
 	inline Vector GetEyeAngles()
 	{
@@ -69,10 +69,10 @@ public:
 
 	bool HasPlayerAsFriend();
 
-	void ThirdPersonSwitch()
+	/*void ThirdPersonSwitch()
 	{
 		reinterpret_cast<void(__thiscall*)(C_CSPlayer*)>(S::C_CSPlayer_ThirdPersonSwitch())(this);
-	}
+	}*/
 };
 
 namespace Util

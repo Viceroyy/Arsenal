@@ -1,8 +1,8 @@
 #pragma once
 #include "C_BaseCombatCharacter.h"
 
-MAKE_SIGNATURE(C_BasePlayer_UsingStandardWeaponsInVehicle, "client.dll", "56 57 8B F9 8B B7 ? ? ? ? 83 FE FF 74 4D", 0x0);
-MAKE_SIGNATURE(C_BasePlayer_UpdateButtonState, "client.dll", "55 8B EC 8B 81 ? ? ? ? 8B D0", 0x0);
+MAKE_SIGNATURE(C_BasePlayer_UsingStandardWeaponsInVehicle, "client.dll", "48 89 5C 24 ? 57 48 83 EC ? 8B 91 ? ? ? ? 48 8B F9 85 D2 74 ? B8 ? ? ? ? 83 FA ? 74 ? 0F B7 C2 4C 8B 05", 0x0);
+MAKE_SIGNATURE(C_BasePlayer_UpdateButtonState, "client.dll", "44 8B 81 ? ? ? ? 89 91", 0x0);
 
 class CSteamID;
 class CUserCmd;
@@ -166,9 +166,9 @@ public:
 	NETVAR(m_hViewModel, EHANDLE, "CBasePlayer", "m_hViewModel[0]");
 	NETVAR(m_szLastPlaceName, const char*, "CBasePlayer", "m_szLastPlaceName");
 
-	NETVAR_OFF(m_pCurrentCommand, CUserCmd*, "CBasePlayer", "m_hConstraintEntity", -4);
-	NETVAR_OFF(m_nButtons, int, "CBasePlayer", "m_hConstraintEntity", -8);
-	NETVAR_OFF(m_afButtonLast, int, "CBasePlayer", "m_hConstraintEntity", -20);
+	NETVAR_OFF(m_pCurrentCommand, CUserCmd*, "CBasePlayer", "m_hConstraintEntity", -8);
+	NETVAR_OFF(m_nButtons, int, "CBasePlayer", "m_hConstraintEntity", -12);
+	NETVAR_OFF(m_afButtonLast, int, "CBasePlayer", "m_hConstraintEntity", -24);
 
 public:
 
@@ -184,12 +184,13 @@ public:
 
 	inline int& m_nImpulse()
 	{
-		return *reinterpret_cast<int*>(reinterpret_cast<DWORD>(this) + 0x10C4);
+		static const int nOffset = U::NetVars.GetNetVar("CBasePlayer", "m_iBonusChallenge") + 0x68;
+		return *reinterpret_cast<int*>(reinterpret_cast<DWORD_PTR>(this) + nOffset);
 	}
 
-	inline MoveType_t& m_MoveType()
+	inline byte& m_MoveType()
 	{
-		return *reinterpret_cast<MoveType_t*>(reinterpret_cast<DWORD>(this) + 0x178);
+		return *reinterpret_cast<byte*>(uintptr_t(this) + 0x1F4);
 	}
 
 	bool IsSwimming()
@@ -211,6 +212,21 @@ public:
 	{
 		return (GetAbsOrigin() + m_vecViewOffset());
 	}
+
+	inline bool IsOnGround()
+	{
+		return m_fFlags() & FL_ONGROUND;
+	};
+
+	inline bool IsInWater()
+	{
+		return m_fFlags() & FL_INWATER;
+	};
+
+	inline bool IsDucking()
+	{
+		return m_fFlags() & FL_DUCKING;
+	};
 };
 
 namespace Util

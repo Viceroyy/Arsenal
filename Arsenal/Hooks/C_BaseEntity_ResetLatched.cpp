@@ -1,9 +1,9 @@
 #include "../SDK/SDK.h"
 
-MAKE_SIGNATURE(C_BaseEntity_ResetLatched, "client.dll", "53 8B D9 8B 03 8B 80 ? ? ? ? FF D0 84 C0 75 ? 57", 0x0);
+MAKE_SIGNATURE(C_BaseEntity_ResetLatched, "client.dll", "40 56 48 83 EC ? 48 8B 01 48 8B F1 FF 90 ? ? ? ? 84 C0 75", 0x0);
 
-MAKE_HOOK(C_BaseEntity_ResetLatched, S::C_BaseEntity_ResetLatched(), void, __fastcall, 
-	void* ecx, void* edx)
+MAKE_HOOK(C_BaseEntity_ResetLatched, S::C_BaseEntity_ResetLatched(), void,
+	void* rcx)
 {
 	return;
 }

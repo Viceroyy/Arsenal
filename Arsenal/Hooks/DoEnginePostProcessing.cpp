@@ -1,8 +1,8 @@
 #include "../SDK/SDK.h"
 
-MAKE_SIGNATURE(DoEnginePostProcessing, "client.dll", "55 8B EC 81 EC ? ? ? ? 8B 0D ? ? ? ? 53 33 DB", 0x0);
+MAKE_SIGNATURE(DoEnginePostProcessing, "client.dll", "48 8B C4 44 89 48 ? 44 89 40 ? 89 50 ? 89 48", 0x0);
 
-MAKE_HOOK(DoEnginePostProcessing, S::DoEnginePostProcessing(), void, __cdecl,
+MAKE_HOOK(DoEnginePostProcessing, S::DoEnginePostProcessing(), void,
 	int x, int y, int w, int h, bool bFlashlightIsOn, bool bPostVGui)
 {
 	if (!CFG::Visuals_NoPostProcessing || CFG::Visuals_ClearScreenshots && I::EngineClient->IsTakingScreenshot())

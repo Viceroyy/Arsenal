@@ -10,7 +10,7 @@ bool CSpectatorList::GetSpectators()
 {
 	m_vecSpectators.clear();
 
-	auto pLocal = H::EntityCache.GetLocal();
+	auto pLocal = H::Entities.GetLocal();
 
 	if (!pLocal || pLocal->deadflag())
 		return false;
@@ -19,7 +19,7 @@ bool CSpectatorList::GetSpectators()
 	{
 		auto pEntity = I::ClientEntityList->GetClientEntity(n);
 
-		if (!pEntity || pEntity->IsDormant() || pEntity->GetClassID() != ECSClientClass::CCSPlayer)
+		if (!pEntity || pEntity->IsDormant() || pEntity->GetClassID() != ECSClassID::CCSPlayer)
 			continue;
 
 		auto pPlayer = pEntity->As<C_CSPlayer>();
@@ -137,7 +137,7 @@ void CSpectatorList::Run()
 
 		H::Draw.Rect(
 			CFG::Visuals_SpectatorList_Pos_X,
-			CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1,
+			CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (int(n) + 1)) - 1,
 			LIST_WIDTH,
 			CFG::Menu_Drag_Bar_Height + 1,
 			BackgroundColor
@@ -145,9 +145,9 @@ void CSpectatorList::Run()
 
 		int nModeX = CFG::Visuals_SpectatorList_Pos_X;
 		int nModeOffsetX = LIST_WIDTH / 8;
-		int nTextY = CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1;
+		int nTextY = CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (int(n) + 1)) - 1;
 		int nTextX = nModeX + nModeOffsetX + CFG::Menu_Spacing_X;
-		int nY = CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1;
+		int nY = CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (int(n) + 1)) - 1;
 
 		H::Draw.Line(nModeX + nModeOffsetX, nY, nModeX + nModeOffsetX, nY + CFG::Menu_Drag_Bar_Height, OutlineColor);
 
@@ -176,7 +176,7 @@ void CSpectatorList::Run()
 
 		H::Draw.OutlinedRect(
 			CFG::Visuals_SpectatorList_Pos_X,
-			CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (n + 1)) - 1,
+			CFG::Visuals_SpectatorList_Pos_Y + (CFG::Menu_Drag_Bar_Height * (int(n) + 1)) - 1,
 			LIST_WIDTH,
 			CFG::Menu_Drag_Bar_Height + 1,
 			OutlineColor

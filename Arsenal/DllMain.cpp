@@ -1,8 +1,8 @@
 #include "Entry/Entry.h"
 
-DWORD APIENTRY MainThread(LPVOID lpParam)
+DWORD WINAPI MainThread(LPVOID lpParam)
 {
-	while (!GetModuleHandleW(L"mss32.dll"))
+	while (!GetModuleHandleW(L"ServerBrowser.dll"))
 		Sleep(2000);
 
 	U::Entry.Load();
@@ -17,15 +17,10 @@ DWORD APIENTRY MainThread(LPVOID lpParam)
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
-	static bool s_bAttached = false;
-
-	if ((fdwReason == DLL_PROCESS_ATTACH) && !s_bAttached)
+	if (fdwReason == DLL_PROCESS_ATTACH)
 	{
-		DisableThreadLibraryCalls(hinstDLL);
-		if (const HANDLE hMain = CreateThread(nullptr, 0, MainThread, hinstDLL, 0, nullptr))
-		{
-			s_bAttached = true; CloseHandle(hMain);
-		}
+		if (const auto hMainThread = CreateThread(nullptr, 0, MainThread, hinstDLL, 0, nullptr))
+			CloseHandle(hMainThread);
 	}
 
 	return TRUE;

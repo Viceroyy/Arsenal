@@ -4,9 +4,9 @@
 
 #define Q_ARRAYSIZE(A) (sizeof(A)/sizeof((A)[0]))
 
-MAKE_SIGNATURE(KeyValues_LoadFromBuffer, "engine.dll", "55 8B EC 83 EC ? 53 8B 5D ? 89 4D ? 85 DB", 0x0);
-MAKE_SIGNATURE(KeyValues_Initialize, "engine.dll", "55 8B EC 56 8B F1 6A ? FF 75 ? C7 06 ? ? ? ? C7 46 ? ? ? ? ? C7 46 ? ? ? ? ? C7 46 ? ? ? ? ? C7 46 ? ? ? ? ? C7 46 ? ? ? ? ? C7 46 ? ? ? ? ? C7 46 ? ? ? ? ? FF 15 ? ? ? ? 83 C4 ? 89 06 8B C6", 0x0);
-MAKE_SIGNATURE(KeyValues_FindKey, "client.dll", "55 8B EC 81 EC ? ? ? ? 56 8B 75 ? 57 8B F9 85 F6 0F 84", 0x0);
+MAKE_SIGNATURE(KeyValues_LoadFromBuffer, "engine.dll", "4C 89 4C 24 ? 48 89 4C 24 ? 55 56", 0x0);
+MAKE_SIGNATURE(KeyValues_Initialize, "engine.dll", "40 53 48 83 EC ? 48 8B D9 C7 01", 0x0);
+MAKE_SIGNATURE(KeyValues_FindKey, "client.dll", "48 8B C4 53 57 41 56", 0x0);
 
 int UnicodeToUTF8(const wchar_t* unicode, char* ansi, int ansiBufferSize)
 {
@@ -199,9 +199,9 @@ const wchar_t* KeyValues::GetWString(const char* keyName, const wchar_t* default
 			break;
 		case TYPE_STRING:
 		{
-			int bufSize = strlen(dat->m_sValue) + 1;
+			const auto bufSize = strlen(dat->m_sValue) + 1;
 			wchar_t* pWBuf = new wchar_t[bufSize];
-			int result = UTF8ToUnicode(dat->m_sValue, pWBuf, bufSize * sizeof(wchar_t));
+			const int result = UTF8ToUnicode(dat->m_sValue, pWBuf, static_cast<int>(bufSize) * sizeof(wchar_t));
 			if (result >= 0)
 			{
 				SetWString(keyName, pWBuf);
@@ -322,7 +322,7 @@ void KeyValues::SetWString(const char* keyName, const wchar_t* value)
 			value = L"";
 		}
 
-		int len = wcslen(value);
+		int len = int(wcslen(value));
 		dat->m_wsValue = new wchar_t[len + 1];
 		memcpy(dat->m_wsValue, value, (len + 1) * sizeof(wchar_t));
 
@@ -350,7 +350,7 @@ void KeyValues::SetString(const char* keyName, const char* value)
 			value = "";
 		}
 
-		int len = strlen(value);
+		int len = int(strlen(value));
 		dat->m_sValue = new char[len + 1];
 		memcpy(dat->m_sValue, value, len + 1);
 

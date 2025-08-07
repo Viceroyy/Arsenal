@@ -96,31 +96,44 @@ public:
 	NETVAR(m_flFadeScale, float, "CBaseAnimating", "m_flFadeScale");
 
 public:
-	CUtlVector<matrix3x4_t>* GetCachedBoneData()
+	inline CUtlVector<matrix3x4_t>* GetCachedBoneData()
 	{
-		static int nOffset = H::NetVar.Get("CBaseAnimating", "m_hLightingOrigin") - 88;
-		return reinterpret_cast<CUtlVector<matrix3x4_t> *>(reinterpret_cast<std::uintptr_t>(this) + nOffset);
-		//return reinterpret_cast<CUtlVector<matrix3x4_t> *>(reinterpret_cast<DWORD>(this) + 0x80C);
+		static int nOffset = U::NetVars.GetNetVar("CBaseAnimating", "m_hLightingOrigin") - 88;
+		return reinterpret_cast<CUtlVector<matrix3x4_t>*>(uintptr_t(this) + nOffset);
 	}
 
-	Vector GetHitboxPosMatrix(const int nHitbox, matrix3x4_t BoneMatrix[128])
+	std::optional<Vector> GetHitboxPosMatrix(const int nHitbox, const matrix3x4_t* pBoneMatrix)
 	{
-		if (const auto& pModel = GetModel())
-		{
-			if (const auto& pHdr = I::ModelInfoClient->GetStudiomodel(pModel))
-			{
-				if (const auto& pSet = pHdr->pHitboxSet(m_nHitboxSet()))
-				{
-					if (const auto& pBox = pSet->pHitbox(nHitbox))
-					{
-						Vector vPos = (pBox->bbmin + pBox->bbmax) * 0.5f, vOut;
-						U::Math.VectorTransform(vPos, BoneMatrix[pBox->bone], vOut);
-						return vOut;
-					}
-				}
-			}
-		}
+		if (!pBoneMatrix)
+			return std::nullopt;
 
-		return Vector();
+		// Guard clauses to prevent crashes from invalid pointers.
+		const auto pModel = GetModel();
+		if (!pModel)
+			return std::nullopt;
+
+		const auto pHdr = I::ModelInfoClient->GetStudiomodel(pModel);
+		if (!pHdr)
+			return std::nullopt;
+
+		const auto pSet = pHdr->pHitboxSet(m_nHitboxSet());
+		if (!pSet)
+			return std::nullopt;
+
+		const auto pBox = pSet->pHitbox(nHitbox);
+		if (!pBox)
+			return std::nullopt;
+
+		// We assume pBox->bone is a valid index, but it's a potential crash point.
+		// If you ever encounter a crash here, add a bounds check:
+		// if (pBox->bone >= 128 || pBox->bone < 0) return std::nullopt;
+		const auto pTransformMatrix = &pBoneMatrix[pBox->bone];
+
+		const Vector vPos = (pBox->bbmin + pBox->bbmax) * 0.5f;
+		Vector vOut;
+
+		U::Math.VectorTransform(vPos, *pTransformMatrix, vOut);
+
+		return vOut;
 	}
 };

@@ -12,22 +12,35 @@
 class CHelpers_NetVarManager
 {
 public:
-	int Get(const char* const szClass, const char* const szNetVar);
+	int GetOffset(RecvTable* pTable, const char* szNetVar);
+	int GetNetVar(const char* szClass, const char* szNetVar);
 
-private:
-	int GetOffset(RecvTable* pTable, const char* const szNetVar);
+	RecvProp* GetProp(RecvTable* pTable, const char* szNetVar);
+	RecvProp* GetNetProp(const char* szClass, const char* szNetVar);
 };
 
-namespace H { inline CHelpers_NetVarManager NetVar; }
+namespace U { inline CHelpers_NetVarManager NetVars; }
 
-#define NETVAR(_name, type, table, name) inline type &_name() \
+#define NETVAR(_name, type, table, name) inline type& _name() \
 { \
-	static const int nOffset = H::NetVar.Get(table, name); \
-	return *reinterpret_cast<type *>(reinterpret_cast<DWORD>(this) + nOffset); \
+	static int nOffset = U::NetVars.GetNetVar(table, name); \
+	return *reinterpret_cast<type*>(uintptr_t(this) + nOffset); \
 }
 
-#define NETVAR_OFF(_name, type, table, name, offset) inline type &_name() \
+#define NETVAR_OFF(_name, type, table, name, offset) inline type& _name() \
 { \
-	static const int nOffset = H::NetVar.Get(table, name) + offset; \
-	return *reinterpret_cast<type *>(reinterpret_cast<DWORD>(this) + nOffset); \
+	static int nOffset = U::NetVars.GetNetVar(table, name) + offset; \
+	return *reinterpret_cast<type*>(uintptr_t(this) + nOffset); \
+}
+
+#define NETVAR_ARRAY(_name, type, table, name) inline type& _name(int iIndex) \
+{ \
+	static int nOffset = U::NetVars.GetNetVar(table, name); \
+	return *reinterpret_cast<type*>(uintptr_t(this) + nOffset + iIndex * sizeof(type)); \
+}
+
+#define NETVAR_ARRAY_OFF(_name, type, table, name, offset) inline type& _name(int iIndex) \
+{ \
+	static int nOffset = U::NetVars.GetNetVar(table, name) + offset; \
+	return *reinterpret_cast<type*>(uintptr_t(this) + nOffset + iIndex * sizeof(type)); \
 }

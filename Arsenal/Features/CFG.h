@@ -101,33 +101,12 @@ namespace CFG
 
 #pragma endregion
 
-#pragma region Outlines
-
-	CFGVAR(Outlines_Active, true);
-	CFGVAR(Outlines_Style, 1); //0 Bloom 1 Crisp 2 Cartoony 3 Cartoony Alt
-	CFGVAR(Outlines_Bloom_Amount, 5);
-
-	CFGVAR(Outlines_Players_Active, true);
-	CFGVAR(Outlines_Players_Alpha, 1.0f);
-	CFGVAR(Outlines_Players_Ignore_Local, false);
-	CFGVAR(Outlines_Players_Ignore_Friends, false);
-	CFGVAR(Outlines_Players_Ignore_Enemies, false);
-	CFGVAR(Outlines_Players_Ignore_Teammates, true);
-
-	CFGVAR(Outlines_World_Active, true);
-	CFGVAR(Outlines_World_Alpha, 1.0f);
-	CFGVAR(Outlines_World_Ignore_PlantedC4, false);
-	CFGVAR(Outlines_World_Ignore_DroppedWeapons, false);
-	CFGVAR(Outlines_World_Ignore_LocalProjectiles, false);
-	CFGVAR(Outlines_World_Ignore_EnemyProjectiles, false);
-	CFGVAR(Outlines_World_Ignore_TeammateProjectiles, true);
-
-#pragma endregion
-
 #pragma region Misc
 
 	CFGVAR(Misc_Bunnyhop, true);
-	CFGVAR(Misc_AutoStrafe, true);
+	CFGVAR(Misc_AutoStrafe, 2); //0 Off 1 Legit 2 Directional
+	CFGVAR(Misc_AutoStrafeTurnScale, 0.7f);
+	CFGVAR(Misc_AutoStrafeMaxDelta, 180.f);
 	CFGVAR(Misc_NoSpread, true);
 	CFGVAR(Misc_NoRecoil, true);
 
@@ -139,12 +118,15 @@ namespace CFG
 	CFGVAR(Misc_SequenceFreeze_Key, 0);
 	CFGVAR(Misc_SequenceFreeze_Value, 16);
 
+	CFGVAR(Misc_AntiCheatCompatibility, false);
+
 #pragma endregion
 
 #pragma region Visuals
 
 	CFGVAR(Visuals_NoRecoil, true);
 	CFGVAR(Visuals_NoInterpolation, true);
+	CFGVAR(Visuals_NoLerp, false);
 	CFGVAR(Visuals_NoMOTD, true);
 	CFGVAR(Visuals_NoScreenEffects, true);
 	CFGVAR(Visuals_NoDSP, true);

@@ -133,24 +133,24 @@ public:
 		x = X; y = Y;
 	}
 
-	float Lenght(void) const
+	float Length(void) const
 	{
 		return ::sqrtf(x * x + y * y);
 	}
 
-	float LenghtSqr(void) const
+	float LengthSqr(void) const
 	{
 		return (x * x + y * y);
 	}
 
 	float DistTo(const Vector2D& v) const
 	{
-		return (*this - v).Lenght();
+		return (*this - v).Length();
 	}
 
 	float DistToSqr(const Vector2D& v) const
 	{
-		return (*this - v).LenghtSqr();
+		return (*this - v).LengthSqr();
 	}
 
 	float Dot(const Vector2D& v) const

@@ -51,10 +51,10 @@ enum UserMessages
 	CS_UM_PlayerStatsUpdate = 46
 };
 
-MAKE_SIGNATURE(CUserMessages_DispatchUserMessage, "client.dll", "55 8B EC 8B 55 ? 83 EC ? 56 8B F1 85 D2 0F 88", 0x0);
+MAKE_SIGNATURE(CUserMessages_DispatchUserMessage, "client.dll", "40 56 48 83 EC ? 49 8B F0", 0x0);
 
-MAKE_HOOK(CUserMessages_DispatchUserMessage, S::CUserMessages_DispatchUserMessage(), bool, __fastcall, 
-	void* ecx, void* edx, UserMessages msg_type, bf_read& msg_data)
+MAKE_HOOK(CUserMessages_DispatchUserMessage, S::CUserMessages_DispatchUserMessage(), bool,
+	void* rcx, UserMessages msg_type, bf_read& msg_data)
 {
 	if (CFG::Visuals_NoMOTD && msg_type == CS_UM_VGUIMenu)
 	{
@@ -71,5 +71,5 @@ MAKE_HOOK(CUserMessages_DispatchUserMessage, S::CUserMessages_DispatchUserMessag
 	if (CFG::Visuals_NoScreenEffects && (msg_type == CS_UM_Shake || msg_type == CS_UM_Fade || msg_type == CS_UM_Rumble))
 		return true;
 
-	return CALL_ORIGINAL(ecx, edx, msg_type, msg_data);
+	return CALL_ORIGINAL(rcx, msg_type, msg_data);
 }

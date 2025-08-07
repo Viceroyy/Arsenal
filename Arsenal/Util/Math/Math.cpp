@@ -64,29 +64,36 @@ void CUtil_Math::PointsFromBox(const Vector mins, const Vector maxs, Vector* poi
 	points[7][2] = maxs[2];
 }
 
-void CUtil_Math::VectorAngles(const Vector& forward, Vector& angles)
+void CUtil_Math::VectorAngles(const Vector& vForward, Vector& vAngles)
 {
-	float yaw, pitch;
+	float flYaw, flPitch;
 
-	if (forward.y == 0.0f && forward.x == 0.0f)
+	if (vForward.y == 0.0f && vForward.x == 0.0f)
 	{
-		yaw = 0.0f;
-		pitch = (forward.z > 0.0f) ? 270.0f : 90.0f;
+		flYaw = 0.0f;
+		flPitch = (vForward.z > 0.0f) ? 270.0f : 90.0f;
 	}
 	else
 	{
-		yaw = RAD2DEGF(::atan2f(forward.y, forward.x));
-		yaw += (360.0f * (yaw < 0.0f));
+		flYaw = RAD2DEG(atan2f(vForward.y, vForward.x));
+		if (flYaw < 0.0f)
+			flYaw += 360.0f;
 
-		const float tmp = forward.Lenght2D();
-
-		pitch = RAD2DEGF(::atan2f(-forward.z, tmp));
-		pitch += (360.0f * (pitch < 0.0f));
+		flPitch = RAD2DEG(atan2f(-vForward.z, vForward.Length2D()));
+		if (flPitch < 0.0f)
+			flPitch += 360.0f;
 	}
 
-	angles[0] = pitch;
-	angles[1] = yaw;
-	angles[2] = 0.0f;
+	vAngles.x = flPitch;
+	vAngles.y = flYaw;
+	vAngles.z = 0.0f;
+}
+
+Vector CUtil_Math::VectorAngles(const Vector& vForward)
+{
+	Vector vResult;
+	VectorAngles(vForward, vResult);
+	return vResult;
 }
 
 void CUtil_Math::AngleVectors(const Vector vAngles, Vector* vForward)
@@ -176,7 +183,7 @@ float CUtil_Math::CalcFov(const Vector vSrc, const Vector vDst)
 	Vector v_dst = { };
 	AngleVectors(vDst, &v_dst);
 
-	float result = RAD2DEG(::acosf(v_dst.Dot(v_src) / v_dst.LenghtSqr()));
+	float result = RAD2DEG(::acosf(v_dst.Dot(v_src) / v_dst.LengthSqr()));
 
 	if (!isfinite(result) || isinf(result) || isnan(result))
 		result = 0.0f;

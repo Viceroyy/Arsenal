@@ -6,6 +6,7 @@
 
 CSignature::CSignature(const char* sDLLName, const char* sSignature, int nOffset, const char* sName)
 {
+	m_dwVal = 0x0;
 	m_pszDLLName = sDLLName;
 	m_pszSignature = sSignature;
 	m_nOffset = nOffset;
@@ -14,22 +15,29 @@ CSignature::CSignature(const char* sDLLName, const char* sSignature, int nOffset
 	U::Signatures.AddSignature(this);
 }
 
-void CSignature::Initialize()
+bool CSignature::Initialize()
 {
 	m_dwVal = U::Pattern.Find(m_pszDLLName, m_pszSignature);
 	if (!m_dwVal)
+	{
 		OutputDebugStringA(std::format("CSignature::Initialize() failed to initialize:\n  {}\n  {}\n  {}\n", m_pszName, m_pszDLLName, m_pszSignature).c_str());
+		return false;
+	}
 
 	m_dwVal += m_nOffset;
+	return true;
 }
 
-void CSignatures::Initialize()
+bool CSignatures::Initialize()
 {
-	for (auto Signature : m_vecSignatures)
+	for (auto pSignature : m_vSignatures)
 	{
-		if (!Signature)
+		if (!pSignature)
 			continue;
 
-		Signature->Initialize();
+		if (!pSignature->Initialize())
+			m_bFailed = true;
 	}
+
+	return !m_bFailed;
 }

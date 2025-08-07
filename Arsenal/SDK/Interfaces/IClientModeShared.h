@@ -4,7 +4,7 @@
 class ClientModeShared
 {
 public:
-	bool IsChatPanelOutOfFocus(void)
+	/*bool IsChatPanelOutOfFocus(void)
 	{
 		static auto CHudChat = U::VFunc.Get<uintptr_t(__thiscall*)(void*)>(this, 19)(this);
 
@@ -14,7 +14,7 @@ public:
 		}
 
 		return false;
-	}
+	}*/
 };
 
 namespace I { inline ClientModeShared* ClientMode = nullptr; }

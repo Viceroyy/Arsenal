@@ -1,18 +1,16 @@
 #include "../SDK/SDK.h"
 
 #include "../Features/Materials/Materials.h"
-#include "../Features/Outlines/Outlines.h"
 #include "../Features/WorldModulation/WorldModulation.h"
 
-MAKE_HOOK(IBaseClientDLL_LevelShutdown, U::VFunc.Get<void*>(I::BaseClientDLL, 7u), void, __fastcall, 
-	void* ecx, void* edx)
+MAKE_HOOK(IBaseClientDLL_LevelShutdown, U::VFunc.Get<void*>(I::BaseClientDLL, 7u), void,
+	void* rcx)
 {
-	CALL_ORIGINAL(ecx, edx);
+	CALL_ORIGINAL(rcx);
 
-	H::EntityCache.Clear();
-	G.DormancyMap.clear();
+	H::Entities.Clear(true);
+	//G.DormancyMap.clear();
 
 	F::Materials.CleanUp();
-	F::Outlines.CleanUp();
 	F::WorldModulation.LevelShutdown();
 }

@@ -16,8 +16,8 @@
 #include "IEngineTrace.h"
 #include "../../Util/Signatures/Signatures.h"
 
-MAKE_SIGNATURE(StartDrawing, "vguimatsurface.dll", "55 8B EC 64 A1 ? ? ? ? 6A FF 68 ? ? ? ? 50 64 89 25 ? ? ? ? 83 EC 14", 0x0);
-MAKE_SIGNATURE(FinishDrawing, "vguimatsurface.dll", "55 8B EC 6A FF 68 ? ? ? ? 64 A1 ? ? ? ? 50 64 89 25 ? ? ? ? 51 56 6A 00", 0x0);
+MAKE_SIGNATURE(StartDrawing, "vguimatsurface.dll", "40 53 56 57 48 83 EC ? 48 8B F9 80 3D", 0x0);
+MAKE_SIGNATURE(FinishDrawing, "vguimatsurface.dll", "40 53 48 83 EC ? 33 C9", 0x0);
 
 class VMatrix;
 class IMaterial;

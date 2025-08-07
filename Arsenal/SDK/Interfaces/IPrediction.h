@@ -24,7 +24,7 @@ class C_BasePlayer;
 class IPrediction
 {
 public:
-	virtual			~IPrediction(void) = 0;
+	virtual			~IPrediction(void) {};
 	virtual void	Init(void) = 0;
 	virtual void	Shutdown(void) = 0;
 	virtual void	Update(int startframe, bool validframe, int incoming_acknowledged, int outgoing_command) = 0;
@@ -67,17 +67,11 @@ public:
 	virtual void	_Update(bool received_new_world_update, bool validframe, int incoming_acknowledged, int outgoing_command) = 0;
 
 public:
-	CHandle< C_BaseEntity > m_hLastGround;
-	bool			m_bInPrediction;
-	bool			m_bFirstTimePredicted;
-	bool			m_bOldCLPredictValue;
-	bool			m_bEnginePaused;
-	int				m_nPreviousStartFrame;
-	int				m_nCommandsPredicted;
-	int				m_nServerCommandsAcknowledged;
-	int				m_bPreviousAckHadErrors;
-	int				m_nIncomingPacketNumber;
-	float			m_flIdealPitch;
+	EntityHandle_t				m_hLastGround;
+	bool						m_bInPrediction;
+	bool						m_bFirstTimePredicted;
+	bool						m_bOldCLPredictValue;
+	bool						m_bEnginePaused;
 };
 
 namespace I { inline CPrediction* ClientPrediction = nullptr; }

@@ -1,4 +1,41 @@
 #include "DrawManager.h"
+#include "../../Util/Timer/Timer.h"
+#include "../SDK.h"
+
+void CHelpers_DrawManager::Start(bool bBadFontCheck)
+{
+	I::MatSystemSurface->StartDrawing();
+	I::MatSystemSurface->DisableClipping(true);
+
+	if (bBadFontCheck)
+	{
+		static Timer tTimer = {};
+		if (tTimer.Run(1.f))
+		{
+			if (!GetTextSize("", EFonts::ESP).y)
+				H::Draw.Initialize();
+		}
+	}
+}
+
+void CHelpers_DrawManager::End()
+{
+	I::MatSystemSurface->FinishDrawing();
+}
+
+Vector2D CHelpers_DrawManager::GetTextSize(const char* text, const EFonts& tFont)
+{
+	int w = 0, h = 0;
+	I::MatSystemSurface->GetTextSize(m_Fonts[tFont].m_hFont, Util::ConvertUtf8ToWide(text).c_str(), w, h);
+	return { float(w), float(h) };
+}
+
+Vector2D CHelpers_DrawManager::GetTextSize(const wchar_t* text, const EFonts& tFont)
+{
+	int w = 0, h = 0;
+	I::MatSystemSurface->GetTextSize(m_Fonts[tFont].m_hFont, text, w, h);
+	return { float(w), float(h) };
+}
 
 void CHelpers_DrawManager::Initialize()
 {
@@ -34,17 +71,15 @@ void CHelpers_DrawManager::Uninitialize()
 	m_Fonts.clear();
 }
 
-void CHelpers_DrawManager::UpdateMatrix()
+void CHelpers_DrawManager::UpdateW2SMatrix()
 {
-	CViewSetup ViewSetup = { };
-
-	if (I::BaseClientDLL->GetPlayerView(ViewSetup))
+	CViewSetup tViewSetup;
+	if (I::BaseClientDLL->GetPlayerView(tViewSetup))
 	{
-		static VMatrix WorldToView = { };
-		static VMatrix ViewToProjection = { };
-		static VMatrix WorldToPixels = { };
-
-		I::RenderView->GetMatricesForView(ViewSetup, &WorldToView, &ViewToProjection, &m_WorldToProjection, &WorldToPixels);
+		static VMatrix mWorldToView;
+		static VMatrix mViewToProjection;
+		static VMatrix mWorldToPixels;
+		I::RenderView->GetMatricesForView(tViewSetup, &mWorldToView, &mViewToProjection, &m_WorldToProjection, &mWorldToPixels);
 	}
 }
 
@@ -126,7 +161,7 @@ void CHelpers_DrawManager::String(const EFonts& font, int x, int y, const Color_
 	I::MatSystemSurface->DrawSetTextPos(x, y);
 	I::MatSystemSurface->DrawSetTextFont(fnt);
 	I::MatSystemSurface->DrawSetTextColor(clr);
-	I::MatSystemSurface->DrawPrintText(wstr, wcslen(wstr));
+	I::MatSystemSurface->DrawPrintText(wstr, int(wcslen(wstr)));
 }
 
 void CHelpers_DrawManager::String(const EFonts& font, int x, int y, const Color_t& clr, const EAlign& align, const wchar_t* const str, ...)
@@ -162,7 +197,7 @@ void CHelpers_DrawManager::String(const EFonts& font, int x, int y, const Color_
 	I::MatSystemSurface->DrawSetTextPos(x, y);
 	I::MatSystemSurface->DrawSetTextFont(fnt);
 	I::MatSystemSurface->DrawSetTextColor(clr);
-	I::MatSystemSurface->DrawPrintText(wstr, wcslen(wstr));
+	I::MatSystemSurface->DrawPrintText(wstr, int(wcslen(wstr)));
 }
 
 void CHelpers_DrawManager::Line(const int x, const int y, const int x1, const int y1, const Color_t& clr)

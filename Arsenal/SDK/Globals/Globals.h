@@ -2,11 +2,11 @@
 #include "../../Util/Math/Math.h"
 #include <unordered_map>
 
-struct DormantData
+/*struct DormantData
 {
 	Vector Location;
 	float LastUpdate = 0.f;
-};
+};*/
 
 class CGlobals
 {
@@ -18,7 +18,7 @@ public:
 
 	int SeqNum = 0;
 
-	std::unordered_map<int, DormantData> DormancyMap = {};
+	//std::unordered_map<int, DormantData> DormancyMap = {};
 };
 
 inline CGlobals G;

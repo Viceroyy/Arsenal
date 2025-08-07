@@ -2,16 +2,19 @@
 
 void CFeatures_EnginePrediction::Start(C_CSPlayer* pLocal, CUserCmd* cmd)
 {
-	if (!pLocal || pLocal->deadflag() || !I::MoveHelper)
+	if (!I::MoveHelper)
 		return;
 
 	memset(&m_MoveData, 0, sizeof(CMoveData));
 
 	cmd->random_seed = MD5_PseudoRandom(cmd->command_number) & std::numeric_limits<int>::max();
 
-	pLocal->m_pCurrentCommand() = cmd;
-	C_BaseEntity::SetPredictionRandomSeed(cmd);
-	C_BaseEntity::SetPredictionPlayer(pLocal);
+	//StartCommand
+	{
+		pLocal->m_pCurrentCommand() = cmd;
+		C_BaseEntity::SetPredictionRandomSeed(cmd);
+		C_BaseEntity::SetPredictionPlayer(pLocal);
+	}
 
 	m_fOldCurrentTime = I::GlobalVars->curtime;
 	m_fOldFrameTime = I::GlobalVars->frametime;
@@ -50,15 +53,21 @@ void CFeatures_EnginePrediction::Start(C_CSPlayer* pLocal, CUserCmd* cmd)
 
 	I::ClientPrediction->SetLocalViewAngles(cmd->viewangles);
 
-	if (pLocal->PhysicsRunThink())
-		pLocal->PreThink();
-
-	const int thinktick = pLocal->m_nNextThinkTick();
-
-	if (thinktick > 0 && thinktick < nServerTicks)
+	//RunPreThink
 	{
-		pLocal->m_nNextThinkTick() = TICK_NEVER_THINK;
-		pLocal->Think();
+		if (pLocal->PhysicsRunThink())
+			pLocal->PreThink();
+	}
+
+	//RunThink
+	{
+		const int thinktick = pLocal->m_nNextThinkTick();
+
+		if (thinktick > 0 && thinktick < nServerTicks)
+		{
+			pLocal->m_nNextThinkTick() = TICK_NEVER_THINK;
+			pLocal->Think();
+		}
 	}
 
 	I::ClientPrediction->SetupMove(pLocal, cmd, I::MoveHelper, &m_MoveData);
@@ -71,16 +80,19 @@ void CFeatures_EnginePrediction::Start(C_CSPlayer* pLocal, CUserCmd* cmd)
 	I::ClientPrediction->m_bFirstTimePredicted = bOldIsFirstPrediction;
 }
 
-void CFeatures_EnginePrediction::Finish(C_CSPlayer* pLocal, CUserCmd* cmd)
+void CFeatures_EnginePrediction::Finish(C_CSPlayer* pLocal)
 {
-	if (!pLocal || pLocal->deadflag())
+	if (!I::MoveHelper)
 		return;
 
 	I::GameMovement->FinishTrackPredictionErrors(pLocal);
 
-	pLocal->m_pCurrentCommand() = NULL;
-	C_BaseEntity::SetPredictionRandomSeed(NULL);
-	C_BaseEntity::SetPredictionPlayer(NULL);
+	//FinishCommand
+	{
+		pLocal->m_pCurrentCommand() = NULL;
+		C_BaseEntity::SetPredictionRandomSeed(NULL);
+		C_BaseEntity::SetPredictionPlayer(NULL);
+	}
 
 	I::GlobalVars->curtime = m_fOldCurrentTime;
 	I::GlobalVars->frametime = m_fOldFrameTime;

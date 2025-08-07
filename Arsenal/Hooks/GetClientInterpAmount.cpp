@@ -1,8 +1,17 @@
 #include "../SDK/SDK.h"
 
-MAKE_SIGNATURE(GetClientInterpAmount, "client.dll", "55 8B EC A1 ? ? ? ? 83 EC ? A8", 0x0);
+MAKE_SIGNATURE(GetClientInterpAmount, "client.dll", "40 53 48 83 EC ? 8B 05 ? ? ? ? A8 ? 75 ? 48 8B 0D", 0x0);
+MAKE_SIGNATURE(CNetGraphPanel_DrawTextFields_GetClientInterpAmount_Call1, "client.dll", "F3 41 0F 59 C1 4C 8D 05", 0x0);
+MAKE_SIGNATURE(CNetGraphPanel_DrawTextFields_GetClientInterpAmount_Call2, "client.dll", "0F 28 F8 0F 2F 3D ? ? ? ? 76", 0x0);
 
-MAKE_HOOK(GetClientInterpAmount, S::GetClientInterpAmount(), float, __cdecl)
+MAKE_HOOK(GetClientInterpAmount, S::GetClientInterpAmount(), float)
 {
-	return CFG::Visuals_NoInterpolation ? 0.f : CALL_ORIGINAL();
+	if (CFG::Visuals_NoLerp && !CFG::Visuals_NoInterpolation)
+		return CALL_ORIGINAL();
+
+	static const auto dwDesired1 = S::CNetGraphPanel_DrawTextFields_GetClientInterpAmount_Call1();
+	static const auto dwDesired2 = S::CNetGraphPanel_DrawTextFields_GetClientInterpAmount_Call2();
+	const auto dwRetAddr = uintptr_t(_ReturnAddress());
+
+	return dwRetAddr == dwDesired1 || dwRetAddr == dwDesired2 ? CALL_ORIGINAL() : 0.f;
 }

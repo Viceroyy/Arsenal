@@ -1,40 +1,67 @@
 #include "NetVarManager.h"
 
-int CHelpers_NetVarManager::Get(const char* const szClass, const char* const szVarName)
+#ifdef GetProp
+#undef GetProp
+#endif
+
+int CHelpers_NetVarManager::GetOffset(RecvTable* pTable, const char* szNetVar)
 {
-	ClientClass* pCC = I::BaseClientDLL->GetAllClasses();
-
-	while (pCC)
+	auto uHash = FNV1A::Hash32(szNetVar);
+	for (int i = 0; i < pTable->GetNumProps(); i++)
 	{
-		if (FNV1A::Hash(szClass) == FNV1A::Hash(pCC->m_pNetworkName))
-			return GetOffset(pCC->m_pRecvTable, szVarName);
+		RecvProp* pProp = pTable->GetProp(i);
+		if (uHash == FNV1A::Hash32(pProp->m_pVarName))
+			return pProp->GetOffset();
 
-		pCC = pCC->m_pNext;
+		if (auto pDataTable = pProp->GetDataTable())
+		{
+			if (auto nOffset = GetOffset(pDataTable, szNetVar))
+				return nOffset + pProp->GetOffset();
+		}
 	}
 
 	return 0;
 }
 
-int CHelpers_NetVarManager::GetOffset(RecvTable* pTable, const char* const szVarName)
+int CHelpers_NetVarManager::GetNetVar(const char* szClass, const char* szNetVar)
 {
-	int n;
-	for (n = 0; n < pTable->m_nProps; n++)
+	auto uHash = FNV1A::Hash32(szClass);
+	for (auto pCurrNode = I::BaseClientDLL->GetAllClasses(); pCurrNode; pCurrNode = pCurrNode->m_pNext)
 	{
-		RecvProp Prop = pTable->m_pProps[n];
-
-		if (FNV1A::Hash(Prop.m_pVarName) == FNV1A::Hash(szVarName))
-			return Prop.GetOffset();
-
-		RecvTable* pTable = Prop.GetDataTable();
-
-		if (pTable)
-		{
-			const int nOff = GetOffset(pTable, szVarName);
-
-			if (nOff)
-				return (nOff + Prop.GetOffset());
-		}
+		if (uHash == FNV1A::Hash32(pCurrNode->m_pNetworkName))
+			return GetOffset(pCurrNode->m_pRecvTable, szNetVar);
 	}
 
 	return 0;
+}
+
+RecvProp* CHelpers_NetVarManager::GetProp(RecvTable* pTable, const char* szNetVar)
+{
+	auto uHash = FNV1A::Hash32(szNetVar);
+	for (int i = 0; i < pTable->GetNumProps(); i++)
+	{
+		RecvProp* pProp = pTable->GetProp(i);
+		if (uHash == FNV1A::Hash32(pProp->m_pVarName))
+			return pProp;
+
+		if (auto pDataTable = pProp->GetDataTable())
+		{
+			if (pProp = GetProp(pDataTable, szNetVar))
+				return pProp;
+		}
+	}
+
+	return nullptr;
+}
+
+RecvProp* CHelpers_NetVarManager::GetNetProp(const char* szClass, const char* szNetVar)
+{
+	auto uHash = FNV1A::Hash32(szClass);
+	for (auto pCurrNode = I::BaseClientDLL->GetAllClasses(); pCurrNode; pCurrNode = pCurrNode->m_pNext)
+	{
+		if (uHash == FNV1A::Hash32(pCurrNode->m_pNetworkName))
+			return GetProp(pCurrNode->m_pRecvTable, szNetVar);
+	}
+
+	return nullptr;
 }

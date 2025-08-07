@@ -25,8 +25,8 @@ void split(const std::string& str, std::deque<std::string>& result)
         result.emplace_back(start, str.cend());
 }
 
-MAKE_HOOK(EngineClient_ClientCmd_Unrestricted, U::VFunc.Get<void*>(I::EngineClient, 106u), void, __fastcall,
-	void* ecx, void* edx, const char* szCmdString)
+MAKE_HOOK(EngineClient_ClientCmd_Unrestricted, U::VFunc.Get<void*>(I::EngineClient, 106u), void,
+    void* rcx, const char* szCmdString)
 {
     std::string cmdString = szCmdString;
     std::deque<std::string> cmdArgs;
@@ -41,5 +41,5 @@ MAKE_HOOK(EngineClient_ClientCmd_Unrestricted, U::VFunc.Get<void*>(I::EngineClie
             return;
     }
 
-    CALL_ORIGINAL(ecx, edx, cmdString.c_str());
+    CALL_ORIGINAL(rcx, cmdString.c_str());
 }

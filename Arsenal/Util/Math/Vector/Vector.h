@@ -144,26 +144,14 @@ public:
 		return Vector(x / v, y / v, z / v);
 	}
 
-	float Lenght(void) const
+	float Length(void) const
 	{
 		return sqrtf(x * x + y * y + z * z);
 	}
 
-	float LenghtSqr(void) const
+	float LengthSqr(void) const
 	{
 		return (x * x + y * y + z * z);
-	}
-
-	float Normalize()
-	{
-		float fl_lenght = Lenght();
-		float fl_lenght_normal = 1.f / ((1.19209290E-07F) + fl_lenght); //FLT_EPSILON
-
-		x = x * fl_lenght_normal;
-		y = y * fl_lenght_normal;
-		z = z * fl_lenght_normal;
-
-		return fl_lenght;
 	}
 
 	void Rotate(const float flYaw)
@@ -181,24 +169,48 @@ public:
 		return Normalize();
 	}
 
-	float Lenght2D(void) const
+	float Length2D(void) const
 	{
 		return sqrtf(x * x + y * y);
 	}
 
-	float Lenght2DSqr(void) const
+	float Length2DSqr(void) const
 	{
 		return (x * x + y * y);
 	}
 
+	float Normalize()
+	{
+		float flLength = Length();
+		float flLengthNormal = 1.f / (FLT_EPSILON + flLength);
+
+		x *= flLengthNormal;
+		y *= flLengthNormal;
+		z *= flLengthNormal;
+
+		return flLength;
+	}
+
+	float Normalize2D()
+	{
+		float flLength = Length2D();
+		float flLengthNormal = 1.f / (FLT_EPSILON + flLength);
+
+		x *= flLengthNormal;
+		y *= flLengthNormal;
+		z = 0;
+
+		return flLength;
+	}
+
 	float DistTo(const Vector& v) const
 	{
-		return (*this - v).Lenght();
+		return (*this - v).Length();
 	}
 
 	float DistToSqr(const Vector& v) const
 	{
-		return (*this - v).LenghtSqr();
+		return (*this - v).LengthSqr();
 	}
 
 	float Dot(const Vector& v) const

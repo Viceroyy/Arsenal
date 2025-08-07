@@ -56,13 +56,13 @@ void CFeatures_PlayerArrows::Run()
 	if (!CFG::Visuals_PlayerArrows_Enabled || I::EngineVGui->IsGameUIVisible())
 		return;
 
-	auto pLocal = H::EntityCache.GetLocal();
+	auto pLocal = H::Entities.GetLocal();
 	if (!pLocal || pLocal->deadflag())
 		return;
 
 	const Vector vLocalPos = pLocal->EyePosition();
 
-	for (auto pEntity : H::EntityCache.GetGroup(EGroupType::PLAYERS_ENEMIES))
+	for (auto pEntity : H::Entities.GetGroup(EGroupType::PLAYERS_ENEMIES))
 	{
 		auto pPlayer = pEntity->As<C_CSPlayer>();
 		if (pPlayer->deadflag())

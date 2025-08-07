@@ -12,7 +12,6 @@ class CMaterials
 	bool m_bCleaningUp = false;
 
 	void DrawEntity(C_BaseEntity* pEntity);
-	void RunLagRecords();
 
 public:
 	IMaterial* m_pFlat = nullptr;
@@ -22,11 +21,10 @@ public:
 	IMaterial* m_pPlastic = nullptr;
 	IMaterialVar* m_pGlowEnvmapTint = nullptr;
 	IMaterialVar* m_pGlowSelfillumTint = nullptr;
-	IMaterial* m_pFlatNoInvis = nullptr;
-	IMaterial* m_pShadedNoInvis = nullptr;
 
 	void Run();
 	void CleanUp();
+	void RunLagRecords(const DrawModelState_t& pState, const ModelRenderInfo_t& pInfo);
 
 	bool HasDrawn(C_BaseEntity* pEntity)
 	{
@@ -49,9 +47,7 @@ public:
 			|| pMaterial == m_pShaded
 			|| pMaterial == m_pGlossy
 			|| pMaterial == m_pGlow
-			|| pMaterial == m_pPlastic
-			|| pMaterial == m_pFlatNoInvis
-			|| pMaterial == m_pShadedNoInvis;
+			|| pMaterial == m_pPlastic;
 	}
 
 	bool IsCleaningUp() { return m_bCleaningUp; }

@@ -2,8 +2,8 @@
 //
 //MAKE_SIGNATURE(CL_SendMove, "engine.dll", "55 8B EC 81 EC ? ? ? ? A1 ? ? ? ? 8D 4D", 0x0);
 //
-//MAKE_HOOK(CL_SendMove, S::CL_SendMove(), void, __cdecl, 
-//	void* ecx, void* edx)
+//MAKE_HOOK(CL_SendMove, S::CL_SendMove(), void, 
+//	void* rcx)
 //{
 //	byte data[4000];
 //

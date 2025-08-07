@@ -6,7 +6,7 @@ class CFeatures_EnginePrediction
 {
 public:
 	void Start(C_CSPlayer* pLocal, CUserCmd* cmd);
-	void Finish(C_CSPlayer* pLocal, CUserCmd* cmd);
+	void Finish(C_CSPlayer* pLocal);
 
 private:
 	int GetTickbase(C_CSPlayer* pLocal, CUserCmd* cmd);

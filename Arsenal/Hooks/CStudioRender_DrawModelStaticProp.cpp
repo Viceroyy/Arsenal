@@ -1,11 +1,11 @@
 #include "../SDK/SDK.h"
 
-MAKE_HOOK(CStudioRender_DrawModelStaticProp, U::VFunc.Get<void*>(I::StudioRender, 30u), void, __fastcall, 
-	void* ecx, void* edx, const DrawModelInfo_t& drawInfo, const matrix3x4_t& modelToWorld, int flags)
+MAKE_HOOK(CStudioRender_DrawModelStaticProp, U::VFunc.Get<void*>(I::StudioRender, 30u), void,
+	void* rcx, const DrawModelInfo_t& drawInfo, const matrix3x4_t& modelToWorld, int flags)
 {
 	if (CFG::Visuals_Distance_Prop_Alpha)
 	{
-		if (auto pLocal = H::EntityCache.GetLocal())
+		if (auto pLocal = H::Entities.GetLocal())
 		{
 			Vector vOrigin = { modelToWorld[0][3], modelToWorld[1][3], modelToWorld[2][3] };
 
@@ -37,5 +37,5 @@ MAKE_HOOK(CStudioRender_DrawModelStaticProp, U::VFunc.Get<void*>(I::StudioRender
 		I::StudioRender->SetColorModulation(CFG::Colors_Props);
 	}
 
-	CALL_ORIGINAL(ecx, edx, drawInfo, modelToWorld, flags);
+	CALL_ORIGINAL(rcx, drawInfo, modelToWorld, flags);
 }

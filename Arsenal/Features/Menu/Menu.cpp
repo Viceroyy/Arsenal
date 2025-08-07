@@ -1106,7 +1106,7 @@ void CFeatures_Menu::MainWindow()
 		CFG::Menu_Accent_Primary
 	);
 
-	H::Draw.String(EFonts::MENU, CFG::Menu_Pos_X + 5, CFG::Menu_Pos_Y + 1, CFG::Menu_Text_Active, ALIGN_TOPLEFT, "Arsenal For Counter-Strike Source");
+	H::Draw.String(EFonts::MENU, CFG::Menu_Pos_X + 5, CFG::Menu_Pos_Y + 1, CFG::Menu_Text_Active, ALIGN_TOPLEFT, "Arsenal for Counter-Strike Source");
 
 	m_nCursorX = CFG::Menu_Pos_X + CFG::Menu_Spacing_X;
 	m_nCursorY = CFG::Menu_Pos_Y + CFG::Menu_Drag_Bar_Height + CFG::Menu_Spacing_Y;
@@ -1139,7 +1139,7 @@ void CFeatures_Menu::MainWindow()
 
 	if (MainTab == EMainTabs::VISUALS)
 	{
-		enum class EVisualsTabs { ESP, MATERIALS, OUTLINES, OTHER, COLORS };
+		enum class EVisualsTabs { ESP, MATERIALS, OTHER, COLORS };
 		static EVisualsTabs VisualsTab = EVisualsTabs::ESP;
 
 		int anchor_x = m_nCursorX;
@@ -1153,12 +1153,6 @@ void CFeatures_Menu::MainWindow()
 
 		if (Button("Materials", VisualsTab == EVisualsTabs::MATERIALS))
 			VisualsTab = EVisualsTabs::MATERIALS;
-
-		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
-		m_nCursorY = anchor_y;
-
-		if (Button("Outlines", VisualsTab == EVisualsTabs::OUTLINES))
-			VisualsTab = EVisualsTabs::OUTLINES;
 
 		m_nCursorX += m_nLastButtonW + CFG::Menu_Spacing_X;
 		m_nCursorY = anchor_y;
@@ -1308,59 +1302,6 @@ void CFeatures_Menu::MainWindow()
 			GroupBoxEnd();
 		}
 
-		if (VisualsTab == EVisualsTabs::OUTLINES)
-		{
-			anchor_x = m_nCursorX;
-			anchor_y = m_nCursorY;
-
-			GroupBoxStart("Global", 150);
-			{
-				CheckBox("Active", CFG::Outlines_Active);
-
-				SelectSingle("Style", CFG::Outlines_Style, {
-					{ "Bloom", 0 },
-					{ "Crisp", 1 },
-					{ "Cartoony", 2 },
-					{ "Cartoony Alt", 3 }
-					});
-
-				SliderInt("Bloom Amount", CFG::Outlines_Bloom_Amount, 1, 10, 1);
-			}
-			GroupBoxEnd();
-
-			GroupBoxStart("World", 150);
-			{
-				CheckBox("Active", CFG::Outlines_World_Active);
-				SliderFloat("Alpha", CFG::Outlines_World_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-
-				multiselect("Ignore", WorldIgnore, {
-					{ "Planted C4", CFG::Outlines_World_Ignore_PlantedC4 },
-					{ "Dropped Weapons", CFG::Outlines_World_Ignore_DroppedWeapons }
-					/*{ "Local Projectiles", CFG::Outlines_World_Ignore_LocalProjectiles },
-					{ "Enemy Projectiles", CFG::Outlines_World_Ignore_EnemyProjectiles },
-					{ "Teammate Projectiles", CFG::Outlines_World_Ignore_TeammateProjectiles }*/
-					});
-			}
-			GroupBoxEnd();
-
-			m_nCursorX += m_nLastGroupBoxW + (CFG::Menu_Spacing_X * 2);
-			m_nCursorY = anchor_y;
-
-			GroupBoxStart("Players", 150);
-			{
-				CheckBox("Active", CFG::Outlines_Players_Active);
-				SliderFloat("Alpha", CFG::Outlines_Players_Alpha, 0.0f, 1.0f, 0.1f, "%.1f");
-
-				multiselect("Ignore", PlayerIgnore, {
-					{ "Local", CFG::Outlines_Players_Ignore_Local },
-					{ "Friends", CFG::Outlines_Players_Ignore_Friends },
-					{ "Enemies", CFG::Outlines_Players_Ignore_Enemies },
-					{ "Teammates", CFG::Outlines_Players_Ignore_Teammates }
-					});
-			}
-			GroupBoxEnd();
-		}
-
 		if (VisualsTab == EVisualsTabs::OTHER)
 		{
 			anchor_x = m_nCursorX;
@@ -1372,6 +1313,7 @@ void CFeatures_Menu::MainWindow()
 				CheckBox("Crosshair On Snipers", CFG::Visuals_DrawCrosshairOnSnipers);
 				CheckBox("Show Spread", CFG::Visuals_DrawSpread);
 				CheckBox("Low Graphics", CFG::Visuals_LowGraphics);
+				CheckBox("No Lerp", CFG::Visuals_NoLerp);
 				SliderInt("FOV", CFG::Visuals_FOV, 90, 120, 1);
 				SliderInt("Viewmodel FOV", CFG::Visuals_ViewmodelFOV, 70, 120, 1);
 
@@ -1489,8 +1431,19 @@ void CFeatures_Menu::MainWindow()
 
 		GroupBoxStart("Misc", 150);
 		{
+			CheckBox("Anti Cheat Compatibility", CFG::Misc_AntiCheatCompatibility);
 			CheckBox("Bunnyhop", CFG::Misc_Bunnyhop);
-			CheckBox("AutoStrafe", CFG::Misc_AutoStrafe);
+			SelectSingle("AutoStrafe Mode", CFG::Misc_AutoStrafe,
+				{
+					{ "Off", 0 },
+					{ "Legit", 1 },
+					{ "Directional", 2 }
+				});
+			if (CFG::Misc_AutoStrafe == 2)
+			{
+				SliderFloat("AutoStrafe Turn Scale", CFG::Misc_AutoStrafeTurnScale, 0.f, 1.f, 0.1f, "%.1f");
+				SliderFloat("AutoStrafe Max Delta", CFG::Misc_AutoStrafeMaxDelta, 0.f, 180.f, 5.f, "%.1f");
+			}
 		}
 		GroupBoxEnd();
 
@@ -1514,7 +1467,7 @@ void CFeatures_Menu::MainWindow()
 					{ "Optimized", 1 },
 					{ "Value", 2 }
 				});
-			SliderInt("Latency Amount", CFG::Misc_Backtrack_Latency, 0, F::Backtrack.flMaxUnlag * 1000, 5);
+			SliderInt("Latency Amount", CFG::Misc_Backtrack_Latency, 0, 1000, 5);
 		}
 		GroupBoxEnd();
 	}

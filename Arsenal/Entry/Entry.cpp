@@ -3,15 +3,13 @@
 #include "../Features/Notification/Notification.h"
 #include "../Features/Players/Players.h"
 #include "../Features/Materials/Materials.h"
-#include "../Features/Outlines/Outlines.h"
 #include "../Features/WorldModulation/WorldModulation.h"
 #include "../Features/Commands/Commands.h"
 #include "../Util/ConVars/ConVars.h"
 #include <iostream>
 
-MAKE_SIGNATURE(GlobalVars, "engine.dll", "A1 ? ? ? ? 8B 11 68", 0x0);
-MAKE_SIGNATURE(C_ClientState, "engine.dll", "B9 ? ? ? ? E8 ? ? ? ? 83 3D ? ? ? ? ? 75 4A", 0x0);
-MAKE_SIGNATURE(PredictionPlayer, "client.dll", "89 3D ? ? ? ? F3 0F", 0x0);
+MAKE_SIGNATURE(GlobalVars, "engine.dll", "48 8B 0D ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B 15", 0x0);
+//MAKE_SIGNATURE(C_ClientState, "engine.dll", "48 8D 0D ? ? ? ? E8 ? ? ? ? F3 0F 5E 05", 0x0);
 
 //// Constants for property types.
 //constexpr std::array<std::string_view, 7> PROPERTY_TYPES = {
@@ -77,18 +75,19 @@ MAKE_SIGNATURE(PredictionPlayer, "client.dll", "89 3D ? ? ? ? F3 0F", 0x0);
 
 void CGlobal_Entry::Load()
 {
-	U::Signatures.Initialize();
+	if (!U::Signatures.Initialize())
+		return;
 
 	//Interfaces
 	{
 		I::BaseClientDLL = U::Interface.Get<IBaseClientDLL*>("client.dll", "VClient017");
-		I::Input = **reinterpret_cast<CInput***>((*reinterpret_cast<uintptr_t**>(I::BaseClientDLL))[15] + 0x2);
+		//I::Input = **reinterpret_cast<CInput***>((*reinterpret_cast<uintptr_t**>(I::BaseClientDLL))[15] + 0x2);
 		I::ClientEntityList = U::Interface.Get<IClientEntityList*>("client.dll", "VClientEntityList003");
 		I::GameMovement = U::Interface.Get<IGameMovement*>("client.dll", "GameMovement001");
 		I::ClientPrediction = U::Interface.Get<CPrediction*>("client.dll", "VClientPrediction001");
 		I::EngineClient = U::Interface.Get<IVEngineClient*>("engine.dll", "VEngineClient014");
 		I::ModelInfoClient = U::Interface.Get<IVModelInfoClient*>("engine.dll", "VModelInfoClient006");
-		I::EngineVGui = U::Interface.Get<IEngineVGui*>("engine.dll", "VEngineVGui001");
+		I::EngineVGui = U::Interface.Get<IEngineVGui*>("engine.dll", "VEngineVGui002");
 		I::InputSystem = U::Interface.Get<IInputSystem*>("inputsystem.dll", "InputSystemVersion001");
 		I::EngineTrace = U::Interface.Get<IEngineTrace*>("engine.dll", "EngineTraceClient003");
 		I::RenderView = U::Interface.Get<IVRenderView*>("engine.dll", "VEngineRenderView014");
@@ -96,21 +95,25 @@ void CGlobal_Entry::Load()
 		I::GameEventManager = U::Interface.Get<IGameEventManager2*>("engine.dll", "GAMEEVENTSMANAGER002");
 		I::StudioRender = U::Interface.Get<IStudioRender*>("studiorender.dll", "VStudioRender025");
 		I::MatSystemSurface = U::Interface.Get<IMatSystemSurface*>("vguimatsurface.dll", "VGUI_Surface030");
-		I::MaterialSystem = U::Interface.Get<IMaterialSystem*>("MaterialSystem.dll", "VMaterialSystem080");
+		I::MaterialSystem = U::Interface.Get<IMaterialSystem*>("MaterialSystem.dll", "VMaterialSystem082");
 		I::Cvar = U::Interface.Get<ICvar*>("vstdlib.dll", "VEngineCvar004");
-		I::ClientMode = **(ClientModeShared***)(U::Pattern.Find("client.dll", "8B 0D ? ? ? ? 8B 01 5D FF 60 28 CC") + 0x2);
-		I::HudChat = (CHudChat*)(((uintptr_t*)(I::ClientMode))[4]);
+		//I::ClientState = *reinterpret_cast<CClientState**>(U::Pattern.Find("engine.dll", "48 8D 0D ? ? ? ? E8 ? ? ? ? F3 0F 5E 05"));
+		//I::ClientMode = **(ClientModeShared***)(U::Pattern.Find("client.dll", "8B 0D ? ? ? ? 8B 01 5D FF 60 28 CC") + 0x2);
+		//I::HudChat = (CHudChat*)(((uintptr_t*)(I::ClientMode))[4]);
 
 		//Other shenanigans
 		{
-			I::GlobalVars = *reinterpret_cast<CGlobalVarsBase**>(S::GlobalVars() + 0x8);
+			const DWORD_PTR dwpFunc = U::VFunc.Get<DWORD_PTR>(I::BaseClientDLL, 10u);
+			XASSERT(dwpFunc == NULL);
+
+			I::ClientMode = *reinterpret_cast<ClientModeShared**>(*reinterpret_cast<DWORD*>(dwpFunc + 0x03) + dwpFunc + 0x07);
+			I::GlobalVars = reinterpret_cast<CGlobalVarsBase*>(*reinterpret_cast<DWORD*>(S::GlobalVars() + 0xA) + S::GlobalVars() + 0xE);
+
+			XASSERT(I::ClientMode == nullptr);
 			XASSERT(I::GlobalVars == nullptr);
 
-			I::ClientState = *reinterpret_cast<CClientState**>(S::C_ClientState() + 0x1);
-			XASSERT(I::ClientState == nullptr);
-
-			I::PredictionPlayer = *reinterpret_cast<C_BasePlayer***>(S::PredictionPlayer() + 0x2);
-			XASSERT(I::PredictionPlayer == nullptr);
+			//I::ClientState = *reinterpret_cast<CClientState**>(S::C_ClientState());
+			//XASSERT(I::ClientState == nullptr);
 		}
 	}
 
@@ -144,17 +147,16 @@ void CGlobal_Entry::Unload()
 		Sleep(250);
 
 		F::Materials.CleanUp();
-		F::Outlines.CleanUp();
 		F::WorldModulation.RestoreWorldModulation();
-		if (I::Input->CAM_IsThirdPerson())
+		/*if (I::Input->CAM_IsThirdPerson())
 		{
-			auto pLocal = H::EntityCache.GetLocal();
+			auto pLocal = H::Entities.GetLocal();
 			if (pLocal)
 			{
 				I::Input->CAM_ToFirstPerson();
 				pLocal->ThirdPersonSwitch();
 			}
-		}
+		}*/
 		H::Draw.Uninitialize();
 
 		Sleep(250);

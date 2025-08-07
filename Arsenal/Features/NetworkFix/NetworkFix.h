@@ -5,9 +5,9 @@
 class CReadPacketState
 {
 private:
-    float m_flFrameTimeClientState = 0.0f;
-    float m_flFrameTime = 0.0f;
-    float m_flCurTime = 0.0f;
+    float m_flFrameTimeClientState = 0.f;
+    float m_flFrameTime = 0.f;
+    float m_flCurTime = 0.f;
     int m_nTickCount = 0;
 
 public:

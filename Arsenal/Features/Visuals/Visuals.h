@@ -8,7 +8,7 @@ public:
 
 	void DoFOV(CViewSetup* pSetup);
 	void DoThirdperson(CViewSetup* pSetup);
-	void ManualNetwork(const StartSoundParams_t& params);
+	//void ManualNetwork(const StartSoundParams_t& params);
 
 private:
 	void SpreadCircle();

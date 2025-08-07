@@ -1,40 +1,101 @@
 #pragma once
 #include "../Includes/inetchannel.h"
 
+MAKE_SIGNATURE(CBaseClientState_SendStringCmd, "engine.dll", "48 81 EC ? ? ? ? 48 8B 49", 0x0);
+
+class IChangeFrameList;
+class CSendProxyRecipients;
+class ServerClass;
+
+class PackedEntity
+{
+public:
+	ServerClass* m_pServerClass;
+	ClientClass* m_pClientClass;
+
+	int m_nEntityIndex;
+	int m_ReferenceCount;
+
+private:
+	CUtlVector<CSendProxyRecipients> m_Recipients;
+
+	void* m_pData;
+	int m_nBits;
+	IChangeFrameList* m_pChangeFrameList;
+
+	unsigned int m_nSnapshotCreationTick : 31;
+	unsigned int m_nShouldCheckCreationTick : 1;
+};
+
+struct CClockDriftMgr
+{
+	float m_ClockOffsets[16];
+	int m_iCurClockOffset;
+	int m_nServerTick;
+	int m_nClientTick;
+};
+
+struct CUtlString
+{
+	char* m_pString;
+};
+
 class CClientState
 {
 public:
-	char pad_0x0000[0x10]; //0x0000
-	CNetChannel* m_NetChannel; //0x0010 
-	char pad_0x0014[0x11C]; //0x0014
-	__int32 m_nSignonState; //0x0130 
-	char pad_0x0134[0x60]; //0x0134
-	__int32 m_nCurrentSequence; //0x0194 
-	__int32 unk1; //0x0198 
-	__int32 unk2; //0x019C 
-	__int32 m_nDeltaTick; //0x01A0 
-	char pad_0x01A4[0x10C]; //0x01A4
-	__int32 m_nMaxClients; //0x02B0 
-	void* N00000583; //0x02B4 
-	void* N00000582; //0x02B8 
-	char pad_0x02BC[0x4854]; //0x02BC
-	float m_flLastServerTickTime; //0x4B10 
-	__int32 N0000196E; //0x4B14 
-	__int32 oldtickcount; //0x4B18 
-	float m_tickRemainder; //0x4B1C 
-	float m_frameTime; //0x4B20 
-	__int32 lastoutgoingcommand; //0x4B24 
-	__int32 chokedcommands; //0x4B28 
-	__int32 last_command_ack; //0x4B2C 
-	__int32 command_ack; //0x4B30 
-	char pad_0x4B34[0x50]; //0x4B34
-	Vector viewangles; //0x4B84 
-	char pad_0x4B90[0xCB0]; //0x4B90
+	byte pad0[24];
+	int m_Socket;
+	CNetChannel* m_NetChannel;
+	unsigned int m_nChallengeNr;
+	double m_flConnectTime;
+	int m_nRetryNumber;
+	char m_szRetryAddress[MAX_OSPATH];
+	CUtlString m_sRetrySourceTag;
+	int m_retryChallenge;
+	int m_nSignonState;
+	double m_flNextCmdTime;
+	int m_nServerCount;
+	unsigned __int64 m_ulGameServerSteamID;
+	int m_nCurrentSequence;
+	CClockDriftMgr m_ClockDriftMgr;
+	int m_nDeltaTick;
+	bool m_bPaused;
+	float m_flPausedExpireTime;
+	int m_nViewEntity;
+	int m_nPlayerSlot;
+	char m_szLevelFileName[128];
+	byte pad1[132];
+	char m_szLevelBaseName[128];
+	byte pad2[132];
+	int m_nMaxClients;
+	PackedEntity* m_pEntityBaselines[2][MAX_EDICTS];
+	byte pad3[2068];
+	void* m_StringTableContainer;
+	bool m_bRestrictServerCommands;
+	bool m_bRestrictClientCommands;
+	byte pad4[106];
+	bool insimulation;
+	int oldtickcount;
+	float m_tickRemainder;
+	float m_frameTime;
+	int lastoutgoingcommand;
+	int chokedcommands;
+	int last_command_ack;
+	int command_ack;
+	int m_nSoundSequence;
+	bool ishltv;
+	bool isreplay;
+	byte pad5[278];
+	int demonum;
+	CUtlString demos[32];
+	byte pad6[344184];
+	bool m_bMarkedCRCsUnverified;
 
-	const char* GetLevelNameShort()
+public:
+	void SendStringCmd(const char* command)
 	{
-		return (const char*)((unsigned int)this + 0x230);
+		reinterpret_cast<void(*)(void*, const char*)>(S::CBaseClientState_SendStringCmd())(this, command);
 	}
-}; //Size=0x5840
+};
 
 namespace I { inline CClientState* ClientState = nullptr; }

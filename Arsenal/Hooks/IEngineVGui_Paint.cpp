@@ -7,20 +7,20 @@
 #include "../Features/Visuals/Visuals.h"
 #include "../Features/SpectatorList/SpectatorList.h"
 
-MAKE_HOOK(IEngineVGui_Paint, U::VFunc.Get<void*>(I::EngineVGui, 13u), void, __fastcall, 
-	void* ecx, void* edx, int mode)
+MAKE_HOOK(IEngineVGui_Paint, U::VFunc.Get<void*>(I::EngineVGui, 14u), void,
+	void* rcx, int mode)
 {
-	CALL_ORIGINAL(ecx, edx, mode);
+	/*if (G.Unload)
+		return CALL_ORIGINAL(rcx, mode);*/
 
-	if (mode & PAINT_UIPANELS)
+	CALL_ORIGINAL(rcx, mode);
+
+	if (mode & PAINT_UIPANELS && (!CFG::Visuals_ClearScreenshots || !I::EngineClient->IsTakingScreenshot()))
 	{
-		H::Draw.UpdateMatrix();
+		H::Draw.UpdateW2SMatrix();
 
 		I::MatSystemSurface->StartDrawing();
 		{
-			if (CFG::Visuals_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
-				return I::MatSystemSurface->FinishDrawing();
-
 			F::Notifications.Draw();
 			F::Visuals.Run();
 			F::ESP.Run();

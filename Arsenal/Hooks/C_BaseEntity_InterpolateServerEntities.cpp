@@ -1,8 +1,8 @@
 #include "../SDK/SDK.h"
 
-MAKE_SIGNATURE(C_BaseEntity_InterpolateServerEntities, "client.dll", "55 8B EC 83 EC ? 8B 0D ? ? ? ? 33 D2 89 55 ? 89 55 ? 89 55 ? 8B 41 ? 89 55 ? 85 C0 74 ? 68 ? ? ? ? 68 ? ? ? ? 68 ? ? ? ? 68 ? ? ? ? 68 ? ? ? ? 68 ? ? ? ? 52 52 52 52 8D 4D ? 51 50 8B 40 ? FF D0 8B 45 ? 83 C4 ? 8B 0D ? ? ? ? 89 45 ? 8B 45 ? 89 45 ? 53", 0x0);
+MAKE_SIGNATURE(C_BaseEntity_InterpolateServerEntities, "client.dll", "4C 8B DC 41 54 41 55 48 81 EC", 0x0);
 
-MAKE_HOOK(C_BaseEntity_InterpolateServerEntities, S::C_BaseEntity_InterpolateServerEntities(), void, __cdecl)
+MAKE_HOOK(C_BaseEntity_InterpolateServerEntities, S::C_BaseEntity_InterpolateServerEntities(), void)
 {
 	if (CFG::Visuals_NoInterpolation)
 	{

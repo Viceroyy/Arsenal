@@ -18,20 +18,20 @@ public:
 	virtual void SetDebug(bool bDebug) = 0;
 };
 
-MAKE_SIGNATURE(C_BaseEntity_AddVar, "client.dll", "55 8B EC 83 EC ? 53 8B D9 56 33 F6", 0x0);
+MAKE_SIGNATURE(CBaseEntity_AddVar, "client.dll", "48 89 5C 24 ? 48 89 6C 24 ? 57 41 56 41 57 48 83 EC ? 33 DB 48 89 74 24", 0x0);
 
-MAKE_HOOK(C_BaseEntity_AddVar, S::C_BaseEntity_AddVar(), void, __fastcall, 
-	void* ecx, void* edx, void* data, IInterpolatedVar* watcher, int type, bool bSetup)
+MAKE_HOOK(CBaseEntity_AddVar, S::CBaseEntity_AddVar(), void,
+	C_BaseEntity* ecx, void* data, IInterpolatedVar* watcher, int type, bool bSetup)
 {
 	if (CFG::Visuals_NoInterpolation && watcher)
 	{
-		auto hash = FNV1A::Hash(watcher->GetDebugName());
+		const auto hash = FNV1A::Hash32(watcher->GetDebugName());
 
-		static const auto m_iv_vecVelocity = FNV1A::HashConst("C_BaseEntity::m_iv_vecVelocity");
-		static const auto m_iv_angEyeAngles = FNV1A::HashConst("C_CSPlayer::m_iv_angEyeAngles");
-		static const auto m_iv_flPoseParameter = FNV1A::HashConst("C_BaseAnimating::m_iv_flPoseParameter");
-		static const auto m_iv_flCycle = FNV1A::HashConst("C_BaseAnimating::m_iv_flCycle");
-		static const auto m_iv_flMaxGroundSpeed = FNV1A::HashConst("CMultiPlayerAnimState::m_iv_flMaxGroundSpeed");
+		static constexpr auto m_iv_vecVelocity = FNV1A::Hash32Const("C_BaseEntity::m_iv_vecVelocity");
+		static constexpr auto m_iv_angEyeAngles = FNV1A::Hash32Const("C_CSPlayer::m_iv_angEyeAngles");
+		static constexpr auto m_iv_flPoseParameter = FNV1A::Hash32Const("C_BaseAnimating::m_iv_flPoseParameter");
+		static constexpr auto m_iv_flCycle = FNV1A::Hash32Const("C_BaseAnimating::m_iv_flCycle");
+		static constexpr auto m_iv_flMaxGroundSpeed = FNV1A::Hash32Const("CMultiPlayerAnimState::m_iv_flMaxGroundSpeed");
 
 		if (hash == m_iv_vecVelocity
 			|| hash == m_iv_flPoseParameter
@@ -39,12 +39,12 @@ MAKE_HOOK(C_BaseEntity_AddVar, S::C_BaseEntity_AddVar(), void, __fastcall,
 			|| hash == m_iv_flMaxGroundSpeed)
 			return;
 
-		if (ecx != H::EntityCache.GetLocal())
+		if (ecx != H::Entities.GetLocal())
 		{
 			if (hash == m_iv_angEyeAngles)
 				return;
 		}
 	}
 
-	CALL_ORIGINAL(ecx, edx, data, watcher, type, bSetup);
+	CALL_ORIGINAL(ecx, data, watcher, type, bSetup);
 }

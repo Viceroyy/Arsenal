@@ -159,7 +159,7 @@
     <ClCompile Include="Hooks\CViewRender_LevelInit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\S_StartDynamicSound.cpp">
+    <ClCompile Include="Hooks\S_StartSound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hooks\C_BaseAnimating_FrameAdvance.cpp">
@@ -181,9 +181,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Features\Materials\Materials.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Outlines\Outlines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hooks\CParticleSystemMgr_DrawRenderCache.cpp">
@@ -313,6 +310,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SDK\Entities\C_CSPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\CL_ReadPackets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Timer\Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -638,9 +641,6 @@
     <ClInclude Include="Features\Materials\Materials.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Outlines\Outlines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SDK\Includes\Activity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -657,6 +657,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Features\SequenceFreeze\SequenceFreeze.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Timer\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Entities\C_BaseAnimatingOverlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

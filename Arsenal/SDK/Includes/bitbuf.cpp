@@ -5,7 +5,7 @@ void bf_write::StartWriting(void* pData, int nBytes, int iStartBit, int nBits)
 	if (!(nBytes % 4 == 0))
 		return;
 
-	if (!(((unsigned long)pData & 3) == 0))
+	if (!((uintptr_t(pData) & 3) == 0))
 		return;
 
 	nBytes &= ~3;
@@ -448,20 +448,16 @@ void bf_write::WriteBitLong(unsigned int data, int numbits, bool bSigned)
 inline void Q_memcpy(void* dest, const void* src, int count)
 {
 	int i;
-	if (((reinterpret_cast<long>(dest) | reinterpret_cast<long>(src) | count) & 3) == 0)
+	if (((uintptr_t(dest) | uintptr_t(src) | count) & 3) == 0)
 	{
 		count >>= 2;
 		for (i = 0; i < count; i++)
-		{
 			static_cast<int*>(dest)[i] = ((int*)src)[i];
-		}
 	}
 	else
 	{
 		for (i = 0; i < count; i++)
-		{
 			static_cast<char*>(dest)[i] = ((char*)src)[i];
-		}
 	}
 }
 
@@ -483,7 +479,7 @@ bool bf_write::WriteBits(const void* pInData, int nBits)
 	}
 
 	// Align output to dword boundary
-	while (((unsigned long)pOut & 3) != 0 && nBitsLeft >= 8)
+	while ((uintptr_t(pOut) & 3) != 0 && nBitsLeft >= 8)
 	{
 
 		WriteUBitLong(*pOut, 8, false);
@@ -955,7 +951,7 @@ int bf_read::ReadBitsClamped_ptr(void* pOutData, size_t outSizeBytes, size_t nBi
 		//	return 0;
 	}
 
-	ReadBits(pOutData, readSizeBits);
+	ReadBits(pOutData, int(readSizeBits));
 	SeekRelative(skippedBits);
 
 	// Return the number of bits actually read.

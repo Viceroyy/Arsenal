@@ -1,7 +1,6 @@
 #include "../SDK/SDK.h"
 
 #include "../Features/Materials/Materials.h"
-#include "../Features/Outlines/Outlines.h"
 
 bool isDrawingWorld = false;
 
@@ -21,20 +20,20 @@ enum view_id_t
 	VIEW_ID_COUNT
 };
 
-MAKE_SIGNATURE(CBaseWorldView_DrawExecute, "client.dll", "55 8B EC 83 EC ? A1 ? ? ? ? 53 56 57 8B D9", 0x0);
+MAKE_SIGNATURE(CBaseWorldView_DrawExecute, "client.dll", "48 8B C4 53 55 56 41 56 41 57", 0x0);
 
-MAKE_HOOK(CBaseWorldView_DrawExecute, S::CBaseWorldView_DrawExecute(), void, __fastcall, 
-	void* ecx, void* edx, float waterHeight, view_id_t viewID, float waterZAdjust)
+MAKE_HOOK(CBaseWorldView_DrawExecute, S::CBaseWorldView_DrawExecute(), void,
+	void* rcx, float waterHeight, view_id_t viewID, float waterZAdjust)
 {
 	isDrawingWorld = true;
-	CALL_ORIGINAL(ecx, edx, waterHeight, viewID, waterZAdjust);
+	CALL_ORIGINAL(rcx, waterHeight, viewID, waterZAdjust);
 	isDrawingWorld = false;
 }
 
-MAKE_SIGNATURE(CParticleSystemMgr_DrawRenderCache, "client.dll", "55 8B EC 81 EC ? ? ? ? 53 8B D9 57 89 5D ? 8B BB", 0x0);
+MAKE_SIGNATURE(CParticleSystemMgr_DrawRenderCache, "client.dll", "48 8B C4 88 50 ? 48 89 48 ? 55 57", 0x0);
 
-MAKE_HOOK(CParticleSystemMgr_DrawRenderCache, S::CParticleSystemMgr_DrawRenderCache(), void, __fastcall, 
-	void* ecx, void* edx, bool bShadowDepth)
+MAKE_HOOK(CParticleSystemMgr_DrawRenderCache, S::CParticleSystemMgr_DrawRenderCache(), void,
+	void* rcx, bool bShadowDepth)
 {
 	if (isDrawingWorld)
 	{
@@ -44,8 +43,7 @@ MAKE_HOOK(CParticleSystemMgr_DrawRenderCache, S::CParticleSystemMgr_DrawRenderCa
 		}
 
 		F::Materials.Run();
-		F::Outlines.RunModels();
 	}
 
-	CALL_ORIGINAL(ecx, edx, bShadowDepth);
+	CALL_ORIGINAL(rcx, bShadowDepth);
 }

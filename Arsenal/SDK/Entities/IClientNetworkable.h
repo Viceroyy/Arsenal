@@ -47,12 +47,12 @@ public:
 	virtual void			SetDestroyedOnRecreateEntities(void) = 0;
 	virtual void			OnDataUnchangedInPVS() = 0;
 
-	ECSClientClass GetClassID()
+	inline ECSClassID GetClassID()
 	{
 		if (auto pClientClass = GetClientClass())
-			return static_cast<ECSClientClass>(pClientClass->m_ClassID);
+			return static_cast<ECSClassID>(pClientClass->m_ClassID);
 
-		return static_cast<ECSClientClass>(0);
+		return static_cast<ECSClassID>(0);
 	}
 };
 

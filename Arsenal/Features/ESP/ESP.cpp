@@ -9,7 +9,7 @@ void CFeatures_ESP::Run()
 	if (!CFG::ESP_Enabled || I::EngineVGui->IsGameUIVisible())
 		return;
 
-	if (auto pLocal = H::EntityCache.GetLocal())
+	if (auto pLocal = H::Entities.GetLocal())
 	{
 		DrawWorld();
 		DrawPlayers(pLocal);
@@ -21,18 +21,18 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 	if (!CFG::ESP_Players_Enabled)
 		return;
 
-	auto pResource = H::EntityCache.GetPR();
+	auto pResource = H::Entities.GetPR();
 	if (!pResource)
 		return;
 
-	for (auto pEntity : H::EntityCache.GetGroup(EGroupType::PLAYERS_ALL))
+	for (auto pEntity : H::Entities.GetGroup(EGroupType::PLAYERS_ALL))
 	{
 		auto pPlayer = pEntity->As<C_CSPlayer>();
 		if (pPlayer->deadflag())
 			continue;
 
 		bool bIsLocal = pPlayer == pLocal;
-		if ((CFG::ESP_Players_Ignore_Local && bIsLocal) || (!I::Input->CAM_IsThirdPerson() && bIsLocal))
+		if ((CFG::ESP_Players_Ignore_Local && bIsLocal) /* || (!I::Input->CAM_IsThirdPerson() && bIsLocal)*/)
 			continue;
 
 		if (!bIsLocal)
@@ -53,7 +53,7 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 		const int nIndex = pPlayer->entindex();
 		int lOffset = 0, rOffset = 0, bOffset = 2, tOffset = 0;
 		const EFonts& fFont = EFonts::ESP;
-		const int iMaxHealth = pPlayer->GetMaxHealth(), iHealth = pPlayer->IsDormant() ? pResource->GetHealth(pPlayer->entindex()) : pPlayer->GetHealth();
+		const int iMaxHealth = pPlayer->GetMaxHealth(), iHealth = pPlayer->IsDormant() ? pResource->m_iHealth(pPlayer->entindex()) : pPlayer->GetHealth();
 
 		const Color_t clrTeam = Util::GetEntityColor(pLocal, pPlayer, CFG::Colors_Relative);
 
@@ -110,33 +110,36 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 
 		if (CFG::ESP_Players_WeaponText)
 		{
-			if (const auto& pWeapon = pPlayer->GetActiveCSWeapon())
+			/*if (const auto& pWeapon = pPlayer->GetActiveCSWeapon())
 			{
 				H::Draw.String(fFont, x + (w / 2), y + h + bOffset, COLOR_WHITE, ALIGN_TOP, "%ls [%d/%d]", Util::GetWeaponName(pWeapon->GetWeaponID()).data(), pWeapon->m_iClip1(), pWeapon->GetMaxClip1());
 				bOffset += H::Draw.GetFontHeight(fFont);
-			}
+			}*/
 		}
 
 		if (!pPlayer->IsDormant() && pPlayer != pLocal)
 		{
-			if (F::Backtrack.mLagCompensation[pPlayer])
+			if (H::Entities.GetLagCompensation(nIndex))
 			{
 				H::Draw.String(fFont, x + w + 4, y + rOffset, { 255, 95, 95, 255 }, ALIGN_TOPLEFT, "LAGCOMP");
 				rOffset += H::Draw.GetFontHeight(fFont);
 			}
 		}
 
-		const auto& pRecords = F::Backtrack.GetRecords(pEntity);
-		auto vRecords = F::Backtrack.GetValidRecords(pRecords);
-		if (vRecords.size())
+		std::vector<TickRecord*> vRecords = {};
+		if (F::Backtrack.GetRecords(pEntity, vRecords))
 		{
-			auto vLastRec = vRecords.end() - 1;
-			if (vLastRec != vRecords.end() && pEntity->GetAbsOrigin().DistTo(vLastRec->vOrigin) > 0.1f)
+			vRecords = F::Backtrack.GetValidRecords(vRecords);
+			if (vRecords.size())
 			{
-				Vector2D vScreenPos;
-				if (H::Draw.WorldPosToScreenPos(vLastRec->vOrigin, vScreenPos))
+				auto vLastRec = vRecords.back();
+				if (pEntity->GetAbsOrigin().DistTo(vLastRec->m_vOrigin) > 0.1f)
 				{
-					H::Draw.Circle(vScreenPos.x, vScreenPos.y, 2, 360, Util::RainbowTickOffset(vLastRec->iTickCount));
+					Vector2D vScreenPos;
+					if (H::Draw.WorldPosToScreenPos(vLastRec->m_vOrigin, vScreenPos))
+					{
+						H::Draw.Circle(vScreenPos.x, vScreenPos.y, 2, 360, Util::RainbowTickOffset(F::Backtrack.m_iTickCount));
+					}
 				}
 			}
 		}
@@ -145,7 +148,7 @@ void CFeatures_ESP::DrawPlayers(C_CSPlayer* pLocal)
 		if (CFG::ESP_Players_Name && I::EngineClient->GetPlayerInfo(nIndex, &pi))
 		{
 			tOffset += H::Draw.GetFontHeight(EFonts::NAME) + 2;
-			H::Draw.String(EFonts::NAME, x + (w / 2), y - tOffset, COLOR_WHITE, ALIGN_TOP, Util::ConvertUtf8ToWide(pi.name).data());
+			H::Draw.String(EFonts::NAME, x + (w / 2), y - tOffset, COLOR_WHITE, ALIGN_TOP, Util::ConvertUtf8ToWide(pi.name).c_str());
 		}
 	}
 	
@@ -164,7 +167,7 @@ void CFeatures_ESP::DrawWorld()
 
 	if (!CFG::ESP_World_Ignore_PlantedC4)
 	{
-		for (auto pC4 : H::EntityCache.GetGroup(EGroupType::WORLD_C4PLANTED))
+		for (auto pC4 : H::Entities.GetGroup(EGroupType::WORLD_C4PLANTED))
 		{
 			int x = 0, y = 0, w = 0, h = 0;
 			if (!GetDynamicBounds(pC4, x, y, w, h))
@@ -186,7 +189,7 @@ void CFeatures_ESP::DrawWorld()
 
 	if (!CFG::ESP_World_Ignore_DroppedWeapons)
 	{
-		for (auto pWeapons : H::EntityCache.GetGroup(EGroupType::WORLD_WEAPONS))
+		for (auto pWeapons : H::Entities.GetGroup(EGroupType::WORLD_WEAPONS))
 		{
 			int x = 0, y = 0, w = 0, h = 0;
 			if (!GetDynamicBounds(pWeapons, x, y, w, h))

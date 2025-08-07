@@ -2,13 +2,13 @@
 //
 //MAKE_SIGNATURE(C_BasePlayer_CalcViewModelView, "client.dll", "55 8B EC 53 8B 5D ? 56 57 8B F9 33 F6 8D 49", 0x0);
 //
-//MAKE_HOOK(C_BasePlayer_CalcViewModelView, S::C_BasePlayer_CalcViewModelView(), void, __fastcall,
-//	void* ecx, void* edx, C_BasePlayer* owner, const Vector& eyePosition, const Vector& eyeAngles)
+//MAKE_HOOK(C_BasePlayer_CalcViewModelView, S::C_BasePlayer_CalcViewModelView(), void,
+//	void* rcx, C_BasePlayer* owner, const Vector& eyePosition, const Vector& eyeAngles)
 //{
 //	if (CFG::Visuals_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
-//		return CALL_ORIGINAL(ecx, edx, owner, eyePosition, eyeAngles);
+//		return CALL_ORIGINAL(rcx, owner, eyePosition, eyeAngles);
 //
-//	auto pLocal = H::EntityCache.GetLocal();
+//	auto pLocal = H::Entities.GetLocal();
 //
 //	if (pLocal && !pLocal->deadflag())
 //	{
@@ -24,16 +24,16 @@
 //		//if (CFG::Visuals_Viewmodel_Roll)
 //			//vEyePosition.z += CFG::Visuals_Viewmodel_Roll;
 //
-//		CALL_ORIGINAL(ecx, edx, owner, vEyePosition, eyeAngles);
+//		CALL_ORIGINAL(rcx, owner, vEyePosition, eyeAngles);
 //	}
 //
-//	else CALL_ORIGINAL(ecx, edx, owner, eyePosition, eyeAngles);
+//	else CALL_ORIGINAL(rcx, owner, eyePosition, eyeAngles);
 //
 //	/*Vector vOffset = { float(CFG::Visuals_Viewmodel_OffsetX), float(CFG::Visuals_Viewmodel_OffsetY), float(CFG::Visuals_Viewmodel_OffsetZ) };
 //	bool bOffset = !vOffset.IsZero();
 //
 //	if (!bOffset && !CFG::Visuals_Viewmodel_Roll && vEyeAngles.IsZero() || CFG::Visuals_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
-//		return CALL_ORIGINAL(ecx, edx, pOwner, vEyePosition, vEyeAngles);
+//		return CALL_ORIGINAL(rcx, pOwner, vEyePosition, vEyeAngles);
 //
 //	Vector vNewEyePosition = vEyePosition;
 //	if (bOffset)
@@ -45,5 +45,5 @@
 //	if (CFG::Visuals_Viewmodel_Roll)
 //		vEyeAngles.z += CFG::Visuals_Viewmodel_Roll;
 //
-//	CALL_ORIGINAL(ecx, edx, pOwner, vNewEyePosition, vEyeAngles);*/
+//	CALL_ORIGINAL(rcx, pOwner, vNewEyePosition, vEyeAngles);*/
 //}

@@ -9,18 +9,48 @@
 #include "../Features/Players/Players.h"
 #include "../Util/ConVars/ConVars.h"
 
-MAKE_SIGNATURE(WeaponIDToAlias, "client.dll", "55 8B EC 8B 4D ? 33 C0 EB", 0x0);
+MAKE_SIGNATURE(WeaponIDToAlias, "client.dll", "4C 8D 05 ? ? ? ? 33 D2 49 8B C0", 0x0);
 
 namespace Util
 {
+	inline bool IsLoopback()
+	{
+		auto pNetChan = I::EngineClient->GetNetChannelInfo();
+		return pNetChan && pNetChan->IsLoopback();
+	}
+
+	inline void RandomSeed(int iSeed)
+	{
+		static auto RandomSeed = reinterpret_cast<void(*)(uint32_t)>(GetProcAddress(GetModuleHandleA("vstdlib.dll"), "RandomSeed"));
+		RandomSeed(iSeed);
+	}
+
+	inline int RandomInt(int iMinVal, int iMaxVal)
+	{
+		static auto RandomInt = reinterpret_cast<int(*)(int, int)>(GetProcAddress(GetModuleHandleA("vstdlib.dll"), "RandomInt"));
+		return RandomInt(iMinVal, iMaxVal);
+	}
+
+	inline float RandomFloat(float flMinVal, float flMaxVal)
+	{
+		static auto RandomFloat = reinterpret_cast<float(*)(float, float)>(GetProcAddress(GetModuleHandleA("vstdlib.dll"), "RandomFloat"));
+		return RandomFloat(flMinVal, flMaxVal);
+	}
+
+	inline double PlatFloatTime()
+	{
+		static auto Plat_FloatTime = reinterpret_cast<double(*)()>(GetProcAddress(GetModuleHandleA("tier0.dll"), "Plat_FloatTime"));
+		return Plat_FloatTime();
+	}
+
 	inline bool IsZoomed()
 	{
-		auto pLocal = H::EntityCache.GetLocal();
+		/*auto pLocal = H::Entities.GetLocal();
 		if (!pLocal)
 			return false;
 
 		if (const auto& pWeapon = pLocal->GetActiveCSWeapon())
-			return G.FOV < pLocal->m_iDefaultFOV() && pWeapon->GetWpnData()->m_WeaponType == WEAPONTYPE_SNIPER_RIFLE;
+			return G.FOV < pLocal->m_iDefaultFOV() && pWeapon->GetWpnData()->m_WeaponType == WEAPONTYPE_SNIPER_RIFLE;*/
 
 		return false;
 	}
@@ -240,7 +270,7 @@ namespace Util
 		if (!pLocal || !pEntity)
 			return { 245, 229, 196, 255 };
 
-		if (pEntity->GetClassID() == ECSClientClass::CCSPlayer)
+		if (pEntity->GetClassID() == ECSClassID::CCSPlayer)
 		{
 			const auto pPlayer = pEntity->As<C_CSPlayer>();
 
@@ -278,19 +308,19 @@ namespace Util
 		return { 245, 229, 196, 255 };
 	}
 
-	inline std::wstring ConvertUtf8ToWide(const std::string& ansi)
+	inline std::wstring ConvertUtf8ToWide(const std::string& source)
 	{
-		const int size = MultiByteToWideChar(CP_UTF8, 0, ansi.c_str(), -1, nullptr, 0);
-		std::wstring result(size, L'\0');
-		MultiByteToWideChar(CP_UTF8, 0, ansi.c_str(), -1, result.data(), size);
+		int size = MultiByteToWideChar(CP_UTF8, 0, source.data(), -1, nullptr, 0);
+		std::wstring result(size, 0);
+		MultiByteToWideChar(CP_UTF8, 0, source.data(), -1, result.data(), size);
 		return result;
 	}
 
-	inline std::string ConvertWideToUtf8(const std::wstring& unicode)
+	inline std::string ConvertWideToUtf8(const std::wstring& source)
 	{
-		const int size = WideCharToMultiByte(CP_UTF8, 0, unicode.c_str(), -1, nullptr, 0, nullptr, nullptr);
-		std::string result(size, '\0');
-		WideCharToMultiByte(CP_UTF8, 0, unicode.c_str(), -1, result.data(), size, nullptr, nullptr);
+		int size = WideCharToMultiByte(CP_UTF8, 0, source.data(), -1, nullptr, 0, nullptr, nullptr);
+		std::string result(size, 0);
+		WideCharToMultiByte(CP_UTF8, 0, source.data(), -1, result.data(), size, nullptr, nullptr);
 		return result;
 	}
 
@@ -365,13 +395,13 @@ public:
 		{
 			switch (pEntity->GetClassID())
 			{
-			case ECSClientClass::CCSPlayer: return pEntity == m_pTarget;
+			case ECSClassID::CCSPlayer: return pEntity == m_pTarget;
 
-			case ECSClientClass::CBaseDoor:
-			case ECSClientClass::CPhysicsProp:
-			case ECSClientClass::CDynamicProp:
-			case ECSClientClass::CBaseEntity:
-			case ECSClientClass::CFuncTrackTrain: return true;
+			case ECSClassID::CBaseDoor:
+			case ECSClassID::CPhysicsProp:
+			case ECSClassID::CDynamicProp:
+			case ECSClassID::CBaseEntity:
+			case ECSClassID::CFuncTrackTrain: return true;
 
 			default: return false;
 			}
@@ -398,15 +428,15 @@ public:
 				return false;
 
 			auto pEntity = static_cast<IClientEntity*>(pServerEntity)->As<C_BaseEntity>();
-			auto pLocal = H::EntityCache.GetLocal();
-			auto pWeapon = H::EntityCache.GetWeapon();
+			auto pLocal = H::Entities.GetLocal();
+			auto pWeapon = H::Entities.GetWeapon();
 
 			const int iTargetTeam = pEntity->m_iTeamNum(), iLocalTeam = pLocal ? pLocal->m_iTeamNum() : iTargetTeam;
 
 			switch (pEntity->GetClassID())
 			{
-			case ECSClientClass::CFuncAreaPortalWindow: return false;
-			case ECSClientClass::CCSPlayer:
+			case ECSClassID::CFuncAreaPortalWindow: return false;
+			case ECSClassID::CCSPlayer:
 				if (iTargetTeam == iLocalTeam)
 					return false;
 			}

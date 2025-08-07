@@ -1,13 +1,13 @@
 #include "../SDK/SDK.h"
 
-MAKE_SIGNATURE(CRendering3dView_EnableWorldFog, "client.dll", "55 8B EC 8B 0D ? ? ? ? 83 EC ? 8B 01 53 56 FF 90 ? ? ? ? 8B F0 85 F6 74 ? 8B 06 8B CE FF 50 ? 33 DB", 0x0);
+MAKE_SIGNATURE(CRendering3dView_EnableWorldFog, "client.dll", "40 53 48 83 EC ? 48 8B 0D ? ? ? ? 48 89 74 24", 0x0);
 
-MAKE_HOOK(CRendering3dView_EnableWorldFog, S::CRendering3dView_EnableWorldFog(), void, __fastcall, 
-	void* ecx, void* edx)
+MAKE_HOOK(CRendering3dView_EnableWorldFog, S::CRendering3dView_EnableWorldFog(), void,
+	void* rcx)
 {
 	if (CFG::Visuals_ClearScreenshots && I::EngineClient->IsTakingScreenshot())
 	{
-		CALL_ORIGINAL(ecx, edx);
+		CALL_ORIGINAL(rcx);
 
 		return;
 	}
@@ -28,5 +28,5 @@ MAKE_HOOK(CRendering3dView_EnableWorldFog, S::CRendering3dView_EnableWorldFog(),
 		}
 	}
 
-	CALL_ORIGINAL(ecx, edx);
+	CALL_ORIGINAL(rcx);
 }

@@ -34,6 +34,7 @@ public:
 	void BuildTransformedBox(Vector* v2, const Vector bbmin, const Vector bbmax, const matrix3x4_t& m);
 	void PointsFromBox(const Vector mins, const Vector maxs, Vector* points);
 	void VectorAngles(const Vector& forward, Vector& angles);
+	Vector VectorAngles(const Vector& vForward);
 	void AngleVectors(const Vector vAngles, Vector* vForward);
 	void ClampAngles(Vector& v);
 	void RotateTriangle(Vector2D* v, const float flRotation);

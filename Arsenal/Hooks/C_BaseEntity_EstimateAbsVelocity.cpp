@@ -1,23 +1,21 @@
 #include "../SDK/SDK.h"
 
-MAKE_SIGNATURE(C_BaseEntity_EstimateAbsVelocity, "client.dll", "55 8B EC 83 EC ? 56 8B F1 E8 ? ? ? ? 3B F0", 0x0);
+MAKE_SIGNATURE(C_BaseEntity_EstimateAbsVelocity, "client.dll", "48 89 5C 24 ? 57 48 83 EC ? 48 8B FA 48 8B D9 E8 ? ? ? ? 48 3B D8", 0x0);
 
-MAKE_HOOK(C_BaseEntity_EstimateAbsVelocity, S::C_BaseEntity_EstimateAbsVelocity(), void, __fastcall, 
-	void* ecx, void* edx, Vector& vel)
+MAKE_HOOK(C_BaseEntity_EstimateAbsVelocity, S::C_BaseEntity_EstimateAbsVelocity(), void,
+	C_BaseEntity* rcx, Vector& vel)
 {
-	if (CFG::Visuals_NoInterpolation)
+	if (CFG::Visuals_NoInterpolation && rcx)
 	{
-		if (auto pEntity = reinterpret_cast<C_BaseEntity*>(ecx))
+		if (rcx->GetClassID() == ECSClassID::CCSPlayer)
 		{
-			if (pEntity->GetClassID() == ECSClientClass::CCSPlayer)
+			if (const auto pPlayer = rcx->As<C_CSPlayer>())
 			{
-				if (auto pPlayer = pEntity->As<C_CSPlayer>()) {
-					vel = pPlayer->m_vecVelocity();
-					return;
-				}
+				vel = pPlayer->m_vecVelocity();
+				return;
 			}
 		}
 	}
 
-	CALL_ORIGINAL(ecx, edx, vel);
+	CALL_ORIGINAL(rcx, vel);
 }

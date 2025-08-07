@@ -2,22 +2,16 @@
 
 #include "../Features/Backtrack/Backtrack.h"
 
-MAKE_SIGNATURE(CNetChan_SendDatagram, "engine.dll", "55 8B EC B8 ? ? ? ? E8 ? ? ? ? A1 ? ? ? ? 53 56 8B D9", 0x0);
+MAKE_SIGNATURE(CNetChan_SendDatagram, "engine.dll", "40 55 57 41 56 48 8D AC 24", 0x0);
 
-MAKE_HOOK(CNetChan_SendDatagram, S::CNetChan_SendDatagram(), int, __fastcall, 
-	CNetChannel* netChannel, void* edx, bf_write* datagram)
+MAKE_HOOK(CNetChan_SendDatagram, S::CNetChan_SendDatagram(), int,
+    CNetChannel* netChannel, bf_write* datagram)
 {
-    if (!I::EngineClient->IsInGame() || !netChannel || datagram)
-        return CALL_ORIGINAL(netChannel, edx, datagram);
+	if (datagram)
+		return CALL_ORIGINAL(netChannel, datagram);
 
-    F::Backtrack.bFakeLatency = CFG::Misc_Backtrack_LatencyMode == 1 || CFG::Misc_Backtrack_LatencyMode == 2 && CFG::Misc_Backtrack_Latency;
-    if (!F::Backtrack.bFakeLatency)
-        return CALL_ORIGINAL(netChannel, edx, datagram);
-
-    const int nInSequenceNr = netChannel->m_nInSequenceNr, nInReliableState = netChannel->m_nInReliableState;
-    F::Backtrack.AdjustPing(netChannel);
-    const int original = CALL_ORIGINAL(netChannel, edx, datagram);
-    netChannel->m_nInSequenceNr = nInSequenceNr, netChannel->m_nInReliableState = nInReliableState;
-
-    return original;
+	F::Backtrack.AdjustPing(netChannel);
+	const int iReturn = CALL_ORIGINAL(netChannel, datagram);
+	F::Backtrack.RestorePing(netChannel);
+	return iReturn;
 }

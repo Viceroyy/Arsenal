@@ -44,7 +44,7 @@ void CPlayers::Parse()
 	nlohmann::json j = nlohmann::json::parse(logFile);
 	for (const auto& item : j.items())
 	{
-		const auto key = FNV1A::Hash(item.key().c_str());
+		const auto key = FNV1A::Hash32(item.key().c_str());
 		auto& playerEntry = j[item.key()];
 
 		m_Players[key] = {
@@ -68,7 +68,7 @@ void CPlayers::Mark(int entindex, const PlayerPriority& info)
 		return;
 	}
 
-	auto steamID = FNV1A::Hash(std::string_view(playerInfo.guid).data());
+	auto steamID = FNV1A::Hash32(std::string_view(playerInfo.guid).data());
 	m_Players[steamID] = info;
 
 	// Load the current playerlist
@@ -120,7 +120,7 @@ bool CPlayers::GetInfo(int entindex, PlayerPriority& out)
 
 bool CPlayers::GetInfoGUID(const std::string& guid, PlayerPriority& out)
 {
-	const auto steamID = FNV1A::Hash(guid.c_str());
+	const auto steamID = FNV1A::Hash32(guid.c_str());
 
 	if (auto it = m_Players.find(steamID); it != std::end(m_Players))
 	{

@@ -45,27 +45,14 @@ public:
 	float			m_flConstraintRadius;
 	float			m_flConstraintWidth;
 	float			m_flConstraintSpeedFactor;
-	void			SetAbsOrigin(const Vector& vec);
-	const Vector& GetAbsOrigin() const;
-private:
 	Vector			m_vecAbsOrigin;
 };
-
-inline const Vector& CMoveData::GetAbsOrigin() const
-{
-	return m_vecAbsOrigin;
-}
-
-inline void CMoveData::SetAbsOrigin(const Vector& vec)
-{
-	m_vecAbsOrigin = vec;
-}
 
 class IGameMovement
 {
 public:
-	virtual			~IGameMovement(void) = 0;
-	virtual void	ProcessMovement(C_BasePlayer* pPlayer, CMoveData * pMove) = 0;
+	virtual			~IGameMovement(void) {}
+	virtual void	ProcessMovement(C_BasePlayer* pPlayer, CMoveData* pMove) = 0;
 	virtual void	StartTrackPredictionErrors(C_BasePlayer* pPlayer) = 0;
 	virtual void	FinishTrackPredictionErrors(C_BasePlayer* pPlayer) = 0;
 	virtual void	DiffPrint(char const* fmt, ...) = 0;

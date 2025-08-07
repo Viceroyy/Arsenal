@@ -5,6 +5,7 @@
 //=============================================================================//
 
 #include "checksum_crc.h"
+#include <cstdint>
 
 #define CRC32_INIT_VALUE 0xFFFFFFFFUL
 #define CRC32_XOR_VALUE  0xFFFFFFFFUL
@@ -145,7 +146,7 @@ JustAfew:
     // The low-order two bits of pb and nBuffer in total control the
     // upfront work.
     //
-    nFront = ((unsigned int)pb) & 3;
+    nFront = uintptr_t(pb) & 3;
     nBuffer -= nFront;
     switch (nFront)
     {
