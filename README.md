@@ -1,8 +1,8 @@
-# Arsenal [download](https://github.com/Viceroyy/Arsenal/releases/download/v1.0.0/Arsenal-Release.dll)
+# Arsenal [download](https://github.com/Viceroyy/Arsenal/releases/download/v1.0.0/Arsenalx64Release.dll)
 
 [![Discord](https://img.shields.io/discord/1267955231636062259?logo=Discord&label=discord)](https://discord.gg/4apwXtJZPH)
 
-Free open-source Windows cheat software for **Counter-Strike Source** game. Designed as an internal cheat - [Dynamic-link library](https://en.wikipedia.org/wiki/Dynamic-link_library) (DLL) loadable into game process. Compatible with the Steam version of the game.
+Free open-source Windows cheat software for **Counter-Strike Source** game. Designed as an internal cheat - [Dynamic-link library](https://en.wikipedia.org/wiki/Dynamic-link_library) (DLL) loadable into game process. Compatible with the x64 Steam version of the game.
 
 ### Notable things
 This cheat disables sv_pure, servers being able to issue commands to your client, removes event delays, and fixes general input delay all automatically and without options in the menu or the config.
@@ -102,11 +102,11 @@ This cheat disables sv_pure, servers being able to issue commands to your client
 
 ### Downloading the DLL
 
-If you haven't already, download the DLL by clicking [here](https://github.com/Viceroyy/Arsenal/releases/download/v1.0.0/Arsenal-Release.dll). Download size ~600 kB.
+If you haven't already, download the DLL by clicking [here](https://github.com/Viceroyy/Arsenal/releases/download/v1.0.0/Arsenalx64Release.dll). Download size ~600 kB.
 
 ### Loading / Injecting into game process
 
-Open your favorite [DLL injector](https://en.wikipedia.org/wiki/DLL_injection) and just inject `Arsenal-Release.dll` into `hl2.exe` process.
+Open your favorite [DLL injector](https://en.wikipedia.org/wiki/DLL_injection) and just inject `Arsenalx64Release.dll` into `cstrike_win64.exe` process.
 
 When injected, menu is openable with the <kbd>INSERT</kbd> key. To unload the DLL from the game, press the <kbd>F11</kbd> key.
 
@@ -115,7 +115,7 @@ When injected, menu is openable with the <kbd>INSERT</kbd> key. To unload the DL
 <details>
 
 ### Prerequisites
-Microsoft Visual Studio 2022 17.11.4 (or newer), platform toolset v143 and Windows SDK 10.0 are required in order to compile Arsenal. You can download VS [here](https://visualstudio.microsoft.com/) (Windows SDK is installed during Visual Studio Setup).
+Microsoft Visual Studio 2022 17.14.11 (or newer), platform toolset v143 and Windows SDK 10.0 are required in order to compile Arsenal. You can download VS [here](https://visualstudio.microsoft.com/) (Windows SDK is installed during Visual Studio Setup).
 
 ### Downloading
 
@@ -125,7 +125,7 @@ There are two options of downloading the source code:
 
 Choose this option if you want pure source and you're not going to contribute to the repo. Download size ~600 kB.
 
-To download source code this way [click here](https://github.com/Viceroyy/Arsenal/archive/main.zip).
+To download source code this way [click here](https://github.com/Viceroyy/Arsenal/archive/refs/heads/x64.zip).
 
 #### With [git](https://git-scm.com)
 
@@ -139,9 +139,9 @@ Open git command prompt and enter following command:
 
 When you have equipped a copy of the source code, next step is opening **Arsenal.sln** in Microsoft Visual Studio 2022.
 
-Then change build configuration to `Release | x86` and simply press **Build solution**.
+Then change build configuration to `Release | x64` and simply press **Build solution**.
 
-If everything went right you should receive `Arsenal-Release.dll`  binary file.
+If everything went right you should receive `Arsenalx64Release.dll`  binary file.
 
 ### Instruction sets
 If your CPU doesn't support the AVX2 instruction set, you can use SSE2 instructions instead in project settings. Currently AVX2 instructions are selected in project settings.
@@ -157,13 +157,14 @@ Press <kbd>INSERT</kbd> while focused on CSS window.
 Configuration files are saved inside `Arsenal` folder in your game folder (`C:\Program Files (x86)\Steam\Steamapps\Common\Counter-Strike Source\Arsenal`). The config is in human readable format and can be edited (e.g, using notepad). Sometimes after updates configuration file needs to be deleted and recreated.
 
 ## Acknowledgments
-
+*   [rei-2](https://github.com/rei-2)
 *   [spook953](https://github.com/spook953)
 *   [Lak3](https://github.com/Lak3)
 *   [whydoIhax/usernameunavalible0](https://github.com/usernameunavalible0)
 *   and others..
 
 ## See also
+*   [Amalgam](https://github.com/rei-2/Amalgam) - where I got most of the sigs along with other stuff
 *   [css-internal-base](https://github.com/usernameunavalible0/css-internal-base) - base of this cheat
 *   [SEOwnedDE](https://github.com/spook953/SEOwnedDE-public) - menu of this cheat
 *   [Osiris CS:GO](https://github.com/danielkrupinski/Osiris/tree/csgo) - where I shamelessly stole this readme
