@@ -11,324 +11,351 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <ProjectGuid>{6E96F178-7E38-0F00-1B2B-8ACEEEC4B9BE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{9d8bde6c-7474-4b07-bb47-a69b7f18ebfe}</ProjectGuid>
-    <RootNamespace>Arsenal</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>$(ProjectName)$(Platform)$(Configuration)</TargetName>
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)include\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
+    <TargetName>$(ProjectName)$(Platform)$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>$(ProjectName)$(Platform)$(Configuration)</TargetName>
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)include\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
+    <TargetName>$(ProjectName)$(Platform)$(Configuration)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
     <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;Arsenal_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
-      <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <StringPooling>true</StringPooling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <SupportJustMyCode />
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <ConformanceMode>true</ConformanceMode>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <BufferSecurityCheck>false</BufferSecurityCheck>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SupportJustMyCode />
+      <OmitFramePointers />
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
     <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;Arsenal_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <StringPooling>true</StringPooling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <ConformanceMode>true</ConformanceMode>
+      <SupportJustMyCode />
+      <OmitFramePointers />
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <SupportJustMyCode />
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DllMain.cpp" />
-    <ClCompile Include="Entry\Entry.cpp" />
-    <ClCompile Include="Features\Backtrack\Backtrack.cpp" />
-    <ClCompile Include="Features\Commands\Commands.cpp" />
-    <ClCompile Include="Features\EnginePrediction\EnginePrediction.cpp" />
-    <ClCompile Include="Features\ESP\ESP.cpp" />
-    <ClCompile Include="Features\Materials\Materials.cpp" />
-    <ClCompile Include="Features\Menu\LateRenderer\LateRenderer.cpp" />
-    <ClCompile Include="Features\Menu\Menu.cpp" />
-    <ClCompile Include="Features\Misc\Misc.cpp" />
-    <ClCompile Include="Features\NetworkFix\NetworkFix.cpp" />
-    <ClCompile Include="Features\NoSpread\NoSpread.cpp" />
-    <ClCompile Include="Features\Notification\Notification.cpp" />
-    <ClCompile Include="Features\PlayerArrows\PlayerArrows.cpp" />
-    <ClCompile Include="Features\Players\Players.cpp" />
-    <ClCompile Include="Features\SequenceFreeze\SequenceFreeze.cpp" />
-    <ClCompile Include="Features\SpectatorList\SpectatorList.cpp" />
-    <ClCompile Include="Features\Visuals\Visuals.cpp" />
-    <ClCompile Include="Features\WorldModulation\WorldModulation.cpp" />
-    <ClCompile Include="Hooks\CBaseClientState_ProcessStringCmd.cpp" />
-    <ClCompile Include="Hooks\CBaseClient_Connect.cpp" />
-    <ClCompile Include="Hooks\CBaseClient_Disconnect.cpp" />
-    <ClCompile Include="Hooks\CBasePlayer_CalcPlayerView.cpp" />
-    <ClCompile Include="Hooks\CClientState_GetClientInterpAmount.cpp" />
-    <ClCompile Include="Hooks\CClientState_GetTime.cpp" />
-    <ClCompile Include="Hooks\CClientState_ProcessFixAngle.cpp" />
-    <ClCompile Include="Hooks\CHudCrosshair_GetDrawPosition.cpp" />
-    <ClCompile Include="Hooks\CInput_WriteUsercmdDeltaToBuffer.cpp" />
-    <ClCompile Include="Hooks\ClientModeShared_CreateMove.cpp" />
-    <ClCompile Include="Hooks\ClientModeShared_DoPostScreenSpaceEffects.cpp" />
-    <ClCompile Include="Hooks\ClientModeShared_GetViewmodelFOV.cpp" />
-    <ClCompile Include="Hooks\ClientModeShared_OverrideView.cpp" />
-    <ClCompile Include="Hooks\CL_CheckForPureServerWhitelist.cpp" />
-    <ClCompile Include="Hooks\CL_Move.cpp" />
-    <ClCompile Include="Hooks\CL_ReadPackets.cpp" />
-    <ClCompile Include="Hooks\CL_SendMove.cpp" />
-    <ClCompile Include="Hooks\CMaterial_Uncache.cpp" />
-    <ClCompile Include="Hooks\CNetChan_SendDatagram.cpp" />
-    <ClCompile Include="Hooks\CNetChan_SendNetMsg.cpp" />
-    <ClCompile Include="Hooks\CParticleSystemMgr_DrawRenderCache.cpp" />
-    <ClCompile Include="Hooks\CPrediction_RunCommand.cpp" />
-    <ClCompile Include="Hooks\CRendering3dView_EnableWorldFog.cpp" />
-    <ClCompile Include="Hooks\CSequenceTransitioner_CheckForSequenceChange.cpp" />
-    <ClCompile Include="Hooks\CSkyboxView_Enable3dSkyboxFog.cpp" />
-    <ClCompile Include="Hooks\CStudioRender_DrawModelStaticProp.cpp" />
-    <ClCompile Include="Hooks\CUserMessages_DispatchUserMessage.cpp" />
-    <ClCompile Include="Hooks\CViewRender_DrawViewModels.cpp" />
-    <ClCompile Include="Hooks\CViewRender_LevelInit.cpp" />
-    <ClCompile Include="Hooks\CViewRender_LevelShutdown.cpp" />
-    <ClCompile Include="Hooks\C_BaseAnimating_FrameAdvance.cpp" />
-    <ClCompile Include="Hooks\C_BaseAnimating_Interpolate.cpp" />
-    <ClCompile Include="Hooks\C_BaseAnimating_SetupBones.cpp" />
-    <ClCompile Include="Hooks\C_BaseEntity_AddVar.cpp" />
-    <ClCompile Include="Hooks\C_BaseEntity_BaseInterpolatePart1.cpp" />
-    <ClCompile Include="Hooks\C_BaseEntity_EstimateAbsVelocity.cpp" />
-    <ClCompile Include="Hooks\C_BaseEntity_Interpolate.cpp" />
-    <ClCompile Include="Hooks\C_BaseEntity_InterpolateServerEntities.cpp" />
-    <ClCompile Include="Hooks\C_BaseEntity_ResetLatched.cpp" />
-    <ClCompile Include="Hooks\C_BasePlayer_CalcViewModelView.cpp" />
-    <ClCompile Include="Hooks\C_CSRagdoll_CreateCSRagdoll.cpp" />
-    <ClCompile Include="Hooks\C_WeaponCSBase_DrawCrosshair.cpp" />
-    <ClCompile Include="Hooks\DoEnginePostProcessing.cpp" />
-    <ClCompile Include="Hooks\DSP_Process.cpp" />
-    <ClCompile Include="Hooks\EngineClient_ClientCmd_Unrestricted.cpp" />
-    <ClCompile Include="Hooks\GetClientInterpAmount.cpp" />
-    <ClCompile Include="Hooks\IBaseClientDLL_FrameStageNotify.cpp" />
-    <ClCompile Include="Hooks\IBaseClientDLL_LevelInitPostEntity.cpp" />
-    <ClCompile Include="Hooks\IBaseClientDLL_LevelShutdown.cpp" />
-    <ClCompile Include="Hooks\IEngineVGui_Paint.cpp" />
-    <ClCompile Include="Hooks\CInput_GetUserCmd.cpp" />
-    <ClCompile Include="Hooks\ModelRender_DrawModelExecute.cpp" />
-    <ClCompile Include="Hooks\ModelRender_ForcedMaterialOverride.cpp" />
-    <ClCompile Include="Hooks\Panel_OnScreenSizeChanged.cpp" />
-    <ClCompile Include="Hooks\S_StartSound.cpp" />
-    <ClCompile Include="Hooks\WINAPI_WndProc.cpp" />
-    <ClCompile Include="SDK\DrawManager\DrawManager.cpp" />
-    <ClCompile Include="SDK\Entities\C_CSPlayer.cpp" />
-    <ClCompile Include="SDK\Entities\C_PlantedC4.h" />
-    <ClCompile Include="SDK\Entities\KeyValues.cpp" />
-    <ClCompile Include="SDK\Entities\NetVarManager\NetVarManager.cpp" />
-    <ClCompile Include="SDK\EntityCacher\EntityCacher.cpp" />
-    <ClCompile Include="SDK\Includes\bitbuf.cpp" />
-    <ClCompile Include="SDK\Includes\checksum_crc.cpp" />
-    <ClCompile Include="SDK\Includes\checksum_md5.cpp" />
-    <ClCompile Include="SDK\Interfaces\IHudChat.h" />
-    <ClCompile Include="SDK\Interfaces\IInputSystem.h" />
-    <ClCompile Include="SDK\Input\Input.cpp" />
-    <ClCompile Include="SDK\Interfaces\ICvar.cpp" />
-    <ClCompile Include="Util\ConVars\ConVars.cpp" />
-    <ClCompile Include="Util\Hook\HooksUtil.cpp" />
-    <ClCompile Include="Util\Hook\MinHook\buffer.c" />
-    <ClCompile Include="Util\Hook\MinHook\hde\hde32.c" />
-    <ClCompile Include="Util\Hook\MinHook\hde\hde64.c" />
-    <ClCompile Include="Util\Hook\MinHook\hook.c" />
-    <ClCompile Include="Util\Hook\MinHook\trampoline.c" />
-    <ClCompile Include="Util\Interface\Interface.cpp" />
-    <ClCompile Include="Util\Math\Math.cpp" />
-    <ClCompile Include="Util\Pattern\Pattern.cpp" />
-    <ClCompile Include="Util\Signatures\Signatures.cpp" />
-    <ClCompile Include="Util\Timer\Timer.cpp" />
-    <ClCompile Include="Util\VFunc\VFunc.cpp" />
+    <ClCompile Include="include/MinHook/buffer.c" />
+    <ClCompile Include="include/MinHook/hde/hde32.c" />
+    <ClCompile Include="include/MinHook/hde/hde64.c" />
+    <ClCompile Include="include/MinHook/hook.c" />
+    <ClCompile Include="include/MinHook/trampoline.c" />
+    <ClCompile Include="src/Core/Core.cpp" />
+    <ClCompile Include="src/DllMain.cpp" />
+    <ClCompile Include="src/Features/Backtrack/Backtrack.cpp" />
+    <ClCompile Include="src/Features/Commands/Commands.cpp" />
+    <ClCompile Include="src/Features/EnginePrediction/EnginePrediction.cpp" />
+    <ClCompile Include="src/Features/ESP/ESP.cpp" />
+    <ClCompile Include="src/Features/Materials/Materials.cpp" />
+    <ClCompile Include="src/Features/Menu/LateRenderer/LateRenderer.cpp" />
+    <ClCompile Include="src/Features/Menu/Menu.cpp" />
+    <ClCompile Include="src/Features/Misc/Misc.cpp" />
+    <ClCompile Include="src/Features/NetworkFix/NetworkFix.cpp" />
+    <ClCompile Include="src/Features/NoSpread/NoSpread.cpp" />
+    <ClCompile Include="src/Features/Notification/Notification.cpp" />
+    <ClCompile Include="src/Features/PlayerArrows/PlayerArrows.cpp" />
+    <ClCompile Include="src/Features/Players/Players.cpp" />
+    <ClCompile Include="src/Features/SequenceFreeze/SequenceFreeze.cpp" />
+    <ClCompile Include="src/Features/SpectatorList/SpectatorList.cpp" />
+    <ClCompile Include="src/Features/Visuals/Visuals.cpp" />
+    <ClCompile Include="src/Features/WorldModulation/WorldModulation.cpp" />
+    <ClCompile Include="src/Hooks/C_BaseAnimating_FrameAdvance.cpp" />
+    <ClCompile Include="src/Hooks/C_BaseAnimating_Interpolate.cpp" />
+    <ClCompile Include="src/Hooks/C_BaseAnimating_SetupBones.cpp" />
+    <ClCompile Include="src/Hooks/C_BaseEntity_AddVar.cpp" />
+    <ClCompile Include="src/Hooks/C_BaseEntity_BaseInterpolatePart1.cpp" />
+    <ClCompile Include="src/Hooks/C_BaseEntity_EstimateAbsVelocity.cpp" />
+    <ClCompile Include="src/Hooks/C_BaseEntity_Interpolate.cpp" />
+    <ClCompile Include="src/Hooks/C_BaseEntity_InterpolateServerEntities.cpp" />
+    <ClCompile Include="src/Hooks/C_BaseEntity_ResetLatched.cpp" />
+    <ClCompile Include="src/Hooks/C_BasePlayer_CalcViewModelView.cpp" />
+    <ClCompile Include="src/Hooks/C_CSRagdoll_CreateCSRagdoll.cpp" />
+    <ClCompile Include="src/Hooks/C_WeaponCSBase_DrawCrosshair.cpp" />
+    <ClCompile Include="src/Hooks/CBaseClient_Connect.cpp" />
+    <ClCompile Include="src/Hooks/CBaseClient_Disconnect.cpp" />
+    <ClCompile Include="src/Hooks/CBaseClientState_ProcessStringCmd.cpp" />
+    <ClCompile Include="src/Hooks/CBasePlayer_CalcPlayerView.cpp" />
+    <ClCompile Include="src/Hooks/CClientState_GetClientInterpAmount.cpp" />
+    <ClCompile Include="src/Hooks/CClientState_GetTime.cpp" />
+    <ClCompile Include="src/Hooks/CClientState_ProcessFixAngle.cpp" />
+    <ClCompile Include="src/Hooks/CHudCrosshair_GetDrawPosition.cpp" />
+    <ClCompile Include="src/Hooks/CInput_GetUserCmd.cpp" />
+    <ClCompile Include="src/Hooks/CInput_WriteUsercmdDeltaToBuffer.cpp" />
+    <ClCompile Include="src/Hooks/CL_CheckForPureServerWhitelist.cpp" />
+    <ClCompile Include="src/Hooks/CL_Move.cpp" />
+    <ClCompile Include="src/Hooks/CL_ReadPackets.cpp" />
+    <ClCompile Include="src/Hooks/CL_SendMove.cpp" />
+    <ClCompile Include="src/Hooks/ClientModeShared_CreateMove.cpp" />
+    <ClCompile Include="src/Hooks/ClientModeShared_DoPostScreenSpaceEffects.cpp" />
+    <ClCompile Include="src/Hooks/ClientModeShared_GetViewmodelFOV.cpp" />
+    <ClCompile Include="src/Hooks/ClientModeShared_OverrideView.cpp" />
+    <ClCompile Include="src/Hooks/CMaterial_Uncache.cpp" />
+    <ClCompile Include="src/Hooks/CNetChan_SendDatagram.cpp" />
+    <ClCompile Include="src/Hooks/CNetChan_SendNetMsg.cpp" />
+    <ClCompile Include="src/Hooks/CParticleSystemMgr_DrawRenderCache.cpp" />
+    <ClCompile Include="src/Hooks/CPrediction_RunCommand.cpp" />
+    <ClCompile Include="src/Hooks/CRendering3dView_EnableWorldFog.cpp" />
+    <ClCompile Include="src/Hooks/CSequenceTransitioner_CheckForSequenceChange.cpp" />
+    <ClCompile Include="src/Hooks/CSkyboxView_Enable3dSkyboxFog.cpp" />
+    <ClCompile Include="src/Hooks/CStudioRender_DrawModelStaticProp.cpp" />
+    <ClCompile Include="src/Hooks/CUserMessages_DispatchUserMessage.cpp" />
+    <ClCompile Include="src/Hooks/CViewRender_DrawViewModels.cpp" />
+    <ClCompile Include="src/Hooks/CViewRender_LevelInit.cpp" />
+    <ClCompile Include="src/Hooks/CViewRender_LevelShutdown.cpp" />
+    <ClCompile Include="src/Hooks/DoEnginePostProcessing.cpp" />
+    <ClCompile Include="src/Hooks/DSP_Process.cpp" />
+    <ClCompile Include="src/Hooks/EngineClient_ClientCmd_Unrestricted.cpp" />
+    <ClCompile Include="src/Hooks/GetClientInterpAmount.cpp" />
+    <ClCompile Include="src/Hooks/IBaseClientDLL_FrameStageNotify.cpp" />
+    <ClCompile Include="src/Hooks/IBaseClientDLL_LevelInitPostEntity.cpp" />
+    <ClCompile Include="src/Hooks/IBaseClientDLL_LevelShutdown.cpp" />
+    <ClCompile Include="src/Hooks/IEngineVGui_Paint.cpp" />
+    <ClCompile Include="src/Hooks/ModelRender_DrawModelExecute.cpp" />
+    <ClCompile Include="src/Hooks/ModelRender_ForcedMaterialOverride.cpp" />
+    <ClCompile Include="src/Hooks/Panel_OnScreenSizeChanged.cpp" />
+    <ClCompile Include="src/Hooks/S_StartSound.cpp" />
+    <ClCompile Include="src/Hooks/WINAPI_WndProc.cpp" />
+    <ClCompile Include="src/SDK/SDK.cpp" />
+    <ClCompile Include="src/SDK/Definitions/Interfaces/ICvar.cpp" />
+    <ClCompile Include="src/SDK/Definitions/Main/CCSPlayer.cpp" />
+    <ClCompile Include="src/SDK/Definitions/Main/KeyValues.cpp" />
+    <ClCompile Include="src/SDK/Definitions/Misc/bitbuf.cpp" />
+    <ClCompile Include="src/SDK/Definitions/Misc/ChecksumCRC.cpp" />
+    <ClCompile Include="src/SDK/Definitions/Misc/MD5.cpp" />
+    <ClCompile Include="src/SDK/EntityCacher/EntityCacher.cpp" />
+    <ClCompile Include="src/SDK/Events/Events.cpp" />
+    <ClCompile Include="src/SDK/Helpers/Draw/Draw.cpp" />
+    <ClCompile Include="src/SDK/Helpers/Input.cpp" />
+    <ClCompile Include="src/Utils/ConVars/ConVars.cpp" />
+    <ClCompile Include="src/Utils/ExceptionHandler/ExceptionHandler.cpp" />
+    <ClCompile Include="src/Utils/Hooks/Hooks.cpp" />
+    <ClCompile Include="src/Utils/Interfaces/Interfaces.cpp" />
+    <ClCompile Include="src/Utils/KeyHandler/KeyHandler.cpp" />
+    <ClCompile Include="src/Utils/Math/Math.cpp" />
+    <ClCompile Include="src/Utils/Memory/Memory.cpp" />
+    <ClCompile Include="src/Utils/NetVars/NetVars.cpp" />
+    <ClCompile Include="src/Utils/Signatures/Signatures.cpp" />
+    <ClCompile Include="src/Utils/Timer/Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Entry\Entry.h" />
-    <ClInclude Include="Features\Backtrack\Backtrack.h" />
-    <ClInclude Include="Features\Commands\Commands.h" />
-    <ClInclude Include="Features\EnginePrediction\EnginePrediction.h" />
-    <ClInclude Include="Features\ESP\ESP.h" />
-    <ClInclude Include="Features\Materials\Materials.h" />
-    <ClInclude Include="Features\Menu\LateRenderer\LateRenderer.h" />
-    <ClInclude Include="Features\Menu\Menu.h" />
-    <ClInclude Include="Features\Misc\Misc.h" />
-    <ClInclude Include="Features\NetworkFix\NetworkFix.h" />
-    <ClInclude Include="Features\NoSpread\NoSpread.h" />
-    <ClInclude Include="Features\CFG.h" />
-    <ClInclude Include="Features\Notification\Notification.h" />
-    <ClInclude Include="Features\PlayerArrows\PlayerArrows.h" />
-    <ClInclude Include="Features\Players\Players.h" />
-    <ClInclude Include="Features\SequenceFreeze\SequenceFreeze.h" />
-    <ClInclude Include="Features\SpectatorList\SpectatorList.h" />
-    <ClInclude Include="Features\Visuals\Visuals.h" />
-    <ClInclude Include="Features\WorldModulation\WorldModulation.h" />
-    <ClInclude Include="Hooks\WINAPI_WndProc.h" />
-    <ClInclude Include="SDK\DrawManager\DrawManager.h" />
-    <ClInclude Include="SDK\Entities\C_BaseAnimating.h" />
-    <ClInclude Include="SDK\Entities\C_BaseAnimatingOverlay.h" />
-    <ClInclude Include="SDK\Entities\C_BaseCombatCharacter.h" />
-    <ClInclude Include="SDK\Entities\C_BaseCombatWeapon.h" />
-    <ClInclude Include="SDK\Entities\C_BaseEntity.h" />
-    <ClInclude Include="SDK\Entities\C_BaseFlex.h" />
-    <ClInclude Include="SDK\Entities\C_BasePlayer.h" />
-    <ClInclude Include="SDK\Entities\C_CSPlayer.h" />
-    <ClInclude Include="SDK\Entities\C_WeaponCSBase.h" />
-    <ClInclude Include="SDK\Entities\IClientEntity.h" />
-    <ClInclude Include="SDK\Entities\IClientNetworkable.h" />
-    <ClInclude Include="SDK\Entities\IClientRenderable.h" />
-    <ClInclude Include="SDK\Entities\IClientThinkable.h" />
-    <ClInclude Include="SDK\Entities\IClientUnknown.h" />
-    <ClInclude Include="SDK\Entities\KeyValues.h" />
-    <ClInclude Include="SDK\Entities\NetVarManager\NetVarManager.h" />
-    <ClInclude Include="SDK\Entities\PlayerResource.h" />
-    <ClInclude Include="SDK\EntityCacher\EntityCacher.h" />
-    <ClInclude Include="SDK\Globals\Globals.h" />
-    <ClInclude Include="SDK\Includes\Activity.h" />
-    <ClInclude Include="SDK\Includes\basehandle.h" />
-    <ClInclude Include="SDK\Includes\bitbuf.h" />
-    <ClInclude Include="SDK\Includes\checksum_crc.h" />
-    <ClInclude Include="SDK\Includes\checksum_md5.h" />
-    <ClInclude Include="SDK\Includes\client_class.h" />
-    <ClInclude Include="SDK\Includes\color.h" />
-    <ClInclude Include="SDK\Includes\const.h" />
-    <ClInclude Include="SDK\Includes\dt_common.h" />
-    <ClInclude Include="SDK\Includes\dt_recv.h" />
-    <ClInclude Include="SDK\Includes\ehandle.h" />
-    <ClInclude Include="SDK\Includes\gameeventlistener.h" />
-    <ClInclude Include="SDK\Includes\iappsystem.h" />
-    <ClInclude Include="SDK\Includes\iconvar.h" />
-    <ClInclude Include="SDK\Includes\igameevents.h" />
-    <ClInclude Include="SDK\Includes\ihandleentity.h" />
-    <ClInclude Include="SDK\Includes\imageformat.h" />
-    <ClInclude Include="SDK\Includes\inetchannel.h" />
-    <ClInclude Include="SDK\Includes\inetchannelinfo.h" />
-    <ClInclude Include="SDK\Includes\in_buttons.h" />
-    <ClInclude Include="SDK\Includes\isurface.h" />
-    <ClInclude Include="SDK\Includes\ivguimatinfo.h" />
-    <ClInclude Include="SDK\Includes\ivguimatinfovar.h" />
-    <ClInclude Include="SDK\Includes\strtools.h" />
-    <ClInclude Include="SDK\Includes\studio.h" />
-    <ClInclude Include="SDK\Includes\usercmd.h" />
-    <ClInclude Include="SDK\Includes\utlvector.h" />
-    <ClInclude Include="SDK\Includes\view_shared.h" />
-    <ClInclude Include="SDK\Includes\xboxstubs.h" />
-    <ClInclude Include="SDK\Input\Input.h" />
-    <ClInclude Include="SDK\Interfaces\GlobalVars_Base.h" />
-    <ClInclude Include="SDK\Interfaces\IBaseClientDLL.h" />
-    <ClInclude Include="SDK\Interfaces\IClientEntityList.h" />
-    <ClInclude Include="SDK\Interfaces\IClientModeShared.h" />
-    <ClInclude Include="SDK\Interfaces\IClientState.h" />
-    <ClInclude Include="SDK\Interfaces\ICvar.h" />
-    <ClInclude Include="SDK\Interfaces\IEngineTrace.h" />
-    <ClInclude Include="SDK\Interfaces\IEngineVGui.h" />
-    <ClInclude Include="SDK\Interfaces\IGameMovement.h" />
-    <ClInclude Include="SDK\Interfaces\IInput.h" />
-    <ClInclude Include="SDK\Interfaces\IMaterialSystem.h" />
-    <ClInclude Include="SDK\Interfaces\IMatSystemSurface.h" />
-    <ClInclude Include="SDK\Interfaces\IMoveHelper.h" />
-    <ClInclude Include="SDK\Interfaces\IPrediction.h" />
-    <ClInclude Include="SDK\Interfaces\IStudioRender.h" />
-    <ClInclude Include="SDK\Interfaces\IVEngineClient.h" />
-    <ClInclude Include="SDK\Interfaces\IVModelInfo.h" />
-    <ClInclude Include="SDK\Interfaces\IVModelRender.h" />
-    <ClInclude Include="SDK\Interfaces\IVRenderView.h" />
-    <ClInclude Include="SDK\SDK.h" />
-    <ClInclude Include="Util\Assert\Assert.h" />
-    <ClInclude Include="Util\Color\Color.h" />
-    <ClInclude Include="Util\Config\Config.h" />
-    <ClInclude Include="Util\Config\json.hpp" />
-    <ClInclude Include="Util\ConVars\ConVars.h" />
-    <ClInclude Include="Util\Hash\Hash.h" />
-    <ClInclude Include="Util\Hook\HooksUtil.h" />
-    <ClInclude Include="Util\Hook\MinHook\buffer.h" />
-    <ClInclude Include="Util\Hook\MinHook\hde\hde32.h" />
-    <ClInclude Include="Util\Hook\MinHook\hde\hde64.h" />
-    <ClInclude Include="Util\Hook\MinHook\hde\pstdint.h" />
-    <ClInclude Include="Util\Hook\MinHook\hde\table32.h" />
-    <ClInclude Include="Util\Hook\MinHook\hde\table64.h" />
-    <ClInclude Include="Util\Hook\MinHook\MinHook.h" />
-    <ClInclude Include="Util\Hook\MinHook\trampoline.h" />
-    <ClInclude Include="Util\Icons.h" />
-    <ClInclude Include="Util\Interface\Interface.h" />
-    <ClInclude Include="Util\Math\Math.h" />
-    <ClInclude Include="Util\Math\Vector\Vector.h" />
-    <ClInclude Include="Util\Math\Vector\Vector2D.h" />
-    <ClInclude Include="Util\Pattern\Pattern.h" />
-    <ClInclude Include="Util\Signatures\Signatures.h" />
-    <ClInclude Include="Util\Timer\Timer.h" />
-    <ClInclude Include="Util\Util.h" />
-    <ClInclude Include="Util\VFunc\VFunc.h" />
+    <ClInclude Include="include/MinHook/buffer.h" />
+    <ClInclude Include="include/MinHook/hde/hde32.h" />
+    <ClInclude Include="include/MinHook/hde/hde64.h" />
+    <ClInclude Include="include/MinHook/hde/pstdint.h" />
+    <ClInclude Include="include/MinHook/hde/table32.h" />
+    <ClInclude Include="include/MinHook/hde/table64.h" />
+    <ClInclude Include="include/MinHook/MinHook.h" />
+    <ClInclude Include="include/MinHook/trampoline.h" />
+    <ClInclude Include="src/Core/Core.h" />
+    <ClInclude Include="src/Features/Backtrack/Backtrack.h" />
+    <ClInclude Include="src/Features/CFG.h" />
+    <ClInclude Include="src/Features/Commands/Commands.h" />
+    <ClInclude Include="src/Features/EnginePrediction/EnginePrediction.h" />
+    <ClInclude Include="src/Features/ESP/ESP.h" />
+    <ClInclude Include="src/Features/Materials/Materials.h" />
+    <ClInclude Include="src/Features/Menu/LateRenderer/LateRenderer.h" />
+    <ClInclude Include="src/Features/Menu/Menu.h" />
+    <ClInclude Include="src/Features/Misc/Misc.h" />
+    <ClInclude Include="src/Features/NetworkFix/NetworkFix.h" />
+    <ClInclude Include="src/Features/NoSpread/NoSpread.h" />
+    <ClInclude Include="src/Features/Notification/Notification.h" />
+    <ClInclude Include="src/Features/PlayerArrows/PlayerArrows.h" />
+    <ClInclude Include="src/Features/Players/Players.h" />
+    <ClInclude Include="src/Features/SequenceFreeze/SequenceFreeze.h" />
+    <ClInclude Include="src/Features/SpectatorList/SpectatorList.h" />
+    <ClInclude Include="src/Features/Visuals/Visuals.h" />
+    <ClInclude Include="src/Features/WorldModulation/WorldModulation.h" />
+    <ClInclude Include="src/Hooks/WINAPI_WndProc.h" />
+    <ClInclude Include="src/SDK/SDK.h" />
+    <ClInclude Include="src/SDK/Globals.h" />
+    <ClInclude Include="src/SDK/Vars.h" />
+    <ClInclude Include="src/SDK/Definitions/Classes.h" />
+    <ClInclude Include="src/SDK/Definitions/Definitions.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces.h" />
+    <ClInclude Include="src/SDK/Definitions/Types.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/CClientModeShared.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/CClientState.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/CGlobalVarsBase.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IBaseClientDLL.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IClientEntityList.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/ICVar.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IEngineTrace.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IEngineVGui.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IGameEvents.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IGameMovement.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IHudChat.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IInput.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IInputSystem.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IMaterialSystem.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IMatSystemSurface.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IMoveHelper.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IPrediction.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IStudioRender.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IVEngineClient.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IVModelInfo.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IVModelRender.h" />
+    <ClInclude Include="src/SDK/Definitions/Interfaces/IVRenderView.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CBaseAnimatingOverlay.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CBaseCombatCharacter.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CBaseCombatWeapon.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CBaseEntity.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CBaseFlex.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CBaseHandle.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CBasePlayer.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CCSPlayer.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CPlantedC4.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CUserCmd.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/CWeaponCSBase.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/IClientEntity.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/IClientNetworkable.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/IClientRenderable.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/IClientThinkable.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/IClientUnknown.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/IHandleEntity.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/INetChannel.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/INetChannelInfo.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/KeyValues.h" />
+    <ClInclude Include="src/SDK/Definitions/Main/PlayerResource.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/Activity.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/bitbuf.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/CGameEventListener.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/ChecksumCRC.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/ClientClass.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/Color.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/Const.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/CUtlVector.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/CViewSetup.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/dt_common.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/dt_recv.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/ehandle.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/IAppSystem.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/IConVar.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/ImageFormat.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/in_buttons.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/ISurface.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/IVguiMatInfo.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/IVguiMatInfoVar.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/MD5.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/strtools.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/Studio.h" />
+    <ClInclude Include="src/SDK/Definitions/Misc/xboxstubs.h" />
+    <ClInclude Include="src/SDK/EntityCacher/EntityCacher.h" />
+    <ClInclude Include="src/SDK/Events/Events.h" />
+    <ClInclude Include="src/SDK/Helpers/Draw/Draw.h" />
+    <ClInclude Include="src/SDK/Helpers/Input.h" />
+    <ClInclude Include="src/SDK/Helpers/ConVars/ConVars.h" />
+    <ClInclude Include="src/SDK/Helpers/Entities/Entities.h" />
+    <ClInclude Include="src/SDK/Helpers/TraceFilters/TraceFilters.h" />
+    <ClInclude Include="src/Utils/Icons.h" />
+    <ClInclude Include="src/Utils/Util.h" />
+    <ClInclude Include="src/Utils/Assert/Assert.h" />
+    <ClInclude Include="src/Utils/Color/Color.h" />
+    <ClInclude Include="src/Utils/Config/Config.h" />
+    <ClInclude Include="src/Utils/Config/json.hpp" />
+    <ClInclude Include="src/Utils/ConVars/ConVars.h" />
+    <ClInclude Include="src/Utils/ExceptionHandler/ExceptionHandler.h" />
+    <ClInclude Include="src/Utils/Hash/Hash.h" />
+    <ClInclude Include="src/Utils/Hooks/Hooks.h" />
+    <ClInclude Include="src/Utils/Interfaces/Interfaces.h" />
+    <ClInclude Include="src/Utils/KeyHandler/KeyHandler.h" />
+    <ClInclude Include="src/Utils/Macros/Macros.h" />
+    <ClInclude Include="src/Utils/Math/BaseMath.h" />
+    <ClInclude Include="src/Utils/Math/Math.h" />
+    <ClInclude Include="src/Utils/Math/Vector/Vector.h" />
+    <ClInclude Include="src/Utils/Math/Vector/Vector2D.h" />
+    <ClInclude Include="src/Utils/Memory/Memory.h" />
+    <ClInclude Include="src/Utils/NetVars/NetVars.h" />
+    <ClInclude Include="src/Utils/Signatures/Signatures.h" />
+    <ClInclude Include="src/Utils/Timer/Timer.h" />
+    <ClInclude Include="src/Utils/UtlVector/UtlVector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,0 +1,127 @@
+#pragma once
+
+#define VA_LIST(...) __VA_ARGS__
+
+#define STRINGIFY(x) STRINGIFY2(x)
+#define STRINGIFY2(x) #x
+#define __LINESTRING__ STRINGIFY(__LINE__)
+
+#define ADD_FEATURE_CUSTOM(type, name, scope) namespace scope { inline type name; }
+#define ADD_FEATURE(type, name) ADD_FEATURE_CUSTOM(type, name, F)
+
+#define Assert(cond) if (!cond) { MessageBox(0, #cond "\n\n" __FUNCSIG__ " Line " __LINESTRING__, "Error", MB_OK | MB_ICONERROR); }
+#define AssertFatal(cond) if (!cond) { MessageBox(0, #cond "\n\n" __FUNCSIG__ " Line " __LINESTRING__, "Error", MB_OK | MB_ICONERROR); exit(EXIT_FAILURE); }
+#define AssertCustom(cond, message) if (!cond) { MessageBox(0, message, "Error", MB_OK | MB_ICONERROR); }
+
+#define TICK_INTERVAL I::GlobalVars->interval_per_tick
+#define TIME_TO_TICKS(dt) (static_cast<int>(0.5f + static_cast<float>(dt) / TICK_INTERVAL))
+#define TICKS_TO_TIME(t) (TICK_INTERVAL * (t))
+
+#define MAKE_SIGNATURE(name, dll, sig, offset) namespace S { inline CSignature name(dll, sig, offset, #name); }
+#define MAKE_HOOK(name, address, type, callconvo, ...) namespace Hooks \
+{\
+	namespace name\
+	{\
+		void Init(); \
+		inline CHook Hook(Init); \
+		using FN = type(callconvo *)(__VA_ARGS__); \
+		type callconvo Func(__VA_ARGS__); \
+	}\
+} \
+void Hooks::name::Init() { Hook.Create(reinterpret_cast<void *>(address), Func); } \
+type callconvo Hooks::name::Func(__VA_ARGS__)
+#define CALL_ORIGINAL Hook.Original<FN>()
+
+#define MAKE_INTERFACE_VERSION(type, symbol, dll, version, ...) namespace I { inline type *symbol = nullptr; } \
+namespace MAKE_INTERFACE_SCOPE \
+{\
+	inline InterfaceInit_t symbol##InterfaceInit_t(reinterpret_cast<void**>(&I::symbol), dll, version, 0, __VA_ARGS__); \
+}
+#define MAKE_INTERFACE_EXPORT(type, symbol, dll, name, deref, ...) namespace I { inline type *symbol = nullptr; } \
+namespace MAKE_INTERFACE_SCOPE \
+{\
+	inline InterfaceInit_t symbol##InterfaceInit_t(reinterpret_cast<void**>(&I::symbol), dll, name, 1, 0, deref, __VA_ARGS__); \
+}
+#define MAKE_INTERFACE_SIGNATURE(type, symbol, dll, signature, offset, deref, ...) namespace I { inline type *symbol = nullptr; } \
+namespace MAKE_INTERFACE_SCOPE \
+{\
+	inline InterfaceInit_t symbol##InterfaceInit_t(reinterpret_cast<void**>(&I::symbol), dll, signature, 2, offset, deref, __VA_ARGS__); \
+}
+#define MAKE_INTERFACE_NULL(type, symbol) namespace I { inline type *symbol = nullptr; }
+
+#define NETVAR(_name, type, table, name) inline type& _name() \
+{ \
+	static int nOffset = U::NetVars.GetNetVar(table, name); \
+	return *reinterpret_cast<type*>(uintptr_t(this) + nOffset); \
+}
+#define NETVAR_OFF(_name, type, table, name, offset) inline type& _name() \
+{ \
+	static int nOffset = U::NetVars.GetNetVar(table, name) + offset; \
+	return *reinterpret_cast<type*>(uintptr_t(this) + nOffset); \
+}
+#define NETVAR_EMBED(_name, type, table, name) inline type _name() \
+{ \
+	static int nOffset = U::NetVars.GetNetVar(table, name); \
+	return reinterpret_cast<type>(uintptr_t(this) + nOffset); \
+}
+#define NETVAR_OFF_EMBED(_name, type, table, name, offset) inline type _name() \
+{ \
+	static int nOffset = U::NetVars.GetNetVar(table, name) + offset; \
+	return reinterpret_cast<type>(uintptr_t(this) + nOffset); \
+}
+#define NETVAR_ARRAY(_name, type, table, size, name) inline type& _name(int iIndex) \
+{ \
+	static int nOffset = U::NetVars.GetNetVar(table, name); \
+	return *reinterpret_cast<type*>(uintptr_t(this) + nOffset + iIndex * sizeof(type)); \
+}
+#define NETVAR_ARRAY_OFF(_name, type, table, name, size, offset) inline type& _name(int iIndex) \
+{ \
+	static int nOffset = U::NetVars.GetNetVar(table, name) + offset; \
+	return *reinterpret_cast<type*>(uintptr_t(this) + nOffset + iIndex * sizeof(type)); \
+}
+#define OFFSET(name, type, offset) inline type& name() \
+{ \
+	return *reinterpret_cast<type*>(uintptr_t(this) + offset); \
+}
+#define OFFSET_EMBED(name, type, offset) inline type name() \
+{ \
+	return reinterpret_cast<type>(uintptr_t(this) + offset); \
+}
+#define CONDGET(name, conditions, cond) inline bool name() \
+{ \
+	return conditions & cond; \
+}
+#define VIRTUAL(name, type, index, ...) inline type name() \
+{ \
+	return U::Memory.CallVirtual<index, type>(##__VA_ARGS__); \
+}
+#define VIRTUAL_ARGS(name, type, index, args, ...) inline type name##args \
+{ \
+	return U::Memory.CallVirtual<index, type>(##__VA_ARGS__); \
+}
+#define SIGNATURE(name, type, sig, ...) inline type name() \
+{ \
+	return S::sig##_##name.Call<type>(##__VA_ARGS__); \
+}
+#define SIGNATURE_ARGS(name, type, sig, args, ...) inline type name##args \
+{ \
+	return S::sig##_##name.Call<type>(##__VA_ARGS__); \
+}
+
+#define NONE 0
+#define VISUAL (1 << 31)
+#define NOSAVE (1 << 30)
+#define NOBIND (1 << 29)
+#define DEBUGVAR (1 << 28)
+
+#define SLIDER_CLAMP (1 << 2)
+#define SLIDER_MIN (1 << 3)
+#define SLIDER_MAX (1 << 4)
+#define SLIDER_PRECISION (1 << 5)
+#define SLIDER_NOAUTOUPDATE (1 << 6)
+#define DROPDOWN_MULTI (1 << 2)
+#define DROPDOWN_MODIFIABLE (1 << 3)
+#define DROPDOWN_CUSTOM (1 << 2)
+#define DROPDOWN_AUTOUPDATE (1 << 3)
+
+#define DEFAULT_BIND -1
